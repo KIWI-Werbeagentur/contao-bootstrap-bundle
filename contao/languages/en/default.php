@@ -1,5 +1,5 @@
 <?php
 
-$GLOBALS['TL_LANG']['MSC']['elsPerRow']=[
+$GLOBALS['TL_LANG']['MSC']['responsiveRowCols']=[
     'auto' => "Automatic"
 ];
