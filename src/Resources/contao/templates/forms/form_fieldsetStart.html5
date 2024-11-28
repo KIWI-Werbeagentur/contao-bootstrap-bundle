@@ -1,8 +1,0 @@
-
-<?php if ($this->addBootstrap) $this->class .= ' ' . $this->bootstrapClasses; ?>
-<fieldset<?php if ($this->class): ?> class="<?= $this->class ?>"<?php endif; ?>>
-
-<div<?php if ($this->addBootstrap): ?> class="row"<?php endif; ?>>
-  <?php if ($this->label): ?>
-    <legend<?php if ($this->addBootstrap): ?> class="col-12"<?php endif; ?>><?= $this->label ?></legend>
-  <?php endif; ?>

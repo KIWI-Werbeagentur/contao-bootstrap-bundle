@@ -1,1 +1,0 @@
-<div <?=$this->cssID?> class="w-100 <?=$this->class?>"></div>
