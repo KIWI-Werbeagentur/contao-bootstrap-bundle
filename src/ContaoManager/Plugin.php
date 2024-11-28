@@ -8,8 +8,8 @@ use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
-use Kiwi\Contao\Bootstrap\KiwiBootstrap;
-use Kiwi\Contao\ResponsiveBase\KiwiResponsiveBase;
+use Kiwi\Contao\Bootstrap\KiwiBootstrapBundle;
+use Kiwi\Contao\ResponsiveBase\KiwiResponsiveBaseBundle;
 
 class Plugin implements BundlePluginInterface
 {
@@ -19,11 +19,11 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser): array
     {
         return [
-            BundleConfig::create(KiwiBootstrap::class)
+            BundleConfig::create(KiwiBootstrapBundle::class)
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
-                    KiwiResponsiveBase::class
-                ]),
+                    KiwiResponsiveBaseBundle::class
+                ])
         ];
     }
 }
