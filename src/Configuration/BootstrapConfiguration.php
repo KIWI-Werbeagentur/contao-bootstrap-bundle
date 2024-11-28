@@ -76,9 +76,15 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         '6' => 'row-cols{{modifier}}-6',
     ];
 
+    protected $arrElsPerRowDefaults = ['xs' => 1, 'lg' => 2];
+
     public function getElsPerRow()
     {
         return array_keys($this->elsPerRow);
     }
 
+    public function getDefaults(){
+        $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveElsPerRow']['default'] = (new $GLOBALS['responsive'])->arrElsPerRowDefaults;
+        parent::getDefaults();
+    }
 }
