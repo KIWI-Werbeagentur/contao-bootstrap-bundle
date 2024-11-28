@@ -38,6 +38,6 @@
         }
     },
     "extra":{
-        "contao-manager-plugin": "Kiwi\\Contao\\Bootstrap\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Kiwi\\Contao\\BootstrapBundle\\ContaoManager\\Plugin"
     }
 }
