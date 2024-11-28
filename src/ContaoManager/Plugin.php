@@ -9,6 +9,7 @@ use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Kiwi\Contao\Bootstrap\KiwiBootstrap;
+use Kiwi\Contao\ResponsiveBase\KiwiResponsiveBase;
 
 class Plugin implements BundlePluginInterface
 {
@@ -20,7 +21,8 @@ class Plugin implements BundlePluginInterface
         return [
             BundleConfig::create(KiwiBootstrap::class)
                 ->setLoadAfter([
-                    ContaoCoreBundle::class
+                    ContaoCoreBundle::class,
+                    KiwiResponsiveBase::class
                 ]),
         ];
     }
