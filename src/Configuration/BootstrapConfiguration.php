@@ -2,6 +2,8 @@
 
 namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
+use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
+
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
 
