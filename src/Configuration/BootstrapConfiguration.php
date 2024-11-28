@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiwi\Contao\Bootstrap\Configuration;
+namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiwi\Contao\Bootstrap;
+namespace Kiwi\Contao\BootstrapBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

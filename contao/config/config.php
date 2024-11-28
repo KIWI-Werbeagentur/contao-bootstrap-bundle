@@ -1,3 +1,3 @@
 <?php
 
-$GLOBALS['responsive'] = \Kiwi\Contao\Bootstrap\Configuration\BootstrapConfiguration::class;
+$GLOBALS['responsive'] = \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::class;
