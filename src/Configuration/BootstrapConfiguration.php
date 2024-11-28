@@ -88,7 +88,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
     public function getDefaults(): void
     {
-        $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
+        $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive'])->arrRowColsDefaults;
         parent::getDefaults();
     }
 }
