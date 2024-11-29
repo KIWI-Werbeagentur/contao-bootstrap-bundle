@@ -16,6 +16,17 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xl' => ['breakpoint' => 1024, 'modifier' => '-xl'],
         'xxl' => ['breakpoint' => 2048, 'modifier' => '-xxl'],
     ];
+
+    protected array $arrContainerSizes = [
+        'container-fluid' => 'container-fluid',
+        'container' => 'container',
+        'container-sm' => 'container-sm',
+        'container-md' => 'container-md',
+        'container-lg' => 'container-lg',
+        'container-xl' => 'container-xl',
+        'container-xxl' => 'container-xxl',
+    ];
+
     protected array $arrCols = [
         12 => 'col{{modifier}}-12',
         11 => 'col{{modifier}}-11',
@@ -89,6 +100,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     public function getDefaults(): void
     {
         $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive'])->arrRowColsDefaults;
+        $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveContainerSize']['default'] = 'container';
         parent::getDefaults();
     }
 }
