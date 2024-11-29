@@ -12,11 +12,12 @@ $GLOBALS['TL_LANG']['MSC']['responsiveRowCols']=[
 ];
 
 $GLOBALS['TL_LANG']['MSC']['flexContainer']=[
-    'container-fluid' => "Volle Breite",
-    'container' => "Begrenzte Breite",
-    'container-sm' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['sm'][0]}",
-    'container-md' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['md'][0]}",
-    'container-lg' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['lg'][0]}",
-    'container-xl' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['xl'][0]}",
-    'container-xxl' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['xxl'][0]}",
+    'default' => "Spalten-Element",
+    'container-fluid' => "Volle Breite <span class='label-info'>[Container]</span>",
+    'container' => "Begrenzte Breite <span class='label-info'>[Container]</span>",
+    'container-sm' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['sm'][0]} <span class='label-info'>[Container]</span>",
+    'container-md' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['md'][0]} <span class='label-info'>[Container]</span>",
+    'container-lg' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['lg'][0]} <span class='label-info'>[Container]</span>",
+    'container-xl' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['xl'][0]} <span class='label-info'>[Container]</span>",
+    'container-xxl' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['MSC']['breakpoint']['xxl'][0]} <span class='label-info'>[Container]</span>",
 ];

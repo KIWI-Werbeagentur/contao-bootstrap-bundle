@@ -2,7 +2,6 @@
 
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
-use Contao\ContentModel;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
@@ -22,23 +21,13 @@ class Content
 
         if (!$arrSizes) return;
 
-        $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveOverwriteRowCols'] = [
-            'exclude' => true,
-            'inputType' => 'checkbox',
-            'eval' => ['tl_class' => 'm12 clr', 'submitOnChange' => true],
-            'sql' => "char(1) NOT NULL default ''"
-        ];
-
-        $GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = 'responsiveOverwriteRowCols';
-        $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveOverwriteRowCols'] = 'responsiveCols,responsiveOffsets';
-
+        // Rearrange palette, when parent has row-cols set
         PaletteManipulator::create()
             ->removeField(['responsiveCols', 'responsiveOffsets'], 'template_legend')
             ->addField('responsiveOverwriteRowCols', 'customTpl', PaletteManipulator::POSITION_AFTER)
             ->applyToPalette('text', 'tl_content');
 
-
-        //Set Label
+        // Set Label dynamically to show parent settings
         $arrSize = [];
         foreach ($arrSizes as $strBreakpoint => $strSize) {
             $intCols = 12 / intval($strSize);
