@@ -4,7 +4,7 @@ use Kiwi\Contao\BootstrapBundle\DataContainer\Content;
 
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = [Content::class, 'addOverwriteOption'];
 
-// Is added to palette via onload_callback
+// Is added to palette via onload_callback to check if parent has responsiveRowCols field
 $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveOverwriteRowCols'] = [
     'exclude' => true,
     'inputType' => 'checkbox',

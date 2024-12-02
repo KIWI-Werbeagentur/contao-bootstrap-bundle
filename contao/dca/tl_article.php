@@ -6,7 +6,7 @@ $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols'] = [
     'inputType' => 'responsive',
     'responsiveInputType' => 'select',
     'eval' => ['tl_class' => "clr"],
-    'options_callback' => [$GLOBALS['responsive'], 'getRowCols'],
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getRowCols'],
     'reference' => &$GLOBALS['TL_LANG']['MSC']['responsiveRowCols'],
     'sql' => "blob NULL"
 ];

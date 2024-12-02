@@ -23,6 +23,9 @@
         "twbs/bootstrap": "~5.2.3",
         "kiwi/contao-responsive-base": "dev-main"
     },
+    "provide": {
+        "kiwi/responsive-framework": "dev-main"
+    },
     "require-dev": {
         "contao/manager-plugin": "^2.0"
     },

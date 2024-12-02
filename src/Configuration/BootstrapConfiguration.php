@@ -3,12 +3,12 @@
 namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
+use Contao\DataContainer;
 use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
-
-    protected array $arrBreakpoints = [
+    public array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => ''],
         'sm' => ['breakpoint' => 460, 'modifier' => '-sm'],
         'md' => ['breakpoint' => 768, 'modifier' => '-md'],
@@ -17,7 +17,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xxl' => ['breakpoint' => 2048, 'modifier' => '-xxl'],
     ];
 
-    protected array $arrContainerSizes = [
+    public array $arrContainerSizes = [
         'container-fluid' => 'container-fluid',
         'container' => 'container',
         'container-sm' => 'container-sm',
@@ -27,7 +27,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'container-xxl' => 'container-xxl',
     ];
 
-    protected array $arrCols = [
+    public array $arrCols = [
         12 => 'col{{modifier}}-12',
         11 => 'col{{modifier}}-11',
         10 => 'col{{modifier}}-10',
@@ -45,9 +45,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'hidden' => 'col{{modifier}}-none',
     ];
 
-    protected array $arrColsDefaults = ['xs' => 12, 'lg' => 6];
+    public array $arrColsDefaults = ['xs' => 12, 'lg' => 6];
 
-    protected array $arrOffsets = [
+    public array $arrOffsets = [
         'none' => 'offset{{breakpoint}}-none',
         'auto' => 'offset{{breakpoint}}-auto',
         1 => 'offset{{breakpoint}}-1',
@@ -64,9 +64,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         12 => 'offset{{breakpoint}}-12',
     ];
 
-    protected array $arrOffsetsDefaults = ['xs' => 'none'];
+    public array $arrOffsetsDefaults = ['xs' => 'none'];
 
-    protected array $arrSpacings = [
+    public array $arrSpacings = [
         'default' => 'p{{direction}}{{modifier}}-default',
         'none' => 'p{{direction}}{{modifier}}-none',
         'gap' => 'p{{direction}}{{modifier}}-gap',
@@ -77,6 +77,8 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'lg' => 'p{{direction}}{{modifier}}-lg',
         'xl' => 'p{{direction}}{{modifier}}-xl',
     ];
+
+    public array $arrSpacingsDefaults = [];
 
     protected array $arrRowCols = [
         'auto' => 'row-cols{{modifier}}-auto',
@@ -97,10 +99,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     #[AsCallback(table: 'tl_article', target: 'config.onload')]
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
-    public function getDefaults(): void
+    #[AsCallback(table: 'tl_form', target: 'config.onload')]
+    #[AsCallback(table: 'tl_form_field', target: 'config.onload')]
+    public function getDefaults(DataContainer $objDca): void
     {
-        $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive'])->arrRowColsDefaults;
-        $GLOBALS['TL_DCA']['tl_article']['fields']['responsiveContainerSize']['default'] = 'container';
-        parent::getDefaults();
+        $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive']['config'])->arrRowColsDefaults;
+        $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveContainerSize']['default'] = 'container';
+        parent::getDefaults($objDca);
     }
 }

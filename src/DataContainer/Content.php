@@ -22,10 +22,13 @@ class Content
         if (!$arrSizes) return;
 
         // Rearrange palette, when parent has row-cols set
-        PaletteManipulator::create()
-            ->removeField(['responsiveCols', 'responsiveOffsets'], 'template_legend')
-            ->addField('responsiveOverwriteRowCols', 'customTpl', PaletteManipulator::POSITION_AFTER)
-            ->applyToPalette('text', 'tl_content');
+        foreach ($GLOBALS['TL_DCA'][$objDca->table]['palettes'] as $strPalette => $varFields) {
+            if (!is_string($varFields) || in_array($strPalette, ($GLOBALS['responsive'][$objDca->table]['excludePalettes'] ?? []))) continue;
+            PaletteManipulator::create()
+                ->removeField(['responsiveCols', 'responsiveOffsets'], 'template_legend')
+                ->addField('responsiveOverwriteRowCols', 'customTpl', PaletteManipulator::POSITION_AFTER)
+                ->applyToPalette($strPalette, $objDca->table);
+        }
 
         // Set Label dynamically to show parent settings
         $arrSize = [];
