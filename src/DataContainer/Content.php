@@ -5,6 +5,7 @@ namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
+use Contao\StringUtil;
 use Contao\System;
 
 class Content
@@ -17,7 +18,7 @@ class Content
         $strPtable = $objDca->getActiveRecord()['ptable'];
         $strPid = $objDca->getActiveRecord()['pid'];
         $objParentModel = ($GLOBALS['TL_MODELS'][$strPtable])::findByPk($strPid);
-        $arrSizes = unserialize($objParentModel->responsiveRowCols);
+        $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols);
 
         if (!$arrSizes) return;
 
