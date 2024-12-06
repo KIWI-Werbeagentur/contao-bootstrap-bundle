@@ -25,9 +25,10 @@ class Content
         // Rearrange palette, when parent has row-cols set
         foreach ($GLOBALS['TL_DCA'][$objDca->table]['palettes'] as $strPalette => $varFields) {
             if (!is_string($varFields) || in_array($strPalette, ($GLOBALS['responsive'][$objDca->table]['excludePalettes'] ?? []))) continue;
+
             PaletteManipulator::create()
-                ->removeField(['responsiveCols', 'responsiveOffsets'], 'template_legend')
-                ->addField('responsiveOverwriteRowCols', 'customTpl', PaletteManipulator::POSITION_AFTER)
+                ->removeField(['responsiveCols', 'responsiveOffsets'], 'layout_legend')
+                ->addField('responsiveOverwriteRowCols', 'layout_legend', PaletteManipulator::POSITION_PREPEND)
                 ->applyToPalette($strPalette, $objDca->table);
         }
 
@@ -39,7 +40,7 @@ class Content
         }
 
         System::loadLanguageFile($strPtable);
-        $strLabel = $GLOBALS['TL_LANG'][$strPtable]['responsiveRowCols'][0] ?? '';
+        $strLabel = $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['reference'][0] ?? '';
         $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveOverwriteRowCols']['label'] = $GLOBALS['TL_LANG']['tl_content']['responsiveOverwriteRowCols'];
         $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveOverwriteRowCols']['label'][1] =
             sprintf(
@@ -47,7 +48,7 @@ class Content
                 "<b>" . implode("; ", $arrSize) . "</b>",
                 $strLabel,
                 "/contao?do=article&id=$strPid&table=$strPtable&act=edit",
-                $objParentModel->title ?? ""
+                $objParentModel->title ?? $GLOBALS['TL_LANG']['CTE'][$objParentModel->type][0] ?? ""
             );
     }
 }
