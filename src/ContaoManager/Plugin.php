@@ -7,11 +7,11 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
-use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Kiwi\Contao\BootstrapBundle\KiwiBootstrapBundle;
-use Kiwi\Contao\ResponsiveBase\KiwiResponsiveBaseBundle;
+use Kiwi\Contao\ResponsiveBaseBundle\KiwiResponsiveBaseBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
-class Plugin implements BundlePluginInterface
+class Plugin implements BundlePluginInterface, ConfigPluginInterface
 {
     /**
      * {@inheritdoc}
@@ -25,5 +25,10 @@ class Plugin implements BundlePluginInterface
                     KiwiResponsiveBaseBundle::class
                 ])
         ];
+    }
+
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig): void
+    {
+        $loader->load(__DIR__ . '/../../config/services.yaml');
     }
 }

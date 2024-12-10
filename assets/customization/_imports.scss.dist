@@ -1,0 +1,34 @@
+/*!
+ * Bootstrap v5.2.3 (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors
+ * Copyright 2011-2022 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+// Configuration
+@import "__BOOTSTRAP-STYLES__/functions";
+@import "../../colorvars";
+@import "../themevars-__THEMENAME__";
+@import "layoutvars-__LAYOUTNAME__";
+@import "../../../../vendor/kiwi/contao-bootstrap-bundle/assets/customization/row-cols-import.scss";
+@import "__BOOTSTRAP-STYLES__/variables";
+@import "__BOOTSTRAP-STYLES__/maps";
+$theme-colors: map-merge($theme-colors, $colors);
+@import "__BOOTSTRAP-STYLES__/mixins";
+@import "__BOOTSTRAP-STYLES__/utilities";
+
+// Layout & components from theme
+__BOOTSTRAP-COMPONENTS__
+
+// Helpers
+@import "__BOOTSTRAP-STYLES__/helpers";
+
+// Utilities
+@import "__BOOTSTRAP-STYLES__/utilities/api";
+
+// Custom
+__CUSTOM-STYLES__;
+
+// Custom Styling
+@import "../theme-__THEMENAME__";
+// @import "layout-__LAYOUTNAME__";

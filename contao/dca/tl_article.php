@@ -1,19 +1,11 @@
 <?php
 
+use Contao\Controller;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
-use Contao\System;
 
-System::loadLanguageFile('responsive');
+Controller::loadDataContainer('responsive');
 
-$GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols'] = [
-    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols'],
-    'inputType' => 'responsive',
-    'responsiveInputType' => 'select',
-    'eval' => ['tl_class' => "clr"],
-    'options_callback' => [$GLOBALS['responsive']['config'], 'getRowCols'],
-    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols']['options'],
-    'sql' => "blob NULL"
-];
+$GLOBALS['TL_DCA']['tl_article']['fields']['responsiveRowCols'] = $GLOBALS['TL_DCA']['rowCols']['fields']['responsiveRowCols'];
 
 PaletteManipulator::create()
     ->addField('responsiveRowCols', 'responsiveContainerSize', PaletteManipulator::POSITION_AFTER)

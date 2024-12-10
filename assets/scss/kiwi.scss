@@ -1,0 +1,165 @@
+// inline-label for forms, similar to .horizonal-form, but without the need to assign col-* classes
+//@include media-breakpoint-up(sm) {
+//  .widget.inline-label {
+//    > label,
+//    .checkbox_container > legend,
+//    .radio_container > legend {
+//      float: left;
+//      padding-right: ($grid-gutter-width/2);
+//      width: 120px;
+//      margin-bottom: 0;
+//      padding-top: ($input-btn-padding-y + 1);
+//      ~ .field-wrapper {
+//        overflow: hidden;
+//      }
+//    }
+//    .checkbox_container,
+//    .radio_container {
+//      label {
+//        margin-bottom: 0;
+//      }
+//    }
+//    .field-wrapper:first-child {
+//      padding-left: 120px;
+//    }
+//
+//  }
+//}
+
+// style checkbox_container's and radio_container's legend like other form fields' labels
+.checkbox_container,
+.radio_container {
+  > legend {
+    font-size: inherit;
+    display: inline-block;
+    margin-bottom: $form-label-margin-bottom;
+  }
+}
+
+// the explanation form field uses tinyMCE for its text content, which wraps text in p tags (with a margin-bottom)
+// this rule keeps the element's style consistent and single-line explanations align nicely with other form fields
+.explanation {
+  .form-control-plaintext {
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// enhance the look of file inputs with custom bootstrap styles enabled
+// keeps selected files text from overflowing the container
+.custom-file-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// provide the vendor prefixes for selects with custom bootstrap styles enabled, as we can't use autoprefixer (https://getbootstrap.com/docs/4.4/getting-started/build-tools/#autoprefixer)
+.custom-select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  // Custom row-cols Typ "gestreckt"
+  //@include media-breakpoint-up($breakpoint) {
+  //  .row-cols#{breakpoint-infix($breakpoint)}-stretch > *{
+  //    flex: 1 0 auto;
+  //    width: auto;
+  //  }
+  //}
+
+  // display: none-Klassen für row-cols
+  @include media-breakpoint-only($breakpoint) {
+    .row-cols#{breakpoint-infix($breakpoint)}-none-only > *{
+      display:none!important;
+    }
+  }
+
+  // display-Klassen für einzelne Breakpoints
+  @include media-breakpoint-only($breakpoint) {
+    .d#{breakpoint-infix($breakpoint)}-none-only{
+      display:none!important;
+    }
+  }
+  @include media-breakpoint-only($breakpoint) {
+    .d#{breakpoint-infix($breakpoint)}-block-only{
+      display:block!important;
+    }
+  }
+}
+
+// this class is added to create wrappers with backgrounds, where the background doesn't overflow the grid
+.row.in-grid-bg {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+// bootstrap 5 workarounds
+// remove padding that creates unwanted indents from nested containers
+// DO NOT remove it from containers nested within a larger container, or direct children of .row or .navbar
+// .container-fluid @extends to all responsive container classes, see twbs/bootstrap/scss/_containers.scss::16
+.container, .container-fluid {
+  :not(.row):not(.navbar) > {
+    // this is deliberate, to avoid @extends
+    [class*="container-fluid"] {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    @include media-breakpoint-only(xs) {
+      .container, .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+}
+@include media-breakpoint-up(sm) {
+  .container {
+    :not(.row):not(.navbar) > {
+      .container, .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+  @each $breakpoint, $container-max-width in $container-max-widths {
+    .container-#{$breakpoint} {
+      :not(.row):not(.navbar) > {
+        .container, .container-fluid {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+    }
+  }
+}
+
+// explicitly override max-width for containers that are children of .row
+@if $enable-grid-classes {
+  @each $breakpoint, $container-max-width in $container-max-widths {
+    @include media-breakpoint-up($breakpoint, $grid-breakpoints) {
+      .row > %responsive-container-#{$breakpoint} {
+        max-width: $container-max-width;
+      }
+    }
+  }
+}
+
+// reintroduce text-justify
+.text-justify {
+  text-align: justify !important;
+}
+
+// Wenn "align-items: stretch" auf Wrapper angewendet wird, muss deren ".inside" auch auf die volle Höhe gestreckt werden.
+// Ansonsten haben die Einstellungen für die Ausrichtung der Elemente keine Auswirkung, weil kein Platz vorhanden ist.
+// Bsp: Artikel mit "align-items: stretch", darin 2  Wrapper mit ".col-6", unterschiedlich hohem Content und "align-content: end" oder "align-items: end"
+.flex-row.align-items-stretch {
+  > .ce_wrapper.ce_wrapperStart,
+  > .content-element-group {
+    > .inside {
+      height: 100%;
+    }
+  }
+}

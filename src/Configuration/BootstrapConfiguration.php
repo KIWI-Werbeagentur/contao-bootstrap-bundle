@@ -27,6 +27,8 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'container-xxl' => 'container-xxl',
     ];
 
+    public string $strContainerDefault = 'container';
+
     public array $arrCols = [
         12 => 'col{{modifier}}-12',
         11 => 'col{{modifier}}-11',
@@ -48,20 +50,20 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     public array $arrColsDefaults = ['xs' => 12, 'lg' => 6];
 
     public array $arrOffsets = [
-        'none' => 'offset{{breakpoint}}-none',
-        'auto' => 'offset{{breakpoint}}-auto',
-        1 => 'offset{{breakpoint}}-1',
-        2 => 'offset{{breakpoint}}-2',
-        3 => 'offset{{breakpoint}}-3',
-        4 => 'offset{{breakpoint}}-4',
-        5 => 'offset{{breakpoint}}-5',
-        6 => 'offset{{breakpoint}}-6',
-        7 => 'offset{{breakpoint}}-7',
-        8 => 'offset{{breakpoint}}-8',
-        9 => 'offset{{breakpoint}}-9',
-        10 => 'offset{{breakpoint}}-10',
-        11 => 'offset{{breakpoint}}-11',
-        12 => 'offset{{breakpoint}}-12',
+        'none' => 'offset{{modifier}}-none',
+        'auto' => 'offset{{modifier}}-auto',
+        1 => 'offset{{modifier}}-1',
+        2 => 'offset{{modifier}}-2',
+        3 => 'offset{{modifier}}-3',
+        4 => 'offset{{modifier}}-4',
+        5 => 'offset{{modifier}}-5',
+        6 => 'offset{{modifier}}-6',
+        7 => 'offset{{modifier}}-7',
+        8 => 'offset{{modifier}}-8',
+        9 => 'offset{{modifier}}-9',
+        10 => 'offset{{modifier}}-10',
+        11 => 'offset{{modifier}}-11',
+        12 => 'offset{{modifier}}-12',
     ];
 
     public array $arrOffsetsDefaults = ['xs' => 'none'];
@@ -97,6 +99,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return array_keys($this->arrRowCols);
     }
 
+    #[AsCallback(table: 'tl_module', target: 'config.onload')]
+    #[AsCallback(table: 'tl_theme', target: 'config.onload')]
+    #[AsCallback(table: 'tl_layout', target: 'config.onload')]
     #[AsCallback(table: 'tl_article', target: 'config.onload')]
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
     #[AsCallback(table: 'tl_form', target: 'config.onload')]
@@ -104,7 +109,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     public function getDefaults(DataContainer $objDca): void
     {
         $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive']['config'])->arrRowColsDefaults;
-        $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveContainerSize']['default'] = 'container';
         parent::getDefaults($objDca);
     }
 }
