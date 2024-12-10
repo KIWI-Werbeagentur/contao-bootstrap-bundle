@@ -1,7 +1,8 @@
 <?php
 
 use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
-use Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener;
+
+$GLOBALS['FE_MOD']['navigationMenu']['bootstrapNavbar']     = Kiwi\Contao\BootstrapBundle\FrontendModule\BootstrapNavbar::class;
 
 $GLOBALS['responsive']['config'] = BootstrapConfiguration::class;
 
