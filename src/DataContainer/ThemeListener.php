@@ -11,39 +11,39 @@ use Symfony\Component\Filesystem\Filesystem;
 class ThemeListener
 {
     /**
-     * @param DataContainer $dc
+     * @param DataContainer $objDca
      * @throws Exception
      */
-    public function generateAlias(DataContainer $dc)
+    public function generateAlias(DataContainer $objDca)
     {
         $autoAlias = false;
 
         // Generate alias if there is none
-        if ($dc->activeRecord->alias == '') {
+        if ($objDca->activeRecord->alias == '') {
             $autoAlias = true;
-            $dc->activeRecord->alias = StringUtil::generateAlias($dc->activeRecord->name);
+            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
         }
 
         $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_theme WHERE alias=? AND id!=?")
-            ->execute($dc->activeRecord->alias, $dc->id);
+            ->execute($objDca->activeRecord->alias, $objDca->id);
 
         // Check whether the event alias exists
         if ($objAlias->numRows) {
             if (!$autoAlias) {
-                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $dc->activeRecord->alias));
+                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
             }
 
-            $dc->activeRecord->alias .= '-' . $dc->id;
+            $objDca->activeRecord->alias .= '-' . $objDca->id;
         }
-        Database::getInstance()->prepare("UPDATE tl_theme SET alias=? WHERE id=?")->execute($dc->activeRecord->alias, $dc->activeRecord->id);
+        Database::getInstance()->prepare("UPDATE tl_theme SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
     }
 
-    public function generateThemeCustomizationFile(DataContainer $dc)
+    public function generateThemeCustomizationFile(DataContainer $objDca)
     {
         $strToRoot = "../../..";
         $fs = new Filesystem();
 
-        $themeAlias = $dc->activeRecord->alias;
+        $themeAlias = $objDca->activeRecord->alias;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias;
 
         if (!$themeAlias) {
@@ -62,7 +62,7 @@ class ThemeListener
             $fs->touch($targetPath . '/theme-' . $themeAlias . '.scss');
         }
 
-        $objTheme = $dc->activeRecord;
+        $objTheme = $objDca->activeRecord;
         $themeAlias = $objTheme->alias;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
 

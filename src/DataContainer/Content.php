@@ -13,10 +13,10 @@ class Content
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
     public function addOverwriteOption(DataContainer $objDca)
     {
-        if (!$objDca->getActiveRecord()) return;
+        if (!$objDca->activeRecord) return;
 
-        $strPtable = $objDca->getActiveRecord()['ptable'];
-        $strPid = $objDca->getActiveRecord()['pid'];
+        $strPtable = $objDca->activeRecord['ptable'];
+        $strPid = $objDca->activeRecord['pid'];
         $objParentModel = ($GLOBALS['TL_MODELS'][$strPtable])::findByPk($strPid);
         $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols);
 

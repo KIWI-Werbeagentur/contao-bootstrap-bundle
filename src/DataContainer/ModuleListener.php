@@ -8,12 +8,12 @@ use Contao\ModuleModel;
 
 class ModuleListener
 {
-    public function getOtherModules(DataContainer $dc): array
+    public function getOtherModules(DataContainer $objDca): array
     {
-        $objModules = ModuleModel::findBy('pid', $dc->activeRecord->pid);
+        $objModules = ModuleModel::findBy('pid', $objDca->activeRecord->pid);
 
         while ($objModules->next()) {
-            if($objModules->id == $dc->id || !($GLOBALS['FE_MOD']['navigationMenu'][$objModules->type] ?? false)) continue;
+            if($objModules->id == $objDca->id || !($GLOBALS['FE_MOD']['navigationMenu'][$objModules->type] ?? false)) continue;
             $arrModules[$objModules->id] = $objModules->name . ' (ID ' . $objModules->id . ')';
         }
 

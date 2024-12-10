@@ -12,13 +12,13 @@ use Symfony\Component\Filesystem\Filesystem;
 class LayoutListener
 {
 
-    public function generateLayoutCustomizationFiles(DataContainer $dc)
+    public function generateLayoutCustomizationFiles(DataContainer $objDca)
     {
         $strToRoot = "../../../..";
-        $objTheme = ThemeModel::findByPk($dc->activeRecord->pid);
+        $objTheme = ThemeModel::findByPk($objDca->activeRecord->pid);
         $fs = new Filesystem();
 
-        $layoutAlias = $dc->activeRecord->alias;
+        $layoutAlias = $objDca->activeRecord->alias;
         $themeAlias = $objTheme->alias;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/' . $layoutAlias . '/';
 
@@ -52,30 +52,30 @@ class LayoutListener
     }
 
     /**
-     * @param DataContainer $dc
+     * @param DataContainer $objDca
      * @throws Exception
      */
-    public function generateAlias(DataContainer $dc)
+    public function generateAlias(DataContainer $objDca)
     {
         $autoAlias = false;
 
         // Generate alias if there is none
-        if ($dc->activeRecord->alias == '') {
+        if ($objDca->activeRecord->alias == '') {
             $autoAlias = true;
-            $dc->activeRecord->alias = StringUtil::generateAlias($dc->activeRecord->name);
+            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
         }
 
         $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_layout WHERE alias=? AND id!=?")
-            ->execute($dc->activeRecord->alias, $dc->id);
+            ->execute($objDca->activeRecord->alias, $objDca->id);
 
         // Check whether the event alias exists
         if ($objAlias->numRows) {
             if (!$autoAlias) {
-                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $dc->activeRecord->alias));
+                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
             }
 
-            $dc->activeRecord->alias .= '-' . $dc->id;
+            $objDca->activeRecord->alias .= '-' . $objDca->id;
         }
-        Database::getInstance()->prepare("UPDATE tl_layout SET alias=? WHERE id=?")->execute($dc->activeRecord->alias, $dc->activeRecord->id);
+        Database::getInstance()->prepare("UPDATE tl_layout SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
     }
 }
