@@ -2,12 +2,8 @@
 
 namespace Kiwi\Contao\BootstrapBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class KiwiBootstrapBundle extends Bundle
+class KiwiBootstrapBundle extends AbstractBundle
 {
-    public function getPath(): string
-    {
-        return \dirname(__DIR__);
-    }
 }
