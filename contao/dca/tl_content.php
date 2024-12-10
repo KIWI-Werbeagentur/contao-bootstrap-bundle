@@ -31,4 +31,4 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveRowCols'] = [
     'sql' => "blob NULL"
 ];
 
-$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveContainerSizes'] = "responsiveRowCols," . implode(',',array_keys($GLOBALS['TL_DCA']['container']['fields']));
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveContainerSizes'] = "responsiveRowCols," . implode(',',array_keys($GLOBALS['TL_DCA']['container']['fields'] ?? []));
