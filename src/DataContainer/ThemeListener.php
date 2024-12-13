@@ -70,7 +70,8 @@ class ThemeListener
         if ($GLOBALS['responsive']['bootstrapComponents']) {
             foreach ($GLOBALS['responsive']['bootstrapComponents'] as $strComponent) {
                 if (!$objTheme->responsiveBootstrapComponents || in_array($strComponent, (StringUtil::deserialize($objTheme->responsiveBootstrapComponents) ?? [])))
-                    $arrComponents[] = "@import '$strToRoot{$GLOBALS['responsive']['bootstrap']}/$strComponent';";
+                    $strPath = str_replace("__ROOT__",$strToRoot,$GLOBALS['responsive']['bootstrap']);
+                    $arrComponents[] = "@import '{$strPath}/{$strComponent}';";
             }
         }
 
