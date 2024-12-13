@@ -6,7 +6,7 @@ $GLOBALS['FE_MOD']['navigationMenu']['bootstrapNavbar']     = Kiwi\Contao\Bootst
 
 $GLOBALS['responsive']['config'] = BootstrapConfiguration::class;
 
-$GLOBALS['responsive']['bootstrap'] = 'vendor/twbs/bootstrap/scss';
+$GLOBALS['responsive']['bootstrap'] = '__ROOT__/vendor/twbs/bootstrap/scss';
 $GLOBALS['responsive']['custom'] = "@import '__ROOT__/vendor/kiwi/contao-bootstrap-bundle/assets/scss/kiwi'";
 
 $GLOBALS['responsive']['bootstrapComponents'] = [

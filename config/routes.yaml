@@ -1,3 +1,0 @@
-kiwi.contao.bootstrap.controllers:
-  resource: '@KiwiBootstrapBundle/src/Controller'
-  type: annotation

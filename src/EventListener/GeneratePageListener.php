@@ -33,7 +33,7 @@ class GeneratePageListener
                     $GLOBALS['TL_FRAMEWORK_CSS'][] = 'bundles/kiwibootstrap/contao_responsive.css';
                     break;
                 case 'bs_styles':
-                    $GLOBALS['TL_FRAMEWORK_CSS'][] = "files/themes/{$objTheme->alias }/{$objLayout->alias}/imports.scss";
+                    $GLOBALS['TL_FRAMEWORK_CSS'][] = 'files/themes/' . $objTheme->alias . '/' . $objLayout->alias . '/layout-'.$objLayout->alias.'.scss';
                     break;
                 case 'tinymce.css':
                     $GLOBALS['TL_FRAMEWORK_CSS'][] = 'assets/contao/css/' . basename($strFile, '.css') . '.min.css';

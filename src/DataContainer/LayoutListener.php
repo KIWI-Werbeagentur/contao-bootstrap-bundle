@@ -14,6 +14,7 @@ class LayoutListener
 
     public function generateLayoutCustomizationFiles(DataContainer $objDca)
     {
+        $strToRoot = "../../../..";
         $objTheme = ThemeModel::findByPk($objDca->activeRecord->pid);
         $fs = new Filesystem();
 
@@ -29,16 +30,19 @@ class LayoutListener
             $fs->mkdir($targetPath);
         }
 
+        if (!$fs->exists($targetPath . '_imports-' . $layoutAlias . '.scss')) {
+            $strImports = file_get_contents(System::getContainer()->getParameter('kernel.project_dir') . '/vendor/kiwi/contao-bootstrap-bundle/assets/customization/_imports.scss.dist');
+
+            $strImports = str_replace(['__THEMENAME__', '__LAYOUTNAME__','__BOOTSTRAP-COMPONENTS__','__BOOTSTRAP-STYLES__','__CUSTOM-STYLES__'], [$themeAlias, $layoutAlias, "@import '../_imports-{$themeAlias}.scss';" ,str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['bootstrap']), str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['custom'])], $strImports);
+            file_put_contents($targetPath . '_imports-' . $layoutAlias . '.scss', $strImports);
+        }
+
         if (!$fs->exists($targetPath . 'layoutvars-' . $layoutAlias . '.scss')) {
             file_put_contents($targetPath . 'layoutvars-' . $layoutAlias . '.scss', '// Hier können Bootstrap-Variablen für das Layout überschrieben werden.' . "\n" . '// Eine Datei mit allen möglichen Variablen findet sich unter "vendor/twbs/scss/_variables.scss".' . "\n\n");
         }
 
         if (!$fs->exists($targetPath . 'layout-' . $layoutAlias . '.scss')) {
             file_put_contents($targetPath . 'layout-' . $layoutAlias . '.scss', '@import "_imports-' . $layoutAlias . '";' . "\n\n");
-        }
-
-        if (!$fs->exists($targetPath . 'imports.scss')) {
-            file_put_contents($targetPath . 'imports.scss', "@import url('responsive/styles/layout/{$themeAlias}/{$layoutAlias}.scss');");
         }
 
         return;

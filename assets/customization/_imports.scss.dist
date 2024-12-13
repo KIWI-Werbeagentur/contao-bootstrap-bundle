@@ -6,28 +6,25 @@
  */
 
 // Configuration
-@import url("responsive/styles/bootstrap/_functions.scss");
+@import "__BOOTSTRAP-STYLES__/functions";
 @import "../../colorvars";
 @import "../themevars-__THEMENAME__";
 @import "layoutvars-__LAYOUTNAME__";
-
-/* Overwrite Bootstrap Grid Row Columns */
-$grid-row-columns:  12 !default;
-
-@import url("responsive/styles/bootstrap/_variables.scss");
-@import url("responsive/styles/bootstrap/_maps.scss");
+@import "../../../../vendor/kiwi/contao-bootstrap-bundle/assets/customization/row-cols-import.scss";
+@import "__BOOTSTRAP-STYLES__/variables";
+@import "__BOOTSTRAP-STYLES__/maps";
 $theme-colors: map-merge($theme-colors, $colors);
-@import url("responsive/styles/bootstrap/_mixins.scss");
-@import url("responsive/styles/bootstrap/_utilities.scss");
+@import "__BOOTSTRAP-STYLES__/mixins";
+@import "__BOOTSTRAP-STYLES__/utilities";
 
 // Layout & components from theme
-@import url("/responsive/styles/theme/__THEMENAME__.scss");
+__BOOTSTRAP-COMPONENTS__
 
 // Helpers
-@import url("responsive/styles/bootstrap/helpers");
+@import "__BOOTSTRAP-STYLES__/helpers";
 
-// Utilities !!!!
-@import url("responsive/styles/bootstrap/utilities/api");
+// Utilities
+@import "__BOOTSTRAP-STYLES__/utilities/api";
 
 // Custom
 __CUSTOM-STYLES__;
