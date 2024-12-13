@@ -40,7 +40,6 @@ class ThemeListener
 
     public function generateThemeCustomizationFile(DataContainer $objDca)
     {
-        $strToRoot = "../../..";
         $fs = new Filesystem();
 
         $themeAlias = $objDca->activeRecord->alias;
@@ -61,19 +60,5 @@ class ThemeListener
         if (!$fs->exists($targetPath . '/theme-' . $themeAlias . '.scss')) {
             $fs->touch($targetPath . '/theme-' . $themeAlias . '.scss');
         }
-
-        $objTheme = $objDca->activeRecord;
-        $themeAlias = $objTheme->alias;
-        $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
-
-        $arrComponents = [];
-        if ($GLOBALS['responsive']['bootstrapComponents']) {
-            foreach ($GLOBALS['responsive']['bootstrapComponents'] as $strComponent) {
-                if (!$objTheme->responsiveBootstrapComponents || in_array($strComponent, (StringUtil::deserialize($objTheme->responsiveBootstrapComponents) ?? [])))
-                    $arrComponents[] = "@import '$strToRoot{$GLOBALS['responsive']['bootstrap']}/$strComponent';";
-            }
-        }
-
-        file_put_contents($targetPath . '_imports-' . $themeAlias . '.scss', implode("\n", $arrComponents));
     }
 }

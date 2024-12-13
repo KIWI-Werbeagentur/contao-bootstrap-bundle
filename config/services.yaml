@@ -2,4 +2,10 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+  Kiwi\Contao\BootstrapBundle\Controller\BootstrapAssetsController:
+    public: true
+    arguments:
+      - '@contao.framework'
+      - '@twig'
   Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener: ~
+  Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener: ~
