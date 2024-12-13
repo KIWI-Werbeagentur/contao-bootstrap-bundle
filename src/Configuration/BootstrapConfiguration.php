@@ -8,13 +8,14 @@ use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
+    // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
     public array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => ''],
-        'sm' => ['breakpoint' => 460, 'modifier' => '-sm'],
+        'sm' => ['breakpoint' => 576, 'modifier' => '-sm'],
         'md' => ['breakpoint' => 768, 'modifier' => '-md'],
         'lg' => ['breakpoint' => 992, 'modifier' => '-lg'],
-        'xl' => ['breakpoint' => 1024, 'modifier' => '-xl'],
-        'xxl' => ['breakpoint' => 2048, 'modifier' => '-xxl'],
+        'xl' => ['breakpoint' => 1200, 'modifier' => '-xl'],
+        'xxl' => ['breakpoint' => 1400, 'modifier' => '-xxl'],
     ];
 
     public array $arrContainerSizes = [
@@ -80,7 +81,35 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xl' => 'p{{direction}}{{modifier}}-xl',
     ];
 
-    public array $arrSpacingsDefaults = [];
+    public array $arrSpacingsDefaults = ['xs' => 'default'];
+
+    public array|string $varOrderClasses {
+        get => "order{{modifier}}-{{value}}";
+    }
+
+    public array|string $varAlignSelfClasses {
+        get => "align-self{{modifier}}-{{value}}";
+    }
+
+    public array|string $varFlexDirectionClasses {
+        get => "flex{{modifier}}-{{value}}";
+    }
+
+    public array|string $varJustifyContentClasses {
+        get => "justify-content{{modifier}}-{{value}}";
+    }
+
+    public array|string $varAlignItemsClasses {
+        get => "align-items{{modifier}}-{{value}}";
+    }
+
+    public array|string $varAlignContentClasses {
+        get => "align-content{{modifier}}-{{value}}";
+    }
+
+    public array|string $varFlexWrapClasses {
+        get => "flex-wrap{{modifier}}-{{value}}";
+    }
 
     protected array $arrRowCols = [
         'auto' => 'row-cols{{modifier}}-auto',
