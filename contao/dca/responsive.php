@@ -13,3 +13,8 @@ $GLOBALS['TL_DCA']['rowCols']['fields']['responsiveRowCols'] = [
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols']['options'],
     'sql' => "blob NULL"
 ];
+
+$GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['responsiveInputType'] = 'iconedSelect';
+$GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['reference'] = &$GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'];
+$GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['options'] = ['0',1,2,3,4,5,6,'first','last'];
+unset($GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['eval']['rgxp']);

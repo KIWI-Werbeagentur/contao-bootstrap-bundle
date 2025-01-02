@@ -1,6 +1,5 @@
 <?php
 
-
 $GLOBALS['TL_LANG']['responsive']['spacings']['default'][0] = "Standard [default]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0] = "Kein Abstand [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0] = "Halber Rasterabstand [gap]";
@@ -34,4 +33,9 @@ $GLOBALS['TL_LANG']['responsive']['flexContainer'] = [
     'container-lg' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['responsive']['breakpoint']['lg'][0]} <span class='label-info'>[container-lg]</span>",
     'container-xl' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['responsive']['breakpoint']['xl'][0]} <span class='label-info'>[container-xl]</span>",
     'container-xxl' => "Begrenzte Breite ab {$GLOBALS['TL_LANG']['responsive']['breakpoint']['xxl'][0]} <span class='label-info'>[container-xxl]</span>",
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
+    'first' => "Erstes",
+    'last' => "Letztes"
 ];
