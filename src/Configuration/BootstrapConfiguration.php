@@ -10,12 +10,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 {
     // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
     public array $arrBreakpoints = [
-        'xs' => ['breakpoint' => 0, 'modifier' => ''],
-        'sm' => ['breakpoint' => 576, 'modifier' => '-sm'],
-        'md' => ['breakpoint' => 768, 'modifier' => '-md'],
-        'lg' => ['breakpoint' => 992, 'modifier' => '-lg'],
-        'xl' => ['breakpoint' => 1200, 'modifier' => '-xl'],
-        'xxl' => ['breakpoint' => 1400, 'modifier' => '-xxl'],
+        'xs' => ['breakpoint' => 0, 'modifier' => '', 'container' => '100%'],
+        'sm' => ['breakpoint' => 576, 'modifier' => '-sm', 'container' => '540px'],
+        'md' => ['breakpoint' => 768, 'modifier' => '-md', 'container' => '720px'],
+        'lg' => ['breakpoint' => 992, 'modifier' => '-lg', 'container' => '960px'],
+        'xl' => ['breakpoint' => 1200, 'modifier' => '-xl', 'container' => '1140px'],
+        'xxl' => ['breakpoint' => 1400, 'modifier' => '-xxl', 'container' => '1320px'],
     ];
 
     public array $arrContainerSizes = [

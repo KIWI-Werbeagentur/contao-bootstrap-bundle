@@ -2,21 +2,17 @@
 
 namespace Kiwi\Contao\BootstrapBundle\EventListener;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\LayoutModel;
 use Contao\PageModel;
 use Contao\StringUtil;
-use Contao\System;
 
-/**
- * @Hook("generatePage")
- */
+#[AsHook('generatePage')]
 class GeneratePageListener
 {
     /**
      * Replace Contao's layout.css and responsive.css with bootstrap-compatible versions.
      * Handles other css framework files as well, to preserve the correct order. See: PageRegular::createHeaderScripts
-     * Also includes JS for Bootstrap.
      */
     public function __invoke(PageModel $objPage, LayoutModel $objLayout)
     {
@@ -42,17 +38,13 @@ class GeneratePageListener
                     break;
             }
         }
-        dump($GLOBALS['TL_FRAMEWORK_CSS']);
-        dump($GLOBALS['TL_CSS']);
 
         // set to an empty array, so files do not get added twice
         $objLayout->framework = serialize([]);
 
+        // Breakpoints
         $GLOBALS['TL_JAVASCRIPT'][] = 'responsive/breakpoints.js';
-
         // Bootstrap js
         $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/kiwibootstrap/twbs-combined/bootstrap.bundle.min.js|static';
-        // Kiwi js
-        $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/kiwibootstrap/kiwi_bootstrap_resize.js|static';
     }
 }
