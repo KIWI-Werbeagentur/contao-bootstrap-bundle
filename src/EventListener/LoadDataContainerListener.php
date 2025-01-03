@@ -28,7 +28,7 @@ class LoadDataContainerListener
         if ($strTable == 'tl_module') {
             PaletteManipulatorExtended::create()
                 ->addField('responsiveRowCols', 'items_legend', PaletteManipulator::POSITION_PREPEND)
-                ->applyToPalettes($GLOBALS['responsive']['tl_module']['includePalettes']['container'] ?? [], 'tl_module');
+                ->applyToSubpalette('addResponsiveChildren', 'tl_module');
         }
     }
 }
