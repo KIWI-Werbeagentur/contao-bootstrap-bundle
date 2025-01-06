@@ -2,5 +2,8 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+  kiwi.contao.responsive.frontend:
+    public: true
+    class: Kiwi\Contao\ResponsiveBaseBundle\Service\ResponsiveFrontendService
   Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener: ~

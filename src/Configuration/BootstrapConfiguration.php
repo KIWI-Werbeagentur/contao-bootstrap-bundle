@@ -108,7 +108,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     }
 
     public array|string $varFlexWrapClasses {
-        get => "flex-wrap{{modifier}}-{{value}}";
+        get => "flex{{modifier}}-{{value}}";
     }
 
     protected array $arrRowCols = [
@@ -121,12 +121,16 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         6 => 'row-cols{{modifier}}-6',
     ];
 
-    protected array $arrRowColsDefaults = ['xs' => 1, 'lg' => 2];
+    public array|string $varRowColsClasses {
+        get => $this->arrRowCols;
+    }
 
     public function getRowCols(): array
     {
         return array_keys($this->arrRowCols);
     }
+
+    protected array $arrRowColsDefaults = ['xs' => 1, 'lg' => 2];
 
     #[AsCallback(table: 'tl_module', target: 'config.onload')]
     #[AsCallback(table: 'tl_theme', target: 'config.onload')]
