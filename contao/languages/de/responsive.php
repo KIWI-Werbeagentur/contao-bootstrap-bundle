@@ -19,8 +19,9 @@ $GLOBALS['TL_LANG']['responsive']['breakpoint']['xxl'][0] = "TV";
 
 $GLOBALS['TL_LANG']['responsive']['responsiveRowCols'] = [
     0 => "Elemente pro Zeile",
+    'auto' => "Automatisch [auto]",
     'options' => [
-        'auto' => "Automatisch [auto]"
+        'auto' => "Automatisch [auto]",
     ]
 ];
 
