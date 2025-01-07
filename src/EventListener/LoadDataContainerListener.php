@@ -30,5 +30,11 @@ class LoadDataContainerListener
                 ->addField('responsiveRowCols', 'items_legend', PaletteManipulator::POSITION_PREPEND)
                 ->applyToSubpalette('addResponsiveChildren', 'tl_module');
         }
+        if ($strTable == 'tl_content') {
+            PaletteManipulator::create()
+                ->addField('responsiveRowCols', 'items_legend', PaletteManipulator::POSITION_PREPEND)
+                ->removeField('responsiveColsItems', 'default')
+                ->applyToSubpalette('addResponsiveChildren', 'tl_content');
+        }
     }
 }
