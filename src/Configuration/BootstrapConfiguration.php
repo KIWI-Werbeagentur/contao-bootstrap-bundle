@@ -48,7 +48,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'hidden' => 'col{{modifier}}-none',
     ];
 
-    public array $arrColsDefaults = ['xs' => 12, 'lg' => 6];
+    public array $arrColsDefaults = ['xs' => 12];
 
     public array $arrOffsets = [
         'none' => 'offset{{modifier}}-none',
@@ -67,9 +67,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         12 => 'offset{{modifier}}-12',
     ];
 
-    public array $arrOffsetsDefaults = ['xs' => 'none'];
+    public
+    array $arrOffsetsDefaults = ['xs' => 'none'];
 
-    public array $arrSpacings = [
+    public
+    array $arrSpacings = [
         'default' => 'p{{direction}}{{modifier}}-default',
         'none' => 'p{{direction}}{{modifier}}-none',
         'gap' => 'p{{direction}}{{modifier}}-gap',
@@ -81,9 +83,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xl' => 'p{{direction}}{{modifier}}-xl',
     ];
 
-    public array $arrSpacingsDefaults = ['xs' => 'default'];
+    public
+    array $arrSpacingsDefaults = ['xs' => 'default'];
 
-    public array|string $varOrderClasses {
+    public
+    array|string $varOrderClasses {
         get => "order{{modifier}}-{{value}}";
     }
 
