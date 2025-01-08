@@ -34,7 +34,8 @@ class LoadDataContainerListener
             PaletteManipulator::create()
                 ->addField('responsiveRowCols', 'items_legend', PaletteManipulator::POSITION_PREPEND)
                 ->removeField('responsiveColsItems', 'default')
-                ->applyToSubpalette('addResponsiveChildren', 'tl_content');
+                ->applyToSubpalette('addResponsiveChildren', 'tl_content')
+                ->applyToPalette('element_group', 'tl_content');
         }
     }
 }

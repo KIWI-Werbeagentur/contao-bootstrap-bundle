@@ -32,5 +32,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveRowCols'] = [
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols'],
     'sql' => "blob NULL"
 ];
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_'] = 'responsiveOverwriteRowCols';
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_0'] = 'responsiveOverwriteRowCols';
 
 $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveContainerSizes'] = "responsiveRowCols," . implode(',', array_keys($GLOBALS['TL_DCA']['container']['fields'] ?? []));

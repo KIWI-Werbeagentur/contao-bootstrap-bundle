@@ -24,7 +24,7 @@ class Content
 
         // Rearrange palette, when parent has row-cols set
         foreach ($GLOBALS['TL_DCA'][$objDca->table]['palettes'] as $strPalette => $varFields) {
-            if (!is_string($varFields) || in_array($strPalette, ($GLOBALS['responsive'][$objDca->table]['excludePalettes'] ?? []))) continue;
+            if (!is_string($varFields) || in_array($strPalette, ($GLOBALS['responsive'][$objDca->table]['excludePalettes']['column'] ?? []))) continue;
 
             PaletteManipulator::create()
                 ->removeField(['responsiveCols', 'responsiveOffsets'], 'layout_legend')
