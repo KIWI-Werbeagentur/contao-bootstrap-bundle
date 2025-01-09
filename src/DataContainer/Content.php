@@ -18,9 +18,10 @@ class Content
         $strPtable = $objDca->getCurrentRecord()['ptable'];
         $strPid = $objDca->getCurrentRecord()['pid'];
         $objParentModel = ($GLOBALS['TL_MODELS'][$strPtable])::findByPk($strPid);
-        $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols);
 
-        if (!$arrSizes) return;
+        if (!array_key_exists('responsiveRowCols',$objParentModel->row())) return;
+
+        $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols) ?? [];
 
         // Rearrange palette, when parent has row-cols set
         foreach ($GLOBALS['TL_DCA'][$objDca->table]['palettes'] as $strPalette => $varFields) {
