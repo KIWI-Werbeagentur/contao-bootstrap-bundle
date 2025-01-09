@@ -4,3 +4,4 @@ services:
     autoconfigure: true
   Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener: ~
+  Kiwi\Contao\BootstrapBundle\EventListener\AlterResponsiveValues: ~

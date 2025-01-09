@@ -35,7 +35,7 @@ class Content
         // Set Label dynamically to show parent settings
         $arrSize = [];
         foreach ($arrSizes as $strBreakpoint => $strSize) {
-            $intCols = 12 / intval($strSize);
+            $intCols = is_numeric($strSize) ? 12 / intval($strSize) : $strSize;
             $arrSize[] = "$strBreakpoint=$intCols";
         }
 

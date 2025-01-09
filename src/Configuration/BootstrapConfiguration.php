@@ -45,7 +45,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         1 => 'col{{modifier}}-1',
         'auto' => 'col{{modifier}}-auto',
         'fill' => 'col{{modifier}}',
-        'hidden' => 'col{{modifier}}-none',
+        'hidden' => 'd{{modifier}}-none-only',
     ];
 
     public array $arrColsDefaults = ['xs' => 12];
