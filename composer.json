@@ -33,9 +33,6 @@
         "contao/manager-plugin": "<2.0 || >=3.0",
         "kiwi/contao-wrapper-bundle": "<1.0.0"
     },
-    "suggest": {
-        "kiwi/contao-wrapper-bundle": "Wrapper to group multiple Elements into cols or containers."
-    },
     "autoload": {
         "psr-4" : {
             "Kiwi\\Contao\\BootstrapBundle\\" : "src/"
