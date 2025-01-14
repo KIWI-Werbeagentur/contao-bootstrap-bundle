@@ -47,6 +47,6 @@ class BootstrapNavbar extends Module
         $objNavigation = ModuleModel::findByPk($this->module);
         /** @var Module $objNavigationModule */
         $objNavigationModule = new $GLOBALS['FE_MOD']['navigationMenu'][$objNavigation->type]($objNavigation);
-        $this->Template->html = $objNavigationModule->generate();
+        $this->Template->navigationHTML = $objNavigationModule->generate();
     }
 }

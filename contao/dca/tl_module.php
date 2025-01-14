@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['responsiveRowCols'] = $GLOBALS['TL_DC
 
 
 //Navbar
-$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,alt;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl;{layout_legend},breakpoint,navbarTheme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,alt;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl;{layout_legend},breakpoint,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['fields']['alt'] = [
     'inputType' => 'text',
     'eval' => ['tl_class' => 'w50', 'maxlength' => 255],
