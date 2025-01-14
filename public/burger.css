@@ -1,0 +1,562 @@
+.burger {
+    --bs-navbar-toggler-focus-width: 0;
+    --bs-border-width: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    padding: 0;
+    outline: none;
+}
+
+.burger--1 .burger__line {
+    fill: none;
+    stroke: black;
+    stroke-width: 6;
+    transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1)
+}
+
+.burger--1 .burger__line--1 {
+    stroke-dasharray: 60 207;
+    stroke-width: 6
+}
+
+.burger--1 .burger__line--2 {
+    stroke-dasharray: 60 60;
+    stroke-width: 6
+}
+
+.burger--1 .burger__line--3 {
+    stroke-dasharray: 60 207;
+    stroke-width: 6
+}
+
+.burger--1[aria-expanded="true"] .burger__line--1 {
+    stroke-dasharray: 90 207;
+    stroke-dashoffset: -134;
+    stroke-width: 6
+}
+
+.burger--1[aria-expanded="true"] .burger__line--2 {
+    stroke-dasharray: 1 60;
+    stroke-dashoffset: -30;
+    stroke-width: 6
+}
+
+.burger--1[aria-expanded="true"] .burger__line--3 {
+    stroke-dasharray: 90 207;
+    stroke-dashoffset: -134;
+    stroke-width: 6
+}
+
+
+.burger:not(.burger--1) svg {
+    height: 80px;
+    position: absolute;
+    left: 0;
+    width: 80px;
+}
+
+
+.burger__wrapper{
+    width: 80px;
+    height: 80px;
+}
+
+.burger__icon {
+    filter: url(#gooeyness);
+}
+
+.burger__close {
+    transform: scale(0);
+    transition: transform 400ms;
+}
+
+.burger__line {
+    fill: none;
+    stroke: black;
+    stroke-width: 6px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform-origin: 50%;
+    transition: stroke-dasharray 500ms 200ms, stroke-dashoffset 500ms 200ms, transform 500ms 200ms;
+}
+
+.burger__close .burger__line {
+    stroke-width: 5.5px;
+}
+
+/* First plate */
+.burger--2 .burger__line--2 {
+    stroke-dasharray: 40 200;
+    stroke-dashoffset: 0px;
+}
+
+.burger--2 .burger__line--3 {
+    stroke-dasharray: 40 179;
+    stroke-dashoffset: 0px;
+}
+
+.burger[aria-expanded="true"] .burger__line {
+    transition: stroke-dasharray 500ms, stroke-dashoffset 500ms, transform 500ms;
+}
+
+.burger[aria-expanded="true"].burger--2 .burger__line--1 {
+    transform: scale(0, 1);
+    transition: transform 500ms 100ms;
+}
+
+.burger[aria-expanded="true"].burger--2 .burger__line--2 {
+    stroke-dasharray: 5px 200;
+    stroke-dashoffset: -164px;
+}
+
+.burger[aria-expanded="true"].burger--2 .burger__line--3 {
+    stroke-dasharray: 5px 179;
+    stroke-dashoffset: -142px;
+}
+
+.burger[aria-expanded="true"] .burger__close {
+    transform: scale(1);
+    transition: transform 400ms 350ms;
+}
+
+.burger--3 .burger__line--1 {
+    stroke-dasharray: 21 185.62753295898438;
+    transition-delay: 0;
+}
+
+.burger--3 .burger__line--2 {
+    stroke-dasharray: 21 178.6514129638672;
+    transition-delay: 30ms;
+}
+
+.burger--3 .burger__line--3 {
+    stroke-dasharray: 21 197.92425537109375;
+    transition-delay: 60ms;
+}
+
+.burger--3 .burger__line--4 {
+    stroke-dasharray: 21 190.6597137451172;
+    transition-delay: 90ms;
+}
+
+.burger--3 .burger__line--5 {
+    stroke-dasharray: 21 208.52874755859375;
+    transition-delay: 120ms;
+}
+
+.burger--3 .burger__line--6 {
+    stroke-dasharray: 21 186.59703063964844;
+    transition-delay: 150ms;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__line--1 {
+    stroke-dasharray: 5 185.62753295898438;
+    stroke-dashoffset: -141px;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__line--2 {
+    stroke-dasharray: 5 178.6514129638672;
+    stroke-dashoffset: -137px;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__line--3 {
+    stroke-dasharray: 5 197.92425537109375;
+    stroke-dashoffset: -176px;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__line--4 {
+    stroke-dasharray: 5 190.6597137451172;
+    stroke-dashoffset: -159px;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__line--5 {
+    stroke-dasharray: 5 208.52874755859375;
+    stroke-dashoffset: -139px;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__line--6 {
+    stroke-dasharray: 5 186.59703063964844;
+    stroke-dashoffset: -176px;
+}
+
+.burger[aria-expanded="true"].burger--3 .burger__close {
+    transition: transform 400ms 250ms;
+}
+
+/* O terceiro prato */
+.burger--4 .burger__line {
+    transition: stroke-dasharray 300ms 200ms, stroke-dashoffset 300ms 200ms, transform 300ms 200ms;
+}
+
+.burger--4 .burger__line--1 {
+    stroke-dasharray: 21 109;
+}
+
+.burger--4 .burger__line--2 {
+    stroke-dasharray: 21 112;
+}
+
+.burger--4 .burger__line--3 {
+    stroke-dasharray: 21 102;
+}
+
+.burger--4 .burger__line--4 {
+    stroke-dasharray: 21 103;
+}
+
+.burger--4 .burger__line--5 {
+    stroke-dasharray: 21 110;
+}
+
+.burger--4 .burger__line--6 {
+    stroke-dasharray: 21 115;
+}
+
+.burger--4 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line {
+    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms, transform 400ms;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line--1 {
+    stroke-dasharray: 5 109;
+    stroke-dashoffset: -95px;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line--2 {
+    stroke-dasharray: 5 112;
+    stroke-dashoffset: -96px;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line--3 {
+    stroke-dasharray: 5 102;
+    stroke-dashoffset: -79px;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line--4 {
+    stroke-dasharray: 5 103;
+    stroke-dashoffset: -78px;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line--5 {
+    stroke-dasharray: 5 110;
+    stroke-dashoffset: -63px;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__line--6 {
+    stroke-dasharray: 5 115;
+    stroke-dashoffset: -64px;
+}
+
+.burger[aria-expanded="true"].burger--4 .burger__close {
+    transition: transform 400ms 100ms;
+}
+
+/* Die vierte teller */
+.burger--5 .burger__close {
+    transition: transform 400ms;
+}
+
+.burger--5 .burger__line {
+    transform-origin: 50%;
+    transition: transform 400ms 100ms;
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line {
+    transition: transform 400ms;
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line--1 {
+    transform: translateX(18px) translateY(-3px) rotate(-45deg) scale(.7);
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line--2 {
+    transform: translateX(-18px) translateY(-3px) rotate(45deg) scale(.7);
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line--3 {
+    transform: translateY(0px) rotate(45deg) scale(.7);
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line--4 {
+    transform: translateY(0px) rotate(-45deg) scale(.7);
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line--5 {
+    transform: translateX(18px) translateY(3px) rotate(45deg) scale(.7);
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__line--6 {
+    transform: translateX(-18px) translateY(3px) rotate(-45deg) scale(.7);
+}
+
+.burger[aria-expanded="true"].burger--5 .burger__close {
+    transition: transform 400ms 100ms;
+    transform: scale(1);
+}
+
+/* Den femte rätten */
+.burger--6 .burger__line {
+    transition: stroke-dasharray 400ms 100ms, stroke-dashoffset 400ms 100ms, transform 400ms 100ms;
+}
+
+.burger--6 .burger__line--1 {
+    stroke-dasharray: 40 40;
+}
+
+.burger--6 .burger__line--2 {
+    stroke-dasharray: 21 39;
+}
+
+.burger--6 .burger__line--3 {
+    stroke-dasharray: 21 39;
+}
+
+.burger--6 .burger__line--4 {
+    stroke-dasharray: 40 40;
+}
+
+.burger--6 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+.burger[aria-expanded="true"].burger--6 .burger__line {
+    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms, transform 400ms;
+}
+
+.burger[aria-expanded="true"].burger--6 .burger__line--1 {
+    stroke-dasharray: 1 40;
+    stroke-dashoffset: -33px;
+}
+
+.burger[aria-expanded="true"].burger--6 .burger__line--2 {
+    stroke-dasharray: 5 39;
+    stroke-dashoffset: -37px;
+}
+
+.burger[aria-expanded="true"].burger--6 .burger__line--3 {
+    stroke-dasharray: 5 39;
+    stroke-dashoffset: -37px;
+}
+
+.burger[aria-expanded="true"].burger--6 .burger__line--4 {
+    stroke-dasharray: 1 40;
+    stroke-dashoffset: -33px;
+}
+
+.burger[aria-expanded="true"].burger--6 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+/* Шестая пластина */
+.burger--7 .burger__line {
+    transition: stroke-dasharray 400ms 100ms, stroke-dashoffset 400ms 100ms, transform 400ms 100ms;
+}
+
+.burger--7 .burger__line--1 {
+    stroke-dasharray: 21 127;
+}
+
+.burger--7 .burger__line--2 {
+    stroke-dasharray: 21 106;
+}
+
+.burger--7 .burger__line--3 {
+    stroke-dasharray: 21 106;
+}
+
+.burger--7 .burger__line--4 {
+    stroke-dasharray: 21 126;
+}
+
+.burger--7 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+.burger[aria-expanded="true"].burger--7 .burger__line {
+    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms, transform 400ms;
+}
+
+.burger[aria-expanded="true"].burger--7 .burger__line--1 {
+    stroke-dasharray: 2 127;
+    stroke-dashoffset: -94px;
+}
+
+.burger[aria-expanded="true"].burger--7 .burger__line--2 {
+    stroke-dasharray: 2 106;
+    stroke-dashoffset: -91px;
+}
+
+.burger[aria-expanded="true"].burger--7 .burger__line--3 {
+    stroke-dasharray: 2 106;
+    stroke-dashoffset: -91px;
+}
+
+.burger[aria-expanded="true"].burger--7 .burger__line--4 {
+    stroke-dasharray: 2 127;
+    stroke-dashoffset: -94px;
+}
+
+.burger[aria-expanded="true"].burger--7 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+/* 제 7 판 */
+.burger--8 .burger__line {
+    transition: stroke-dasharray 400ms 100ms, stroke-dashoffset 400ms 100ms, transform 400ms 100ms;
+}
+
+.burger--8 .burger__line--1 {
+    stroke-dasharray: 21 102;
+}
+
+.burger--8 .burger__line--2 {
+    stroke-dasharray: 21 92;
+}
+
+.burger--8 .burger__line--3 {
+    stroke-dasharray: 21 97;
+}
+
+.burger--8 .burger__line--4 {
+    stroke-dasharray: 21 97;
+}
+
+.burger--8 .burger__line--5 {
+    stroke-dasharray: 21 92;
+}
+
+.burger--8 .burger__line--6 {
+    stroke-dasharray: 21 102;
+}
+
+.burger--8 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line {
+    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms, transform 400ms;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line--1 {
+    stroke-dasharray: 2 102;
+    stroke-dashoffset: -102px;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line--2 {
+    stroke-dasharray: 2 92;
+    stroke-dashoffset: -92px;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line--3 {
+    stroke-dasharray: 2 97;
+    stroke-dashoffset: -97px;
+    transition-delay: 20ms;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line--4 {
+    stroke-dasharray: 2 97;
+    stroke-dashoffset: -97px;
+    transition-delay: 20ms;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line--5 {
+    stroke-dasharray: 2 92;
+    stroke-dashoffset: -90px;
+    transition-delay: 40ms;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__line--6 {
+    stroke-dasharray: 2 102;
+    stroke-dashoffset: -100px;
+    transition-delay: 40ms;
+}
+
+.burger[aria-expanded="true"].burger--8 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+/* Όγδοο πιάτο */
+.burger--9 .burger__line {
+    transition: stroke-dasharray 400ms 100ms, stroke-dashoffset 400ms 100ms, transform 400ms 100ms;
+}
+
+.burger--9 .burger__line--1 {
+    stroke-dasharray: 21 201;
+}
+
+.burger--9 .burger__line--2 {
+    stroke-dasharray: 21 201;
+    transition-delay: 20ms;
+}
+
+.burger--9 .burger__line--3 {
+    stroke-dasharray: 21 201;
+    transition-delay: 40ms;
+}
+
+.burger--9 .burger__line--4 {
+    stroke-dasharray: 21 201;
+    transition-delay: 60ms;
+}
+
+.burger--9 .burger__line--5 {
+    stroke-dasharray: 21 201;
+    transition-delay: 80ms;
+}
+
+.burger--9 .burger__line--6 {
+    stroke-dasharray: 21 201;
+    transition-delay: 100ms;
+}
+
+.burger--9 .burger__close {
+    transition: transform 400ms 50ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line {
+    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms, transform 400ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line--1 {
+    stroke-dasharray: 5 201;
+    stroke-dashoffset: -158px;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line--2 {
+    stroke-dasharray: 5 201;
+    stroke-dashoffset: -158px;
+    transition-delay: 20ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line--3 {
+    stroke-dasharray: 5 201;
+    stroke-dashoffset: -158px;
+    transition-delay: 40ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line--4 {
+    stroke-dasharray: 5 201;
+    stroke-dashoffset: -158px;
+    transition-delay: 60ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line--5 {
+    stroke-dasharray: 5 201;
+    stroke-dashoffset: -158px;
+    transition-delay: 80ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__line--6 {
+    stroke-dasharray: 5 201;
+    stroke-dashoffset: -158px;
+    transition-delay: 100ms;
+}
+
+.burger[aria-expanded="true"].burger--9 .burger__close {
+    transition: transform 400ms 50ms;
+}

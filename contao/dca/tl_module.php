@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['responsiveRowCols'] = $GLOBALS['TL_DC
 
 
 //Navbar
-$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,alt;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl;{layout_legend},breakpoint,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,alt;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl,breakpoint,animation,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['fields']['alt'] = [
     'inputType' => 'text',
     'eval' => ['tl_class' => 'w50', 'maxlength' => 255],
@@ -33,6 +33,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['breakpoint'] = [
     'inputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getBreakpoints'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['breakpoint'],
+    'eval' => ['tl_class' => 'w50'],
+    'sql' => "varchar(255) NOT NULL default ''"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['animation'] = [
+    'inputType' => 'select',
+    'options' => [0,1,2,3,4,5,6,7],
+    'reference' => &$GLOBALS['TL_LANG']['burger']['animation']['options'],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(255) NOT NULL default ''"
 ];

@@ -9,6 +9,11 @@ $GLOBALS['TL_LANG']['tl_module']['breakpoint'] = [
     1 => "Geben Sie an, ab welchem Viewport die Navigations in Desktopansicht dargestellt werden soll."
 ];
 
+
+$GLOBALS['TL_LANG']['tl_module']['animation'] = [
+    0 => "Animation"
+];
+
 $GLOBALS['TL_LANG']['tl_module']['theme'] = [
     0 => "Theme",
     'options' => [

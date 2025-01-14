@@ -35,6 +35,10 @@ class BootstrapNavbar extends Module
         /** @var PageModel $objPage */
         global $objPage;
 
+        if ($this->animation) {
+            $GLOBALS['TL_FRAMEWORK_CSS'][] = 'bundles/kiwibootstrap/burger.css';
+        }
+
         $this->Template->singleSRC = FilesModel::findByPk($this->singleSRC)->path;
 
         $strLocalePrefix = '';
