@@ -43,7 +43,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['theme'] = [
         'dark',
         'light',
     ],
-    'reference' => &$GLOBALS['TL_LANG']['tl_module']['navbarTheme_options'],
+    'reference' => &$GLOBALS['TL_LANG']['tl_module']['theme']['options'],
     'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(16) NOT NULL default ''"
 ];

@@ -1,0 +1,28 @@
+
+<!-- indexer::stop -->
+<nav class="<?= $this->class ?> block navbar navbar-<?= $this->theme ?><?php if ($this->breakpoint): ?> navbar-expand-<?= $this->breakpoint ?><?php endif; ?>"<?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif; ?>>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{env::base_url}}<?= $this->localePrefix ?>"><img src="<?= $this->singleSRC ?>" alt="<?= $this->alt ?>"></a>
+
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-<?= $this->id ?>" aria-controls="navbar-collapse-<?= $this->id ?>" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <?php if ($this->html && $this->position == 'out::before'): ?>
+            <?= $this->html ?>
+        <?php endif; ?>
+        <div class="collapse navbar-collapse" id="navbar-collapse-<?= $this->id ?>">
+            <?php if ($this->html && $this->position == 'in::before'): ?>
+                <?= $this->html ?>
+            <?php endif; ?>
+            <?= $this->navigationHTML ?>
+            <?php if ($this->html && $this->position == 'in::after'): ?>
+                <?= $this->html ?>
+            <?php endif; ?>
+        </div>
+        <?php if ($this->html && $this->position == 'out::after'): ?>
+            <?= $this->html ?>
+        <?php endif; ?>
+    </div>
+</nav>
+<!-- indexer::continue -->

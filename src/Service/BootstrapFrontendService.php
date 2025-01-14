@@ -6,17 +6,17 @@ use Kiwi\Contao\ResponsiveBaseBundle\Service\ResponsiveFrontendService;
 
 class BootstrapFrontendService extends ResponsiveFrontendService
 {
-    public function getColClasses($strData, $arrData = []): array
+    public function getColClasses($strData, $varData = []): array
     {
-        if ($arrData['responsiveOverwriteRowCols'] ?? true) {
+        if (self::getProp($varData, 'responsiveOverwriteRowCols') ?: true) {
             return $this->getResponsiveClasses($strData, 'varColClasses');
         }
         return [];
     }
 
-    public function getOffsetClasses($strData, $arrData = []): array
+    public function getOffsetClasses($strData, $varData = []): array
     {
-        if ($arrData['responsiveOverwriteRowCols'] ?? true) {
+        if (self::getProp($varData, 'responsiveOverwriteRowCols') ?: true) {
             return $this->getResponsiveClasses($strData, 'varOffsetClasses');
         }
         return [];
@@ -27,15 +27,15 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varRowColsClasses');
     }
 
-    public function getAllInnerContainerClasses(array $arrData, array $arrFields = []): array
+    public function getAllInnerContainerClasses($varData, array $arrFields = []): array
     {
         $arrBootstrapClasses = array_merge(
             [
                 "row"
             ],
-            $this->getRowColsClasses($arrData[$arrFields['rowCols'] ?? 'responsiveRowCols'] ?? "")
+            $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols'))
         );
 
-        return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($arrData, $arrFields));
+        return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields));
     }
 }
