@@ -30,5 +30,6 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
     public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig): void
     {
         $loader->load(__DIR__ . '/../../config/services.yaml');
+        $loader->load(__DIR__ . '/../../config/migrations.yaml');
     }
 }

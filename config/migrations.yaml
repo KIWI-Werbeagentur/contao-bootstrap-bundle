@@ -1,0 +1,7 @@
+services:
+  Kiwi\Contao\BootstrapBundle\Migration\SymlinkJsMigration:
+    tags:
+      - { name: contao.migration, priority: 0 }
+    arguments:
+      - '@filesystem'
+      - '%kernel.project_dir%'
