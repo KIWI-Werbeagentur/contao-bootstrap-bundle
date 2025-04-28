@@ -21,10 +21,10 @@
         "php": "^8.3.11",
         "contao/core-bundle": "~5.3.18",
         "twbs/bootstrap": "~5.2.3",
-        "kiwi/contao-responsive-base": "dev-main"
+        "kiwi/contao-responsive-base": "0.1"
     },
     "provide": {
-        "kiwi/responsive-framework": "dev-main"
+        "kiwi/responsive-framework": "0.1"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.0"
