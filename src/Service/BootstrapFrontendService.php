@@ -44,10 +44,4 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
         return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields));
     }
-
-    /*public function getContainerClasses($strData): array
-    {
-        dump($strData);
-        return parent::getContainerClasses($strData);
-    }*/
 }
