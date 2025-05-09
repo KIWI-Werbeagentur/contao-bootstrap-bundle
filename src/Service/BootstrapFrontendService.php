@@ -8,7 +8,7 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 {
     public function getColClasses($strData, $varData = []): array
     {
-        if (self::getProp($varData, 'responsiveOverwriteRowCols') ?: true) {
+        if (self::propExists($varData, 'responsiveOverwriteRowCols') ? self::getProp($varData, 'responsiveOverwriteRowCols') : true) {
             return $this->getResponsiveClasses($strData, 'varColClasses');
         }
         return [];
@@ -16,7 +16,7 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
     public function getOffsetClasses($strData, $varData = []): array
     {
-        if (self::getProp($varData, 'responsiveOverwriteRowCols') ?: true) {
+        if (self::propExists($varData, 'responsiveOverwriteRowCols') ? self::getProp($varData, 'responsiveOverwriteRowCols') : true) {
             return $this->getResponsiveClasses($strData, 'varOffsetClasses');
         }
         return [];

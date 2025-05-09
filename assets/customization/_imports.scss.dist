@@ -16,6 +16,7 @@
 $theme-colors: map-merge($theme-colors, $colors);
 @import "__BOOTSTRAP-STYLES__/mixins";
 @import "__BOOTSTRAP-STYLES__/utilities";
+@import "../../schemes";
 
 // Layout & components from theme
 __BOOTSTRAP-COMPONENTS__
