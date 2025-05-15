@@ -1,0 +1,4 @@
+
+<div class="<?= $this->prefix ?> explanation form-group<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if ($this->addBootstrap): ?> <?= $this->bootstrapClasses ?><?php endif; ?>">
+  <div class="form-control-plaintext"><?= method_exists($this, 'cspInlineStyle') ? $this->cspInlineStyles($this->generate()) : $this->generate() ?></div>
+</div>

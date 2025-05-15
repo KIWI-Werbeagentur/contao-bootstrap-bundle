@@ -7,7 +7,6 @@ $GLOBALS['TL_DCA']['tl_form_field']['fields']['responsiveHelpBlock'] = [
     'sql' => "varchar(255) NOT NULL default ''"
 ];
 
-
 // Descriptive attribute before or after Input
 $GLOBALS['TL_DCA']['tl_form_field']['fields']['responsiveInputAttribute'] = [
     'inputType' => 'checkbox',

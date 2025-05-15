@@ -1,0 +1,35 @@
+<?php $this->extend('form_row'); ?>
+
+<?php $this->block('label'); ?>
+  <?php if ($this->label): ?>
+    <label for="ctrl_<?= $this->id ?>"<?php if ($this->class): ?> class="<?= $this->class ?>"<?php endif; ?>>
+      <?php if ($this->mandatory): ?>
+        <span class="invisible"><?= $this->mandatoryField ?> </span><?= $this->label ?><span class="mandatory">*</span>
+      <?php else: ?>
+        <?= $this->label ?>
+      <?php endif; ?>
+    </label>
+  <?php endif; ?>
+<?php $this->endblock(); ?>
+
+<?php $this->block('field'); ?>
+  <?php if ($this->responsiveInputAttribute): ?>
+    <div class="input-group<?php if ($this->hasErrors()): ?> is-invalid<?php endif; ?>">
+      <?php if ('before' == $this->responsiveInputAttributePosition): ?>
+        <span class="input-group-text input-group-prepend"><?= $this->responsiveInputAttributeContent ?></span>
+      <?php endif; ?>
+  <?php endif; ?>
+  <input type="<?= $this->type ?>" name="<?= $this->name ?>" id="ctrl_<?= $this->id ?>" class="text form-control<?php if ($this->hideInput): ?> password<?php endif; ?><?php if ($this->hasErrors()): ?> is-invalid<?php endif; ?><?php if ($this->class): ?> <?= $this->class ?><?php endif; ?>" value="<?= \Contao\StringUtil::specialchars($this->value) ?>"<?= $this->getAttributes() ?><?php if ($this->responsiveHelpBlock): ?> aria-describedby="ctrl_<?= $this->id ?>_text"<?php endif; ?>>
+  <?php if ($this->responsiveInputAttribute): ?>
+      <?php if ('after' == $this->responsiveInputAttributePosition): ?>
+        <span class="input-group-text input-group-append"><?= $this->responsiveInputAttributeContent ?></span>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
+  <?php if ($this->responsiveHelpBlock): ?>
+    <div class="form-text" id="ctrl_<?= $this->id ?>_text"><?= $this->responsiveHelpBlock ?></div>
+  <?php endif; ?>
+  <?php if ($this->hasErrors()): ?>
+    <div class="invalid-feedback"><?= $this->getErrorAsString() ?></div>
+  <?php endif; ?>
+<?php $this->endblock(); ?>

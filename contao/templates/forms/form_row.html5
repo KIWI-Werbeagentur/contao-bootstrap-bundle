@@ -1,0 +1,9 @@
+<div class="form-item <?= $this->prefix ?><?php if ($this->class): ?> <?= $this->class ?><?php endif; ?> <?= $this->rowClasses ?? '' ?>">
+    <div class="widget__inner">
+        <?php $this->block('label'); ?>
+        <?php $this->endblock(); ?>
+
+        <?php $this->block('field'); ?>
+        <?php $this->endblock(); ?>
+    </div>
+</div>
