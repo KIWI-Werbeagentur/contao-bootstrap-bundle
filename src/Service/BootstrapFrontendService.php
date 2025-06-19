@@ -8,6 +8,9 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 {
     public function getColClasses($strData, $varData = []): array
     {
+        if(self::propExists($varData, 'ptable') && !($GLOBALS['TL_DCA'][self::getProp($varData, 'ptable')]['fields']['responsiveRowCols'] ?? false)) {
+            return $this->getResponsiveClasses($strData, 'varColClasses');
+        }
         if (self::propExists($varData, 'responsiveOverwriteRowCols') ? self::getProp($varData, 'responsiveOverwriteRowCols') : true) {
             return $this->getResponsiveClasses($strData, 'varColClasses');
         }
@@ -16,6 +19,9 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
     public function getOffsetClasses($strData, $varData = []): array
     {
+        if(self::propExists($varData, 'ptable') && !($GLOBALS['TL_DCA'][self::getProp($varData, 'ptable')]['fields']['responsiveRowCols'] ?? false)) {
+            return $this->getResponsiveClasses($strData, 'varOffsetClasses');
+        }
         if (self::propExists($varData, 'responsiveOverwriteRowCols') ? self::getProp($varData, 'responsiveOverwriteRowCols') : true) {
             return $this->getResponsiveClasses($strData, 'varOffsetClasses');
         }

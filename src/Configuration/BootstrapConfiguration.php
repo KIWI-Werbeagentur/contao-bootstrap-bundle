@@ -51,7 +51,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     public array $arrColsDefaults = ['xs' => 12];
 
     public array $arrOffsets = [
-        'none' => 'offset{{modifier}}-none',
+        'none' => 'offset{{modifier}}-0',
         'auto' => 'ms{{modifier}}-auto',
         1 => 'offset{{modifier}}-1',
         2 => 'offset{{modifier}}-2',

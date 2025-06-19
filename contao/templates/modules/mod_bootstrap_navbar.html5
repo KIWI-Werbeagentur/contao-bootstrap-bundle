@@ -1,7 +1,8 @@
 <!-- indexer::stop -->
-<nav class="<?= $this->class ?> block navbar navbar-<?= $this->theme ?><?php if ($this->breakpoint): ?> navbar-expand-<?= $this->breakpoint ?><?php endif; ?>"<?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif; ?>>
+
+<nav class="<?= $this->class ?> block navbar navbar-<?= $this->theme ?><?php if ($this->breakpoint): ?> navbar-expand-<?= $this->breakpoint ?><?php endif; ?>"<?= $this->cssID ?> data-brakpoint-name="<?= $this->breakpoint?>" data-breakpoint-size="<?= (new $GLOBALS['responsive']['config']())->arrBreakpoints[$this->breakpoint]['breakpoint'] ?? "" ?>"  style="--breakpoint-name:<?= $this->breakpoint?>;--breakpoint-size:<?= (new $GLOBALS['responsive']['config']())->arrBreakpoints[$this->breakpoint]['breakpoint'] ?? 0 ?>;<?= $this->style ?>">
     <?php $this->block('inner'); ?>
-    <div class="container-fluid">
+    <div class="mod_bootstrapNavbar__container container-fluid">
         <a class="navbar-brand" href="{{env::base_url}}<?= $this->localePrefix ?>"><img src="<?= $this->singleSRC ?>"
                                                                                         alt="<?= $this->alt ?>"></a>
         <button type="button" class="navbar-toggler burger burger--<?= $this->animation ?>" data-bs-toggle="collapse"
