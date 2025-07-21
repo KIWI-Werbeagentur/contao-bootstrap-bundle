@@ -6,8 +6,9 @@
  */
 
 // Configuration
+//@import "../../colorvars";
+//@import "../../schemes";
 @import "__BOOTSTRAP-STYLES__/functions";
-@import "../../colorvars";
 @import "../themevars-__THEMENAME__";
 @import "layoutvars-__LAYOUTNAME__";
 @import "../../../../vendor/kiwi/contao-bootstrap-bundle/assets/customization/row-cols-import.scss";
@@ -16,7 +17,6 @@
 $theme-colors: map-merge($theme-colors, $colors);
 @import "__BOOTSTRAP-STYLES__/mixins";
 @import "__BOOTSTRAP-STYLES__/utilities";
-@import "../../schemes";
 
 // Layout & components from theme
 __BOOTSTRAP-COMPONENTS__

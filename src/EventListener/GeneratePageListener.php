@@ -31,16 +31,16 @@ class GeneratePageListener
                 case 'bs_styles':
                     $GLOBALS['TL_FRAMEWORK_CSS'][] = 'files/themes/' . $objTheme->alias . '/' . $objLayout->alias . '/layout-'.$objLayout->alias.'.scss';
                     break;
-                case 'tinymce.css':
-                    $GLOBALS['TL_FRAMEWORK_CSS'][] = 'assets/contao/css/' . basename($strFile, '.css') . '.min.css';
-                    break;
                 default:
                     break;
             }
         }
 
-        // set to an empty array, so files do not get added twice
-        $objLayout->framework = serialize([]);
+        $arrFramework = array_filter($arrFramework, function($v) {
+            return !in_array($v,['layout.css','responsive.css','bs_styles']);
+        });
+        // remove styles from array, so files do not get added twice
+        $objLayout->framework = serialize($arrFramework);
 
         // Breakpoints
         $GLOBALS['TL_JAVASCRIPT'][] = 'responsive/breakpoints.js';

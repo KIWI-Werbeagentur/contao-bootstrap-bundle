@@ -31,10 +31,24 @@ class LayoutListener
         }
 
         if (!$fs->exists($targetPath . '_imports-' . $layoutAlias . '.scss')) {
-            $strImports = file_get_contents(System::getContainer()->getParameter('kernel.project_dir') . '/vendor/kiwi/contao-bootstrap-bundle/assets/customization/_imports.scss.dist');
+            $arrData = [
+                'themeName' => $themeAlias,
+                'layoutName' => $layoutAlias,
+                'bootstrapComponents' => "@import '../_imports-{$themeAlias}.scss';",
+                'bootstrapStyles' => str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['bootstrap']),
+                'customStyles' => str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['custom'])
+            ];
+            $strBuffer = System::getContainer()->get('twig')->render('@Contao/responsive/bootstrap_imports.scss.twig', $arrData);
 
-            $strImports = str_replace(['__THEMENAME__', '__LAYOUTNAME__','__BOOTSTRAP-COMPONENTS__','__BOOTSTRAP-STYLES__','__CUSTOM-STYLES__'], [$themeAlias, $layoutAlias, "@import '../_imports-{$themeAlias}.scss';" ,str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['bootstrap']), str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['custom'])], $strImports);
-            file_put_contents($targetPath . '_imports-' . $layoutAlias . '.scss', $strImports);
+            if (isset($GLOBALS['TL_HOOKS']['alterBootstrapImports']) && \is_array($GLOBALS['TL_HOOKS']['alterBootstrapImports']))
+            {
+                foreach ($GLOBALS['TL_HOOKS']['alterBootstrapImports'] as $callback)
+                {
+                    $strBuffer = System::importStatic($callback[0])->{$callback[1]}($arrData, $strBuffer, $this);
+                }
+            }
+
+            file_put_contents($targetPath . '_imports-' . $layoutAlias . '.scss', $strBuffer);
         }
 
         if (!$fs->exists($targetPath . 'layoutvars-' . $layoutAlias . '.scss')) {
@@ -46,9 +60,6 @@ class LayoutListener
         }
 
         return;
-        if (!$fs->exists($targetPath . '../../colorvars.scss')) {
-            (new KiwiColorListener())->updateScssFile();
-        }
     }
 
     /**

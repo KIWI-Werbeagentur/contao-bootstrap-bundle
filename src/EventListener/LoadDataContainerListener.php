@@ -4,6 +4,9 @@ namespace Kiwi\Contao\BootstrapBundle\EventListener;
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
+use Contao\Database;
+use Contao\StringUtil;
+use Contao\System;
 use Kiwi\Contao\CmxBundle\DataContainer\PaletteManipulatorExtended;
 
 #[AsHook('loadDataContainer', priority: -100)]
@@ -37,6 +40,11 @@ class LoadDataContainerListener
                 ->applyToSubpalette('addResponsiveChildren', 'tl_content')
                 ->applyToPalettes($GLOBALS['responsive']['tl_content']['includePalettes']['container'], 'tl_content');
 
+        }
+        if ($strTable == 'tl_layout') {
+            $GLOBALS['TL_DCA']['tl_layout']['fields']['framework']['default'] = array_unique(array_merge($GLOBALS['TL_DCA']['tl_layout']['fields']['framework']['default'] ?? [],["layout.css", "responsive.css", "bs_styles"]));
+            $strDefaults = serialize($GLOBALS['TL_DCA']['tl_layout']['fields']['framework']['default']);
+            $GLOBALS['TL_DCA']['tl_layout']['fields']['framework']['sql'] = "varchar(255) NOT NULL default '$strDefaults'";
         }
     }
 }
