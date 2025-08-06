@@ -2,14 +2,19 @@
 
 namespace Kiwi\Contao\BootstrapBundle\Service;
 
+use Contao\Controller;
 use Kiwi\Contao\ResponsiveBaseBundle\Service\ResponsiveFrontendService;
 
 class BootstrapFrontendService extends ResponsiveFrontendService
 {
     public function getColClasses($strData, $varData = []): array
     {
-        if(self::propExists($varData, 'ptable') && !($GLOBALS['TL_DCA'][self::getProp($varData, 'ptable')]['fields']['responsiveRowCols'] ?? false)) {
-            return $this->getResponsiveClasses($strData, 'varColClasses');
+        if(self::propExists($varData, 'ptable')) {
+            Controller::loadDataContainer(self::getProp($varData, 'ptable'));
+
+            if(!($GLOBALS['TL_DCA'][self::getProp($varData, 'ptable')]['fields']['responsiveRowCols'] ?? false)) {
+                return $this->getResponsiveClasses($strData, 'varColClasses');
+            }
         }
         if (self::propExists($varData, 'responsiveOverwriteRowCols') ? self::getProp($varData, 'responsiveOverwriteRowCols') : true) {
             return $this->getResponsiveClasses($strData, 'varColClasses');
@@ -19,8 +24,12 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
     public function getOffsetClasses($strData, $varData = []): array
     {
-        if(self::propExists($varData, 'ptable') && !($GLOBALS['TL_DCA'][self::getProp($varData, 'ptable')]['fields']['responsiveRowCols'] ?? false)) {
-            return $this->getResponsiveClasses($strData, 'varOffsetClasses');
+        if(self::propExists($varData, 'ptable')) {
+            Controller::loadDataContainer(self::getProp($varData, 'ptable'));
+
+            if(!($GLOBALS['TL_DCA'][self::getProp($varData, 'ptable')]['fields']['responsiveRowCols'] ?? false)) {
+                return $this->getResponsiveClasses($strData, 'varOffsetClasses');
+            }
         }
         if (self::propExists($varData, 'responsiveOverwriteRowCols') ? self::getProp($varData, 'responsiveOverwriteRowCols') : true) {
             return $this->getResponsiveClasses($strData, 'varOffsetClasses');
