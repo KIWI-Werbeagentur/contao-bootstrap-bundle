@@ -20,7 +20,7 @@
 
 // Layout & components from theme
 {% block components %}
-    {{ bootstrapComponents }}
+    {{ bootstrapComponents|raw }}
 {% endblock components %}
 
 // Helpers
@@ -35,7 +35,7 @@
 
 // Custom
 {% block custom %}
-    {{ customStyles }};
+    {{ customStyles|raw }};
 {% endblock custom %}
 
 // Custom Styling
