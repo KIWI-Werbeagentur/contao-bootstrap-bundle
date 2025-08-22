@@ -4,10 +4,10 @@
     <?php $this->block('inner'); ?>
     <div class="mod_bootstrapNavbar__container container-fluid">
         <a class="navbar-brand" href="{{env::base_url}}<?= $this->localePrefix ?>">
-            <?php if($this->singleSRC->extension == "svg"): ?>
-                <?= file_get_contents($this->singleSRC->path) ?>
+            <?php if ($this->inlineSingleSRC): ?>
+                <?= $this->inlineSingleSRC ?>
             <?php else:?>
-            <img src="<?= $this->singleSRC->path ?>"  alt="<?= $this->alt ?>">
+                <img src="<?= $this->singleSRC ?>"  alt="<?= $this->alt ?>">
             <?php endif;?>
         </a>
         <button type="button" class="navbar-toggler burger burger--<?= $this->animation ?>" data-bs-toggle="collapse"

@@ -39,7 +39,12 @@ class BootstrapNavbar extends Module
             $GLOBALS['TL_FRAMEWORK_CSS'][] = 'bundles/kiwibootstrap/burger.css';
         }
 
-        $this->Template->singleSRC = FilesModel::findByPk($this->singleSRC);
+        $objFile = FilesModel::findByPk($this->singleSRC);
+        $this->Template->singleSRC = $objFile->path;
+
+        if ($objFile->extension == 'svg') {
+            $this->inlineSingleSRC = file_get_contents($objFile->path);
+        }
 
         $strLocalePrefix = '';
         if ($objPage->urlPrefix !== "") {
