@@ -1,5 +1,5 @@
 <form<?php if ($this->action): ?> action="<?= $this->action ?>"<?php endif; ?><?php if ($this->formId): ?>  id="<?= $this->formId ?>"<?php endif; ?> method="<?= $this->method ?>" enctype="<?= $this->enctype ?>"<?= $this->attributes ?><?= $this->novalidate ?><?php if ($this->ajax): ?> data-ajax-form="<?= $this->id ?>"<?php endif; ?>>
-  <div class="formbody row">
+  <div class="formbody <?= $this->bodyClasses ?? 'row' ?>">
     <?php if ($this->errors): ?>
       <?php foreach ($this->errors as $error): ?>
         <p class="error"><?= $error ?></p>
