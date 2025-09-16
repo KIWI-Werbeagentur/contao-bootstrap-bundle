@@ -1,8 +1,9 @@
 {
     "name": "kiwi/contao-bootstrap",
     "type": "contao-bundle",
+    "keywords": ["contao", "bootstrap", "grid", "responsive", "ccs-framework"],
     "description": "This Contao bundle implements the possibility to assign bootstrap (css-framework) grid classes to contents and therefore flexibly align them via the CMS.",
-    "license": "proprietary",
+    "license": "LGPL-3.0-or-later",
     "authors": [
         {
             "name": "Katrin Zimmermann",
@@ -21,10 +22,7 @@
         "php": "^8.3.11",
         "contao/core-bundle": "~5.3.18",
         "twbs/bootstrap": "~5.2.3",
-        "kiwi/contao-responsive-base": "^0.1"
-    },
-    "provide": {
-        "kiwi/responsive-framework": "^0.1"
+        "kiwi/contao-responsive-base": "^1.0"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.0"
