@@ -1,0 +1,33 @@
+services:
+  Kiwi\Contao\BootstrapBundle\Migration\Version6\Version6Update:
+    tags:
+      - { name: contao.migration, priority: 0 }
+    arguments:
+      - '@filesystem'
+      - '%kernel.project_dir%'
+
+  Kiwi\Contao\BootstrapBundle\Migration\Version6\LayoutContentAlignment:
+    tags:
+      - { name: contao.migration, priority: 0 }
+    arguments:
+      - '@database_connection'
+
+  Kiwi\Contao\BootstrapBundle\Migration\SymlinkJsMigration:
+    tags:
+      - { name: contao.migration, priority: 0 }
+    arguments:
+      - '@filesystem'
+      - '%kernel.project_dir%'
+
+  Kiwi\Contao\BootstrapBundle\Migration\Version6\RowColsImport:
+    tags:
+      - { name: contao.migration, priority: 0 }
+    arguments:
+      - '@database_connection'
+      - '@filesystem'
+
+  Kiwi\Contao\BootstrapBundle\Migration\Version6\WrapperToElementGroup:
+    tags:
+      - { name: contao.migration, priority: -1000 } # run it last, as it might fail, reporting data that has to be migrated manually
+    arguments:
+      - '@database_connection'

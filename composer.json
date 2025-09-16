@@ -1,0 +1,43 @@
+{
+    "name": "kiwi/contao-bootstrap",
+    "type": "contao-bundle",
+    "description": "This Contao bundle implements the possibility to assign bootstrap (css-framework) grid classes to contents and therefore flexibly align them via the CMS.",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Katrin Zimmermann",
+            "homepage": "https://github.com/diekatrin"
+        },
+        {
+            "name": "Patrick Josupeit",
+            "homepage": "https://gitlab.com/patrickjDE"
+        },
+        {
+            "name": "KIWI. Werbeagentur GmbH",
+            "homepage": "https://www.kiwi.de"
+        }
+    ],
+    "require": {
+        "php": "^8.3.11",
+        "contao/core-bundle": "~5.3.18",
+        "twbs/bootstrap": "~5.2.3"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.0"
+    },
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0",
+        "kiwi/contao-wrapper-bundle": "<1.0.0"
+    },
+    "suggest": {
+        "kiwi/contao-wrapper-bundle": "Wrapper to group multiple Elements into cols or containers."
+    },
+    "autoload": {
+        "psr-4" : {
+            "Kiwi\\Contao\\Bootstrap\\" : "src/"
+        }
+    },
+    "extra":{
+        "contao-manager-plugin": "Kiwi\\Contao\\Bootstrap\\ContaoManager\\Plugin"
+    }
+}

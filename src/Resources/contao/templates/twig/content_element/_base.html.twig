@@ -1,0 +1,44 @@
+{% extends "@Contao/content_element/_base.html.twig" %}
+
+{% if data.layout_content_alignment is defined and data.layout_content_alignment  %}
+  {% set attributes = attrs(attributes|default)
+    .addClass('text-' ~ data.layout_content_alignment)
+  %}
+{% endif %}
+
+{% if type == 'headline' and data.bootstrap_headline_class %}
+    {% set attributes = attrs(attributes|default).addClass(data.bootstrap_headline_class) %}
+{% endif %}
+
+{% if data.col is defined and data.col %}
+    {% set attributes = attrs(attributes|default)
+        .addClass(data|getBootstrapColumnClasses)
+    %}
+{% endif %}
+
+{% if data.hyperlink_button is defined and data.hyperlink_button %}
+    {% set link_attributes = attrs(link_attributes|default)
+        .addClass(data|getBootstrapButtonClasses)
+    %}
+{% endif %}
+
+{#
+  ** Add changes to the base template here. **
+
+  Hint: Try adjusting blocks and attributes instead of
+  overwriting the whole template. This way your version
+  can remain compatible with future changes to the base
+  template as well as adjustments made by extensions.
+
+  Currently available blocks:
+    "headline_component", "headline_attributes",
+    "headline_inner", "wrapper", "wrapper_tag",
+    "attributes", "inner", "content", "metadata",
+    "style", "script"
+
+  Example:
+    {% block headline_component %}
+       {{ parent() }}
+       My additional content for 'headline_component'…
+    {% endblock %}
+#}

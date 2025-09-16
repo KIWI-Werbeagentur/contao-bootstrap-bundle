@@ -1,0 +1,10 @@
+services:
+  kiwi.contao.bootstrap.generate_page_listener:
+    class: Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener
+  kiwi.contao.bootstrap.get_attributes_from_dca_listener:
+    class: Kiwi\Contao\BootstrapBundle\EventListener\GetAttributesFromDcaListener
+  Kiwi\Contao\BootstrapBundle\Twig\BootstrapExtension:
+    arguments:
+      - '@contao.image.studio'
+    tags:
+      - 'twig.extension'

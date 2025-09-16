@@ -1,0 +1,10 @@
+
+<div id="<?= \Contao\StringUtil::standardize($this->id, true) ?>">
+    <div class="custom-container container-fluid">
+        <div class="inside">
+            <div class="row">
+                <?= $this->content ?>
+            </div>
+        </div>
+    </div>
+</div>

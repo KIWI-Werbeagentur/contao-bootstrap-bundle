@@ -1,0 +1,32 @@
+{% extends "@Contao/content_element/element_group.html.twig" %}
+
+{% set attributes = attrs()
+    .addClass(data|getBootstrapContainerClasses)
+    .mergeWith(attributes|default)
+%}
+
+{% set inside_attributes = attrs()
+    .addClass(['inside', 'row'])
+    .addClass(data|getInsideClasses)
+    .mergeWith(inside_attributes|default)
+%}
+
+{% if data.addBackgroundImage is defined and data.addBackgroundImage %}
+    {% set inside_attributes = attrs()
+        .addClass(['wrapperBackgroundImage', "#{type}-#{data.id}"])
+        .mergeWith(inside_attributes|default)
+    %}
+{% endif %}
+
+{% block inner %}
+    <div{% block inside_attributes %}{{ inside_attributes }}{% endblock %}>
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block style %}
+    {% if data.addBackgroundImage is defined and data.addBackgroundImage %}
+        {{ data|getBackgroundImageStyleTag|raw }}
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

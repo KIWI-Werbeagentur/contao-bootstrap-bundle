@@ -1,0 +1,32 @@
+
+<!-- indexer::stop -->
+<div class="pagination-container block">
+
+    <ul class="pagination">
+        <?php if ($this->hasFirst): ?>
+            <li class="page-item first"><a href="<?= $this->first['href'] ?>" class="page-link first" title="<?= $this->first['title'] ?>"><?= $this->first['link'] ?></a></li>
+        <?php endif; ?>
+
+        <?php if ($this->hasPrevious): ?>
+            <li class="page-item previous"><a href="<?= $this->previous['href'] ?>" class="page-link previous" title="<?= $this->previous['title'] ?>"><?= $this->previous['link'] ?></a></li>
+        <?php endif; ?>
+
+        <?php foreach ($this->pages as $page): ?>
+            <?php if ($page['href'] === null): ?>
+                <li class="page-item active"><span class="page-link current"><?= $page['page'] ?></span></li>
+            <?php else: ?>
+                <li class="page-item"><a href="<?= $page['href'] ?>" class="page-link link" title="<?= $page['title'] ?>"><?= $page['page'] ?></a></li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <?php if ($this->hasNext): ?>
+            <li class="page-item next"><a href="<?= $this->next['href'] ?>" class="page-link next" title="<?= $this->next['title'] ?>"><?= $this->next['link'] ?></a></li>
+        <?php endif; ?>
+
+        <?php if ($this->hasLast): ?>
+            <li class="page-item last"><a href="<?= $this->last['href'] ?>" class="page-link last" title="<?= $this->last['title'] ?>"><?= $this->last['link'] ?></a></li>
+        <?php endif; ?>
+    </ul>
+
+</div>
+<!-- indexer::continue -->

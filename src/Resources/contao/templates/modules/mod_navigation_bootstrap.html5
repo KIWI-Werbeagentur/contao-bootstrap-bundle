@@ -1,0 +1,23 @@
+<!-- using this template is DEPRECATED - use the BootstrapNavbar Module instead -->
+
+<!-- indexer::stop -->
+<nav class="<?= $this->class ?> block navbar"<?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif; ?> itemscope itemtype="http://schema.org/SiteNavigationElement">
+
+    <?php if ($this->headline): ?>
+        <<?= $this->hl ?>><?= $this->headline ?></<?= $this->hl ?>>
+    <?php endif; ?>
+
+    <a href="<?= $this->request ?>#<?= $this->skipId ?>" class="invisible"><?= $this->skipNavigation ?></a>
+
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-<?= $this->id ?>" aria-controls="navbar-collapse-<?= $this->id ?>" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar-collapse-<?= $this->id ?>">
+        <?= $this->items ?>
+    </div>
+
+    <a id="<?= $this->skipId ?>" class="invisible">&nbsp;</a>
+
+</nav>
+<!-- indexer::continue -->

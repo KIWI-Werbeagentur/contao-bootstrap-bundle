@@ -1,0 +1,16 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+
+
+  <?php if (empty($this->articles)): ?>
+    <p class="empty"><?= $this->empty ?></p>
+  <?php else: ?>
+    <?php if($this->newslistAddBootstrap){echo '<div class="row">';}?>
+        <?= implode('', $this->articles) ?>
+    <?php if($this->newslistAddBootstrap){echo '</div>';}?>
+        <?= $this->pagination ?>
+
+  <?php endif; ?>
+
+<?php $this->endblock(); ?>
