@@ -11,13 +11,17 @@
         },
         {
             "name": "Patrick Josupeit",
-            "homepage": "https://gitlab.com/patrickjDE"
+            "homepage": "https://github.com/patrickjDE"
         },
         {
             "name": "KIWI. Werbeagentur GmbH",
             "homepage": "https://www.kiwi.de"
         }
     ],
+    "suggest": {
+        "kiwi/contao-blueprints": "Simplifies content creation with bootstrap settings for editors",
+        "kiwi/contao-designer": "Manage bootstrap design settings via klickibunti in the CMS"
+    },
     "require": {
         "php": "^8.3.11",
         "contao/core-bundle": "~5.3.18",
