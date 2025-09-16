@@ -33,13 +33,13 @@ Create responsive fields yourself by using the integrated **ResponsiveWidget** o
 ### Installation <a name="installation"></a>
 Install the bundle via composer
  ```
-composer require kiwi/contao-bootstrap-bundle
+composer require kiwi/contao-bootstrap
  ```
 
 ### Implementation <a name="implementation"></a>
 **Step 1: (Re-)store themes**
 
-Go to themes (<em>/contao?do=themes</em>) and create or edit a theme. Choose the bootstrap that shall be loaded or chose none to load all – in any case you need to restore the theme. 
+Go to themes (<em>/contao?do=themes</em>) and create or edit a theme. Choose the bootstrap components that shall be loaded or chose none to load all – in any case you need to restore the theme. 
 
 
 **Step 2: (Re-)store layouts**
