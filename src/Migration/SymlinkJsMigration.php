@@ -27,7 +27,7 @@ class SymlinkJsMigration extends AbstractMigration
 
     public function shouldRun(): bool
     {
-        if (!$this->filesystem->exists($this->projectDir . '/vendor/kiwi/contao-bootstrap-bundle/public/twbs-combined')) {
+        if (!$this->filesystem->exists($this->projectDir . '/vendor/kiwi/contao-bootstrap/public/twbs-combined')) {
             return true;
         }
 
@@ -37,7 +37,7 @@ class SymlinkJsMigration extends AbstractMigration
     public function run(): MigrationResult
     {
         try {
-            $this->filesystem->symlink($this->projectDir . '/vendor/twbs/bootstrap/dist/js', $this->projectDir . '/vendor/kiwi/contao-bootstrap-bundle/public/twbs-combined');
+            $this->filesystem->symlink($this->projectDir . '/vendor/twbs/bootstrap/dist/js', $this->projectDir . '/vendor/kiwi/contao-bootstrap/public/twbs-combined');
         } catch (IOException $e) {
             return $this->createResult(false, $e->getMessage());
         }

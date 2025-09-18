@@ -11,7 +11,7 @@
 @import "__BOOTSTRAP-STYLES__/functions";
 @import "../themevars-__THEMENAME__";
 @import "layoutvars-__LAYOUTNAME__";
-@import "../../../../vendor/kiwi/contao-bootstrap-bundle/assets/customization/row-cols-import.scss";
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/row-cols-import.scss";
 @import "__BOOTSTRAP-STYLES__/variables";
 @import "__BOOTSTRAP-STYLES__/maps";
 $theme-colors: map-merge($theme-colors, $colors);
