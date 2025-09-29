@@ -37,7 +37,7 @@ class SymlinkJsMigration extends AbstractMigration
     public function run(): MigrationResult
     {
         try {
-            $this->filesystem->symlink($this->projectDir . '/vendor/twbs/bootstrap/dist/js', $this->projectDir . '/vendor/kiwi/contao-bootstrap/public/twbs-combined');
+            $this->filesystem->symlink('../../../twbs/bootstrap/dist/js', $this->projectDir . '/vendor/kiwi/contao-bootstrap/public/twbs-combined');
         } catch (IOException $e) {
             return $this->createResult(false, $e->getMessage());
         }
