@@ -26,7 +26,7 @@
         "php": "^8.3.11",
         "contao/core-bundle": "~5.3.18",
         "twbs/bootstrap": "~5.2.3",
-        "kiwi/contao-responsive-base": "^1.0"
+        "kiwi/contao-responsive-base": "^1.0 || dev-main"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.0"
