@@ -5,6 +5,7 @@ namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
+use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
 
@@ -13,6 +14,9 @@ class Content
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
     public function addOverwriteOption(DataContainer $objDca)
     {
+        //Bug: Loads content with article-id when opening content-overview of article --> leads to permission errors
+        if(Input::get("do") == 'article' && Input::get("table") == 'tl_content' && !Input::get("act") == 'edit') return;
+
         if (!$objDca->getCurrentRecord()) return;
 
         $strPtable = $objDca->getCurrentRecord()['ptable'];
