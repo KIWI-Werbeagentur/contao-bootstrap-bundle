@@ -44,27 +44,38 @@ class ThemeListener
         $fs = new Filesystem();
 
         $themeAlias = $objDca->activeRecord->alias;
-        $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias;
+        $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/';
+        $themePath = $targetPath . $themeAlias;
 
         if (!$themeAlias) {
             return;
         }
 
-        if (!$fs->exists($targetPath)) {
-            $fs->mkdir($targetPath);
+        if (!$fs->exists($themePath)) {
+            $fs->mkdir($themePath);
         }
 
-        if (!$fs->exists($targetPath . '/themevars-' . $themeAlias . '.scss')) {
-            file_put_contents($targetPath . '/' . 'themevars-' . $themeAlias . '.scss', '// Hier können Bootstrap-Variablen für alle Layouts des Themes überschrieben werden.' . "\n" . '// Eine Datei mit allen möglichen Variablen findet sich unter "vendor/twbs/scss/_variables.scss".');
+        if (!$fs->exists($themePath . '/themevars-' . $themeAlias . '.scss')) {
+            file_put_contents($themePath . '/' . 'themevars-' . $themeAlias . '.scss', '// Hier können Bootstrap-Variablen für alle Layouts des Themes überschrieben werden.' . "\n" . '// Eine Datei mit allen möglichen Variablen findet sich unter "vendor/twbs/scss/_variables.scss".');
         }
 
-        if (!$fs->exists($targetPath . '/theme-' . $themeAlias . '.scss')) {
-            $fs->touch($targetPath . '/theme-' . $themeAlias . '.scss');
+        if (!$fs->exists($themePath . '/theme-' . $themeAlias . '.scss')) {
+            $fs->touch($themePath . '/theme-' . $themeAlias . '.scss');
+        }
+
+        foreach(['spacings'] as $style){
+            if (!$fs->exists("$targetPath/_$style.scss")) {
+                $arrData = [
+                    'sizes' => implode(", ",(new $GLOBALS['responsive']['config']())->getSpacings()),
+                ];
+                $strBuffer = System::getContainer()->get('twig')->render("@Contao/responsive/$style.scss.twig", $arrData);
+                file_put_contents("{$targetPath}_$style.scss", $strBuffer);
+            }
         }
 
         $objTheme = $objDca->activeRecord;
         $themeAlias = $objTheme->alias;
-        $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
+        $themePath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
 
         $arrComponents = [];
         if ($GLOBALS['responsive']['bootstrapComponents']) {
@@ -76,6 +87,6 @@ class ThemeListener
             }
         }
 
-        file_put_contents($targetPath . '_imports-' . $themeAlias . '.scss', implode("\n", $arrComponents));
+        file_put_contents($themePath . '_imports-' . $themeAlias . '.scss', implode("\n", $arrComponents));
     }
 }

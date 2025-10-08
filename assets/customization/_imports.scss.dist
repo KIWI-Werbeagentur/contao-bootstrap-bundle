@@ -6,8 +6,8 @@
  */
 
 // Configuration
-//@import "../../colorvars";
-//@import "../../schemes";
+//@import "../../_colorvars";
+//@import "../../_schemes";
 @import "__BOOTSTRAP-STYLES__/functions";
 @import "../themevars-__THEMENAME__";
 @import "layoutvars-__LAYOUTNAME__";

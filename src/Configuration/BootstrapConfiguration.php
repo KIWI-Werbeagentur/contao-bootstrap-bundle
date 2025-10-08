@@ -134,7 +134,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return array_keys($this->arrRowCols);
     }
 
-    protected array $arrRowColsDefaults = ['xs' => 1, 'lg' => 2];
+    protected array $arrRowColsDefaults = ['xs' => 1];
 
     #[AsCallback(table: 'tl_module', target: 'config.onload')]
     #[AsCallback(table: 'tl_theme', target: 'config.onload')]

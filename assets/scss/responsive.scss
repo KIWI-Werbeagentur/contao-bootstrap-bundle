@@ -1,0 +1,11 @@
+[data-responsive] {
+  display: none;
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  [data-responsive-#{$breakpoint}] {
+    @include media-breakpoint-only(#{$breakpoint}) {
+      display: block;
+    }
+  }
+}
