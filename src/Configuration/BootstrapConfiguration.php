@@ -29,6 +29,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     ];
 
     public string $strContainerDefault = 'container';
+    public string $strContainerDefaultLayout = 'container-fluid';
 
     public array $arrCols = [
         12 => 'col{{modifier}}-12',
