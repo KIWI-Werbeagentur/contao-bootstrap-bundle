@@ -25,7 +25,7 @@
     "require": {
         "php": "^8.3.11",
         "contao/core-bundle": "^5.3",
-        "twbs/bootstrap": "~5.2.3",
+        "twbs/bootstrap": "~5.3.8",
         "kiwi/contao-responsive-base": "^1.0 || dev-main"
     },
     "require-dev": {
