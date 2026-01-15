@@ -9,7 +9,7 @@ use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
     // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
-    public array $arrBreakpoints = [
+    protected array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => '', 'container' => '100%'],
         'sm' => ['breakpoint' => 576, 'modifier' => '-sm', 'container' => '540px'],
         'md' => ['breakpoint' => 768, 'modifier' => '-md', 'container' => '720px'],
@@ -18,7 +18,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xxl' => ['breakpoint' => 1400, 'modifier' => '-xxl', 'container' => '1320px'],
     ];
 
-    public array $arrContainerSizes = [
+    protected array $arrContainerSizes = [
         'container-fluid' => 'container-fluid',
         'container' => 'container',
         'container-sm' => 'container-sm',
@@ -28,12 +28,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'container-xxl' => 'container-xxl',
     ];
 
-    public string $strContainerDefault = 'container';
-    public string $strContainerDefaultLayout = 'container-fluid';
+    protected string $strContainerDefault = 'container';
+    protected string $strContainerDefaultLayout = 'container-fluid';
 
-    public string $strRow = 'row';
+    protected string $strRow = 'row';
 
-    public array $arrCols = [
+    protected array $arrCols = [
         12 => 'col{{modifier}}-12',
         11 => 'col{{modifier}}-11',
         10 => 'col{{modifier}}-10',
@@ -51,9 +51,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'hidden' => 'd{{modifier}}-none-only',
     ];
 
-    public array $arrColsDefaults = ['xs' => 12];
+    protected array $arrColsDefaults = ['xs' => 12];
 
-    public array $arrOffsets = [
+    protected array $arrOffsets = [
         'none' => 'offset{{modifier}}-0',
         'auto' => 'ms{{modifier}}-auto',
         1 => 'offset{{modifier}}-1',
@@ -70,11 +70,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         12 => 'offset{{modifier}}-12',
     ];
 
-    public
-    array $arrOffsetsDefaults = ['xs' => 'none'];
+    protected array $arrOffsetsDefaults = ['xs' => 'none'];
 
-    public
-    array $arrSpacings = [
+    protected array $arrSpacings = [
         'default' => 'p{{direction}}{{modifier}}-default',
         'none' => 'p{{direction}}{{modifier}}-none',
         'gap' => 'p{{direction}}{{modifier}}-gap',
@@ -86,37 +84,21 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xl' => 'p{{direction}}{{modifier}}-xl',
     ];
 
-    public
-    array $arrSpacingsDefaults = ['xs' => 'default'];
+    protected array $arrSpacingsDefaults = ['xs' => 'default'];
 
-    public
-    array|string $varOrderClasses {
-        get => "order{{modifier}}-{{value}}";
-    }
+    protected array|string $varOrderClasses = [];
 
-    public array|string $varAlignSelfClasses {
-        get => "align-self{{modifier}}-{{value}}";
-    }
+    protected array|string $varAlignSelfClasses = [];
 
-    public array|string $varFlexDirectionClasses {
-        get => "flex{{modifier}}-{{value}}";
-    }
+    protected array|string $varFlexDirectionClasses = [];
 
-    public array|string $varJustifyContentClasses {
-        get => "justify-content{{modifier}}-{{value}}";
-    }
+    protected array|string $varJustifyContentClasses = [];
 
-    public array|string $varAlignItemsClasses {
-        get => "align-items{{modifier}}-{{value}}";
-    }
+    protected array|string $varAlignItemsClasses = [];
 
-    public array|string $varAlignContentClasses {
-        get => "align-content{{modifier}}-{{value}}";
-    }
+    protected array|string $varAlignContentClasses = [];
 
-    public array|string $varFlexWrapClasses {
-        get => "flex{{modifier}}-{{value}}";
-    }
+    protected array|string $varFlexWrapClasses = [];
 
     protected array $arrRowCols = [
         'auto' => 'row-cols{{modifier}}-auto',
@@ -128,8 +110,21 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         6 => 'row-cols{{modifier}}-6',
     ];
 
-    public array|string $varRowColsClasses {
-        get => $this->arrRowCols;
+    protected array|string $varRowColsClasses = [];
+
+    public function __get(string $name)
+    {
+        return match ($name) {
+            'varOrderClasses' => "order{{modifier}}-{{value}}",
+            'varAlignSelfClasses' => "align-self{{modifier}}-{{value}}",
+            'varFlexDirectionClasses' => "flex{{modifier}}-{{value}}",
+            'varJustifyContentClasses' => "justify-content{{modifier}}-{{value}}",
+            'varAlignItemsClasses' => "align-items{{modifier}}-{{value}}",
+            'varAlignContentClasses' => "align-content{{modifier}}-{{value}}",
+            'varFlexWrapClasses' => "flex{{modifier}}-{{value}}",
+            'varRowColsClasses' => $this->arrRowCols,
+            default => parent::__get($name),
+        };
     }
 
     public function getRowCols(): array
