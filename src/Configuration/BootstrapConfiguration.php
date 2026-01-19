@@ -85,6 +85,8 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     ];
 
     protected array $arrSpacingsDefaults = ['xs' => 'default'];
+    protected array $arrSpacingTopDefaults = ['xs' => 'default'];
+    protected array $arrSpacingBottomDefaults = ['xs' => 'default'];
 
     protected array|string $varOrderClasses = [];
 
