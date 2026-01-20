@@ -1,5 +1,9 @@
 <?php
 
+$GLOBALS['TL_LANG']['responsive']['flexContent']['between'] = "Verteilt [space-between]";
+$GLOBALS['TL_LANG']['responsive']['flexContent']['around'] = "Verteilt mit halben Platz nach außen [space-around]";
+$GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Verteilt mit Platz nach außen [space-evenly]";
+
 $GLOBALS['TL_LANG']['responsive']['spacings']['default'][0] = "Standard [default]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0] = "Kein Abstand [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0] = "Halber Rasterabstand [gap]";

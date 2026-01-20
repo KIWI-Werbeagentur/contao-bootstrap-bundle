@@ -114,6 +114,29 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     protected array|string $varRowColsClasses = [];
 
+    public function __construct($objDca = null)
+    {
+        parent::__construct($objDca);
+
+        $this->arrAlignmentContent = [
+            'normal' => 'normal',
+            'start' => 'start',
+            'center' => 'center',
+            'end' => 'end',
+            'between' => 'between',
+            'around' => 'around',
+            'evenly' => 'evenly'
+        ];
+
+        $this->arrIcons['alignContent']['around'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-around.svg";
+        $this->arrIcons['alignContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-evenly.svg";
+        $this->arrIcons['alignContent']['between'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-between.svg";
+
+        $this->arrIcons['justifyContent']['around'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-around.svg";
+        $this->arrIcons['justifyContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-evenly.svg";
+        $this->arrIcons['justifyContent']['between'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-between.svg";
+    }
+
     public function __get(string $name)
     {
         return match ($name) {
