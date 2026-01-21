@@ -43,6 +43,6 @@ $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveC
 */
 
 PaletteManipulator::create()
+    ->removeField('perRow','image_legend')
     ->addField('responsiveRowCols','perRow', PaletteManipulator::POSITION_BEFORE)
-    ->removeField('preRowCols','image_legend')
     ->applyToPalette('gallery', 'tl_content');
