@@ -1,0 +1,5 @@
+{% extends '@Contao/content_element/gallery.html.twig' %}
+
+{% block list_attributes %}
+    {{ list_attributes.addClass(getAllInnerContainerClasses(data)|join(" ")) }}
+{% endblock %}

@@ -36,3 +36,17 @@ $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_'] = 'respo
 $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_0'] = 'responsiveOverwriteRowCols';
 
 $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveContainerSizes'] = "responsiveRowCols," . implode(',', array_keys($GLOBALS['TL_DCA']['container']['fields'] ?? []));
+
+
+/*
+    * GALLERY
+*/
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['perRow'] = [
+    'inputType' => 'responsive',
+    'responsiveInputType' => 'iconedSelect',
+    'eval' => ['tl_class' => "clr"],
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getRowCols'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols']['options'],
+    'sql' => "blob NULL"
+];
