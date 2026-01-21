@@ -42,11 +42,7 @@ $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveC
     * GALLERY
 */
 
-$GLOBALS['TL_DCA']['tl_content']['fields']['perRow'] = [
-    'inputType' => 'responsive',
-    'responsiveInputType' => 'iconedSelect',
-    'eval' => ['tl_class' => "clr"],
-    'options_callback' => [$GLOBALS['responsive']['config'], 'getRowCols'],
-    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols']['options'],
-    'sql' => "blob NULL"
-];
+PaletteManipulator::create()
+    ->addField('responsiveRowCols','perRow', PaletteManipulator::POSITION_BEFORE)
+    ->removeField('preRowCols','image_legend')
+    ->applyToPalette('gallery', 'tl_content');
