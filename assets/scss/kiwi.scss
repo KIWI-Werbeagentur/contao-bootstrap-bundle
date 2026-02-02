@@ -163,3 +163,9 @@
     }
   }
 }
+@scope (.flex-row.align-items-stretch) to (.main__content > *) {
+  .content__main,
+  .main__content {
+    height: 100%;
+  }
+}
