@@ -10,9 +10,10 @@ class ModuleListener
 {
     public function getOtherModules(DataContainer $objDca): array
     {
+        $arrModules = [];
         $objModules = ModuleModel::findBy('pid', $objDca->activeRecord->pid);
 
-        while ($objModules->next()) {
+        while ($objModules !== null && $objModules->next()) {
             if($objModules->id == $objDca->id || !($GLOBALS['FE_MOD']['navigationMenu'][$objModules->type] ?? false)) continue;
             $arrModules[$objModules->id] = $objModules->name . ' (ID ' . $objModules->id . ')';
         }
