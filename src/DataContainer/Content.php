@@ -25,7 +25,7 @@ class Content
 
         if (!array_key_exists('responsiveRowCols',$objParentModel->row())) return;
 
-        $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols) ?? [];
+        $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols, true);
 
         // Rearrange palette, when parent has row-cols set
         foreach ($GLOBALS['TL_DCA'][$objDca->table]['palettes'] as $strPalette => $varFields) {
