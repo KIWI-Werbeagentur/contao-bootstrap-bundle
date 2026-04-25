@@ -14,11 +14,17 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['responsiveRowCols'] = $GLOBALS['TL_DC
 
 
 //Navbar
-$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,alt;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl,breakpoint,animation,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,alt,inlineSvg;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl,breakpoint,animation,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['fields']['alt'] = [
     'inputType' => 'text',
     'eval' => ['tl_class' => 'w50', 'maxlength' => 255],
     'sql' => "varchar(255) NOT NULL default ''"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['inlineSvg'] = [
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'w50 m12'],
+    'sql' => "char(1) NOT NULL default ''"
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['module'] = [

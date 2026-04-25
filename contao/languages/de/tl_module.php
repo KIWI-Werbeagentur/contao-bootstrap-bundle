@@ -4,6 +4,8 @@ $GLOBALS['TL_LANG']['tl_module']['alt'] = [
     0 => "Alternativtext",
 ];
 
+$GLOBALS['TL_LANG']['tl_module']['inlineSvg'] = ['Inline-SVG', 'Logo inline als SVG-Tag einbinden.'];
+
 $GLOBALS['TL_LANG']['tl_module']['breakpoint'] = [
     0 => "Breakpoint",
     1 => "Geben Sie an, ab welchem Viewport die Navigations in Desktopansicht dargestellt werden soll."

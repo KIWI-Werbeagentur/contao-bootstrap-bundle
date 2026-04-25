@@ -8,6 +8,7 @@ use Contao\Module;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
+use enshrined\svgSanitize\Sanitizer;
 use Symfony\Component\HttpFoundation\Request;
 
 class BootstrapNavbar extends Module
@@ -40,10 +41,29 @@ class BootstrapNavbar extends Module
         }
 
         $objFile = FilesModel::findByPk($this->singleSRC);
-        $this->Template->singleSRC = $objFile->path;
 
-        if ($objFile->extension == 'svg') {
-            $this->inlineSingleSRC = file_get_contents($objFile->path);
+        if ($objFile !== null) {
+            $this->Template->singleSRC = $objFile->path;
+
+            if ($this->inlineSvg && strtolower((string)$objFile->extension) === 'svg') {
+                $strAbsolutePath = System::getContainer()->getParameter('kernel.project_dir') . '/' . $objFile->path;
+
+                if (is_file($strAbsolutePath) && is_readable($strAbsolutePath)) {
+                    $strSvg = file_get_contents($strAbsolutePath);
+
+                    if ($strSvg !== false) {
+                        $sanitizer = new Sanitizer();
+                        $sanitizer->removeXMLTag(true);
+                        $strSvg = $sanitizer->sanitize($strSvg);
+
+                        if ($strSvg !== false) {
+                            // Strip any remaining DOCTYPE / leading whitespace before <svg
+                            $strSvg = preg_replace('/^.*?(?=<svg\b)/is', '', $strSvg);
+                            $this->Template->inlineSingleSRC = $strSvg;
+                        }
+                    }
+                }
+            }
         }
 
         $strLocalePrefix = '';
