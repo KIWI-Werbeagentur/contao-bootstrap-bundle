@@ -2,7 +2,6 @@
 
 namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
-use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
 use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
@@ -159,13 +158,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     protected array $arrRowColsDefaults = ['xs' => 1];
 
-    #[AsCallback(table: 'tl_module', target: 'config.onload')]
-    #[AsCallback(table: 'tl_theme', target: 'config.onload')]
-    #[AsCallback(table: 'tl_layout', target: 'config.onload')]
-    #[AsCallback(table: 'tl_article', target: 'config.onload')]
-    #[AsCallback(table: 'tl_content', target: 'config.onload')]
-    #[AsCallback(table: 'tl_form', target: 'config.onload')]
-    #[AsCallback(table: 'tl_form_field', target: 'config.onload')]
     public function getDefaults(DataContainer $objDca): void
     {
         $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive']['config'])->arrRowColsDefaults;
