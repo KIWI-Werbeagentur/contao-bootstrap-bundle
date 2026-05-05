@@ -5,3 +5,7 @@ services:
   Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\AlterResponsiveValues: ~
+  Kiwi\Contao\BootstrapBundle\CacheWarmer\TwbsAssetSymlinkWarmer:
+    arguments:
+      - '@filesystem'
+      - '%kernel.project_dir%'

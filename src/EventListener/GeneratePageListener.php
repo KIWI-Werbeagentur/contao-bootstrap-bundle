@@ -45,6 +45,6 @@ class GeneratePageListener
         // Breakpoints
         $GLOBALS['TL_JAVASCRIPT'][] = 'responsive/breakpoints.js';
         // Bootstrap js
-        $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/kiwibootstrap/twbs-combined/bootstrap.bundle.min.js|static';
+        $GLOBALS['TL_JAVASCRIPT'][] = 'assets/kiwi-twbs-bootstrap/js/bootstrap.bundle.min.js|static';
     }
 }
