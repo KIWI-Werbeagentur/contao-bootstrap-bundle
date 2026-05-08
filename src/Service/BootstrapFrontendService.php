@@ -53,6 +53,17 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varGutterClasses');
     }
 
+    /**
+     * Bootstrap responsive row-gap utilities (row-gap-* per breakpoint). Output lands on the same
+     * tag as `.row` via {@see self::getAllInnerContainerClasses()}.
+     *
+     * @return list<string>
+     */
+    public function getRowGapClasses(?string $strData): array
+    {
+        return $this->getResponsiveClasses($strData, 'varRowGapClasses');
+    }
+
     public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article'): array
     {
         $arrSpecs = [
@@ -73,16 +84,36 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table), $arrBootstrapClasses);
     }
 
-    public function getAllInnerContainerClasses($varData, array $arrFields = []): array
+    public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content'): array
     {
-        $arrBootstrapClasses = array_merge(
-            [
-                "row"
-            ],
-            $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols')),
-            $this->getGutterClasses(self::getProp($varData, $arrFields['gutter'] ?? 'responsiveGutter')),
-        );
+        $arrSpecs = [
+            ['rowCols', 'responsiveRowCols', 'getRowColsClasses'],
+            ['gutter',  'responsiveGutter',  'getGutterClasses'],
+            ['rowGap',  'responsiveRowGap',  'getRowGapClasses'],
+        ];
 
-        return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields));
+        $type = self::getProp($varData, 'type') ?: null;
+
+        $arrBootstrapClasses = [];
+        foreach ($arrSpecs as [$strKey, $strDefaultField, $strMethod]) {
+            $strField = $arrFields[$strKey] ?? $strDefaultField;
+            if (!$this->isFieldInPalette($strField, $type, $table)) {
+                continue;
+            }
+            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod(self::getProp($varData, $strField)));
+        }
+
+        $arrParentClasses = parent::getAllInnerContainerClasses($varData, $arrFields, $table);
+
+        // The structural `row` class enables the Bootstrap flex layout that makes the col-*,
+        // flex-direction, justify-content, etc. utilities produced above and by the parent
+        // take effect. Emit it only when at least one of those is actually being applied -
+        // otherwise we would slap `.row` onto wrappers of element types that have no
+        // responsive container settings at all.
+        if ($arrBootstrapClasses || $arrParentClasses) {
+            return array_merge(['row'], $arrBootstrapClasses, $arrParentClasses);
+        }
+
+        return [];
     }
 }
