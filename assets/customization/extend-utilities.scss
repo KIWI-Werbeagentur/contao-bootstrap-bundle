@@ -1,0 +1,16 @@
+/* Backport Bootstrap 5.3's row-gap utility on top of Bootstrap 5.2's $utilities map.
+ * Drop this map-merge when migrating to Bootstrap 5.3+; row-gap is included upstream there.
+ * Output classes (row-gap-N, row-gap-{bp}-N) match 5.3 exactly so existing CSS keeps working
+ * after the migration. */
+$utilities: map-merge($utilities, (
+  "row-gap": (
+    responsive: true,
+    property: row-gap,
+    class: row-gap,
+    values: $spacers
+  ),
+));
+
+/* provide an easy extension point, so project-level extensions do not need to overwrite the whole $utilities variable */
+$modify-utilities: () !default;
+$utilities: map-merge($utilities, $modify-utilities);
