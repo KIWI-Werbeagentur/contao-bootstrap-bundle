@@ -7,6 +7,9 @@ use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
+    /** Menu token; emits .kiwi-gutter-x-default-{bp} only where it needs to override a prior gx-* size. */
+    public const GUTTER_DEFAULT = 'default';
+
     // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
     protected array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => '', 'container' => '100%'],
@@ -115,6 +118,35 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     protected array|string $varRowColsClasses = [];
 
+    /**
+     * Full enumeration of all gutter tokens to their class templates.
+     * Order is preserved in the BE menu via {@see self::getGutterSizeKeys()}.
+     * Projects extending the available spacers override this property (and the SCSS `$gutters` map).
+     *
+     * @var array<string, string>
+     */
+    protected array $arrGutterClasses = [
+        self::GUTTER_DEFAULT => 'kiwi-gutter-x-default{{modifier}}',
+        '0'   => 'gx{{modifier}}-0',
+        '1'   => 'gx{{modifier}}-1',
+        '2'   => 'gx{{modifier}}-2',
+        '3'   => 'gx{{modifier}}-3',
+        '4'   => 'gx{{modifier}}-4',
+        '5'   => 'gx{{modifier}}-5',
+        '6'   => 'gx{{modifier}}-6',
+        '7'   => 'gx{{modifier}}-7',
+        '8'   => 'gx{{modifier}}-8',
+        '9'   => 'gx{{modifier}}-9',
+        '10'  => 'gx{{modifier}}-10',
+    ];
+
+    /**
+     * Default gutter selection per breakpoint.
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrGutterDefaults = ['xs' => self::GUTTER_DEFAULT];
+
     public function __construct($objDca = null)
     {
         parent::__construct($objDca);
@@ -149,6 +181,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             'varAlignContentClasses' => "align-content{{modifier}}-{{value}}",
             'varFlexWrapClasses' => "flex{{modifier}}-{{value}}",
             'varRowColsClasses' => $this->arrRowCols,
+            'varGutterClasses' => $this->arrGutterClasses,
             default => parent::__get($name),
         };
     }
@@ -160,9 +193,24 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     protected array $arrRowColsDefaults = ['xs' => 1];
 
+    public function getGutterSizeKeys(): array
+    {
+        return array_keys($this->arrGutterClasses);
+    }
+
     public function getDefaults(DataContainer $objDca): void
     {
-        $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive']['config'])->arrRowColsDefaults;
+        if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols'])) {
+            $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
+        }
+
+        $gutterDefault = serialize($this->arrGutterDefaults);
+        foreach (['responsiveGutter', 'responsiveGutterHeader', 'responsiveGutterFooter'] as $field) {
+            if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields'][$field])) {
+                $GLOBALS['TL_DCA'][$objDca->table]['fields'][$field]['default'] = $gutterDefault;
+            }
+        }
+
         parent::getDefaults($objDca);
     }
 }

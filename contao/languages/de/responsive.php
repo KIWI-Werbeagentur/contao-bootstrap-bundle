@@ -46,3 +46,37 @@ $GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
     'first' => "Erstes",
     'last' => "Letztes"
 ];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
+    0 => 'Horizontaler Rasterabstand',
+    1 => 'Bootstrap horizontale Gutter (gx-*) je Viewport. Vertikale Gutter werden separat gesteuert.',
+    'options' => [
+        'default' => 'Layout-Vorgabe ($grid-gutter-width)',
+        '0' => '0rem [gx-0]',
+        '1' => '0,25rem [gx-1]',
+        '2' => '0,5rem [gx-2]',
+        '3' => '1rem [gx-3]',
+        '4' => '1,5rem (Standard) [gx-4]',
+        '5' => '2rem [gx-5]',
+        '6' => '2,5rem [gx-6]',
+        '7' => '3rem [gx-7]',
+        '8' => '4rem [gx-8]',
+        '9' => '5rem [gx-9]',
+        '10' => '6rem [gx-10]',
+    ],
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [
+    0 => 'Horizontaler Rasterabstand Inhaltsbereich',
+    1 => 'Bootstrap horizontale Gutter für Hauptspalte und Seitenleisten.',
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'] = [
+    0 => 'Horizontaler Rasterabstand Header',
+    1 => 'Bootstrap horizontale Gutter für die Kopfzeilen.',
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'] = [
+    0 => 'Horizontaler Rasterabstand Footer',
+    1 => 'Bootstrap horizontale Gutter für die Fußzeile.',
+];

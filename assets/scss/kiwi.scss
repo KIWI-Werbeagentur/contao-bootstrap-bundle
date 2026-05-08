@@ -95,6 +95,23 @@
   margin-right: 0;
 }
 
+// horizontal-gutter reset classes to use alongside gx-*, per breakpoint
+@each $breakpoint in map-keys($grid-breakpoints) {
+  $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+  @include media-breakpoint-only($breakpoint, $grid-breakpoints) {
+    .kiwi-gutter-x-default#{$infix} {
+      --#{$prefix}gutter-x: #{$grid-gutter-width};
+    }
+  }
+}
+
+// provided as a safety mechanism, to prevent unintended horizontal scrolling from some custom gutter configurations
+// `clip` is preferred (does not become a scroll container, does not break sticky descendants);
+// `hidden` is the fallback for browsers that don't support `clip` (pre-Chrome 90 / Firefox 81 / Safari 16)
+#wrapper {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
 
 // bootstrap 5 workarounds
 // remove padding that creates unwanted indents from nested containers
@@ -144,6 +161,18 @@
         max-width: $container-max-width;
       }
     }
+  }
+}
+
+// content-element-group containers inherit --bs-gutter-x from their parent (article, section, or
+// another container) instead of Bootstrap's default 1.5rem redeclaration. The element-group's own
+// `responsiveGutter` only targets its inner row, so the outer container has no own gx-* class to
+// honor — inheriting is always the correct behavior here.
+.content-element-group {
+  &.container,
+  &.container-fluid,
+  &[class*="container-"] {
+    --#{$prefix}gutter-x: inherit;
   }
 }
 

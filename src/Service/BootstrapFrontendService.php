@@ -42,13 +42,36 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varRowColsClasses');
     }
 
+    /**
+     * Bootstrap responsive horizontal-gutter utilities (gx-* per breakpoint; «default» maps to
+     * .kiwi-gutter-x-default-*). Vertical gutters are handled separately by the bundle.
+     * Map is fully enumerated in {@see \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration};
+     * the {@see \Kiwi\Contao\BootstrapBundle\EventListener\AlterResponsiveValues} hook fills empty
+     * breakpoints inside a default run before this runs.
+     *
+     * @return list<string>
+     */
+    public function getGutterClasses(?string $strData): array
+    {
+        return $this->getResponsiveClasses($strData, 'varGutterClasses');
+    }
+
+    public function getAllContainerClasses($varData, array $arrFields = []): array
+    {
+        return array_merge(
+            parent::getAllContainerClasses($varData, $arrFields),
+            $this->getGutterClasses(self::getProp($varData, $arrFields['gutter'] ?? 'responsiveGutter'))
+        );
+    }
+
     public function getAllInnerContainerClasses($varData, array $arrFields = []): array
     {
         $arrBootstrapClasses = array_merge(
             [
                 "row"
             ],
-            $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols'))
+            $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols')),
+            $this->getGutterClasses(self::getProp($varData, $arrFields['gutter'] ?? 'responsiveGutter')),
         );
 
         return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields));
