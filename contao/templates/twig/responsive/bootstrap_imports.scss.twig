@@ -21,6 +21,9 @@
     {% endblock %}
     @import "{{ bootstrapStyles }}/mixins";
     @import "{{ bootstrapStyles }}/utilities";
+    {% block config_post_utilities %}
+        @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-utilities.scss";
+    {% endblock %}
     @import "../../_spacings.scss";
     @import "../../../../vendor/kiwi/contao-bootstrap/assets/scss/responsive.scss";
 {% endblock config %}

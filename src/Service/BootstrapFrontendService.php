@@ -56,6 +56,17 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varGutterClasses');
     }
 
+    /**
+     * Bootstrap responsive row-gap utilities (row-gap-* per breakpoint). Output lands on the same
+     * tag as `.row` via {@see self::getAllInnerContainerClasses()}.
+     *
+     * @return list<string>
+     */
+    public function getRowGapClasses(?string $strData): array
+    {
+        return $this->getResponsiveClasses($strData, 'varRowGapClasses');
+    }
+
     public function getAllContainerClasses($varData, array $arrFields = []): array
     {
         return array_merge(
@@ -72,6 +83,7 @@ class BootstrapFrontendService extends ResponsiveFrontendService
             ],
             $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols')),
             $this->getGutterClasses(self::getProp($varData, $arrFields['gutter'] ?? 'responsiveGutter')),
+            $this->getRowGapClasses(self::getProp($varData, $arrFields['rowGap'] ?? 'responsiveRowGap')),
         );
 
         return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields));

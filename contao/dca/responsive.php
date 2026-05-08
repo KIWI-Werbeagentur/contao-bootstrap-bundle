@@ -28,3 +28,13 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveGutter'] = [
     'eval' => ['tl_class' => 'clr w50'],
     'sql' => 'blob NULL',
 ];
+
+$GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowGap'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getRowGapKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options'],
+    'eval' => ['tl_class' => 'w50'],
+    'sql' => 'blob NULL',
+];

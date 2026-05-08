@@ -147,6 +147,33 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     protected array $arrGutterDefaults = ['xs' => self::GUTTER_DEFAULT];
 
+    /**
+     * Full enumeration of row-gap tokens to their class templates.
+     * Maps to the row-gap-{N} utilities backported from Bootstrap 5.3 via extend-utilities.scss.
+     *
+     * @var array<string, string>
+     */
+    protected array $arrRowGapClasses = [
+        '0'   => 'row-gap{{modifier}}-0',
+        '1'   => 'row-gap{{modifier}}-1',
+        '2'   => 'row-gap{{modifier}}-2',
+        '3'   => 'row-gap{{modifier}}-3',
+        '4'   => 'row-gap{{modifier}}-4',
+        '5'   => 'row-gap{{modifier}}-5',
+        '6'   => 'row-gap{{modifier}}-6',
+        '7'   => 'row-gap{{modifier}}-7',
+        '8'   => 'row-gap{{modifier}}-8',
+        '9'   => 'row-gap{{modifier}}-9',
+        '10'  => 'row-gap{{modifier}}-10',
+    ];
+
+    /**
+     * Default row-gap selection per breakpoint.
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrRowGapDefaults = ['xs' => 0];
+
     public function __construct($objDca = null)
     {
         parent::__construct($objDca);
@@ -182,6 +209,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             'varFlexWrapClasses' => "flex{{modifier}}-{{value}}",
             'varRowColsClasses' => $this->arrRowCols,
             'varGutterClasses' => $this->arrGutterClasses,
+            'varRowGapClasses' => $this->arrRowGapClasses,
             default => parent::__get($name),
         };
     }
@@ -198,6 +226,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return array_keys($this->arrGutterClasses);
     }
 
+    public function getRowGapKeys(): array
+    {
+        return array_keys($this->arrRowGapClasses);
+    }
+
     public function getDefaults(DataContainer $objDca): void
     {
         if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols'])) {
@@ -209,6 +242,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields'][$field])) {
                 $GLOBALS['TL_DCA'][$objDca->table]['fields'][$field]['default'] = $gutterDefault;
             }
+        }
+
+        if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowGap'])) {
+            $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowGap']['default'] = serialize($this->arrRowGapDefaults);
         }
 
         parent::getDefaults($objDca);
