@@ -1,0 +1,15 @@
+{# Custom section that inherits container width + gutter from the layout's main section #}
+{% set _containerSize = layout.responsiveContainerSize|default('') %}
+{% set _gutter = layout is defined and layout
+    ? getGutterClasses(layout.responsiveGutter|default(''))|join(' ')
+    : '' %}
+
+<div id="{{ id }}" class="{{ id }}">
+    <div class="{{ id }}__container custom-container {{ _containerSize }} {{ _gutter }}">
+        <div class="{{ id }}__inside inside">
+            <div class="{{ id }}__content row {{ _gutter }}">
+                {{ content|raw }}
+            </div>
+        </div>
+    </div>
+</div>
