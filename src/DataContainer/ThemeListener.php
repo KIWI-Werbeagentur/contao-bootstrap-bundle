@@ -6,6 +6,7 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\System;
+use Kiwi\Contao\BootstrapBundle\Service\SpacingsFileRegenerator;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ThemeListener
@@ -63,15 +64,9 @@ class ThemeListener
             $fs->touch($themePath . '/theme-' . $themeAlias . '.scss');
         }
 
-        foreach(['spacings'] as $style){
-            if (!$fs->exists("$targetPath/_$style.scss")) {
-                $arrData = [
-                    'sizes' => implode(", ",(new $GLOBALS['responsive']['config']())->getSpacings()),
-                ];
-                $strBuffer = System::getContainer()->get('twig')->render("@Contao/responsive/$style.scss.twig", $arrData);
-                file_put_contents("{$targetPath}_$style.scss", $strBuffer);
-            }
-        }
+        // Delegate to the shared regenerator service so this code path and the
+        // SpacingsCacheWarmer perform exactly the same render/diff/backup/write.
+        System::getContainer()->get(SpacingsFileRegenerator::class)->regenerate();
 
         $objTheme = $objDca->activeRecord;
         $themeAlias = $objTheme->alias;
