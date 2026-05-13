@@ -9,3 +9,10 @@ services:
     arguments:
       - '@filesystem'
       - '%kernel.project_dir%'
+  Kiwi\Contao\BootstrapBundle\Service\SpacingsFileRegenerator:
+    public: true
+    arguments:
+      - '@filesystem'
+      - '@twig'
+      - '%kernel.project_dir%'
+  Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer: ~
