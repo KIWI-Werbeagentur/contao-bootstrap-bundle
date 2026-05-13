@@ -11,7 +11,7 @@
       2. [Layouts](#layout)
       3. [Wrapping elements: articles, element groups & modules of type list](#article)
       4. [Elements: content elements, form fields & modules](#element)
-   3. [Spacings](#spacing)
+   3. [Vertical spacings](#spacing)
    4. [Widgets](#widget)
 
 ## Scope <a name="scope"></a>
@@ -37,7 +37,7 @@ Create responsive fields yourself by using the integrated **ResponsiveWidget** o
 
 ### Installation <a name="installation"></a>
 Install the bundle via composer
- ```
+ ```sh
 composer require kiwi/contao-bootstrap-bundle
  ```
 
@@ -89,22 +89,52 @@ To remove the settings from a specific **module**, add an entry to `$GLOBALS['re
 To remove the settings from a specific **form field**, add an entry to `$GLOBALS['responsive']['tl_form_field']['excludePalettes']['column']` within your config file. 
 
 
-### Spacings <a name="spacing"></a>
-To define custom spacing sizes, overwrite the following settings in you css file
-```
+### Vertical spacings <a name="spacing"></a>
+For simple customization, you can overwrite the following variables in you (s)css file
+```css
 :root {
-  --spacing-default: {{your_size}};
-  --spacing-none: {{your_size, "0" recommended}};
-  --spacing-gap: {{your_size, grid gap recommended}};
-  --spacing-gap-half: {{your_size, half of grid gap recommended}};
-  --spacing-xxs: {{your_size}};
-  --spacing-xs: {{your_size}};
-  --spacing-sm: {{your_size}};
-  --spacing-md: {{your_size}};
-  --spacing-lg: {{your_size}};
-  --spacing-xl: {{your_size}};
-  --spacing-xxl: {{your_size}};
+  --spacing-default: your_size;
+  --spacing-none: your_size; /* "0" recommended */
+  --spacing-gap: your_size; /* grid gutter width recommended */
+  --spacing-gap-half: your_size; /* half of grid gutter width recommended */
+  --spacing-xxs: your_size;
+  --spacing-xs: your_size;
+  --spacing-sm: your_size;
+  --spacing-md: your_size;
+  --spacing-lg: your_size;
+  --spacing-xl: your_size;
+  --spacing-xxl: your_size;
 }
+```
+
+To add custom spacing options, add the css variables in your own (s)css file. Additionally, you need to extend the `BootstrapConfiguration` class and modify the `$arrSpacings` property accordingly, and provide labels for the new options.
+```css
+:root {
+    --spacing-foo: your_size;
+    --spacing-bar: your_size;
+}
+```
+```php
+// /src/CustomBootstrapConfiguration.php
+namespace App;
+
+use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
+
+class CustomBootstrapConfiguration extends BootstrapConfiguration
+{
+    public function __construct($objDca = null)
+    {
+        parent::__construct($objDca);
+
+        $this->arrSpacings['foo'] = 'p{{direction}}{{modifier}}-foo';
+        $this->arrSpacings['bar'] = 'p{{direction}}{{modifier}}-bar';
+    }
+}
+```
+```php
+// /contao/languages/en/responsive.php
+$GLOBALS['TL_LANG']['responsive']['spacings']['foo'][0] = "Foo-sized [foo]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['bar'][0] = "Bar-sized [bar]";
 ```
 
 ### Widgets <a name="widget"></a>
@@ -117,7 +147,7 @@ Directly shows a setting for every viewport
 ![](docs/images/bootstrap--widget--fully-responsive.jpg)
 
 Example usage:
-```
+```php
 $GLOBALS['TL_DCA'][{your table}]['fields'][{your first field}}] = [
     'inputType' => 'responsive',
     'responsiveInputType' => 'select',
@@ -134,7 +164,7 @@ Only shows a global setting but can be set responsively by activating the checkb
 ![](docs/images/bootstrap--widget--opt-responsive.jpg)
 
 Example usage:
-```
+```php
 $GLOBALS['TL_DCA'][{your table}]['fields'][{your second field}}] = [
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'text',
