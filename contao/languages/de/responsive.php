@@ -6,13 +6,15 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Verteilt mit Platz
 
 $GLOBALS['TL_LANG']['responsive']['spacings']['default'][0] = "Standard [default]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0] = "Kein Abstand [none]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0] = "Halber Rasterabstand [gap]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['gap-full'][0] = "Voller Rasterabstand [gap-full]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0] = "Standard-Rasterabstand [gap]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Halber Standard-Rasterabstand [gap-half]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['xxs'][0] = "Extra extra klein [xxs]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xs'][0] = "Extra klein [xs]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['sm'][0] = "Klein [sm]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['md'][0] = "Mittel [md]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['lg'][0] = "Groß [lg]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xl'][0] = "Extra Groß [xl]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['xxl'][0] = "Extra Extra Groß [xxl]";
 
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['xs'][0] = "Standard (Smartphone)";
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['sm'][0] = "Smartphone Landscape";
