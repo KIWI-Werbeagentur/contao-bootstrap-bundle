@@ -75,12 +75,14 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'default' => 'p{{direction}}{{modifier}}-default',
         'none' => 'p{{direction}}{{modifier}}-none',
         'gap' => 'p{{direction}}{{modifier}}-gap',
-        'gap-full' => 'p{{direction}}{{modifier}}-gap-full',
+        'gap-half' => 'p{{direction}}{{modifier}}-gap-half',
+        'xxs' => 'p{{direction}}{{modifier}}-xxs',
         'xs' => 'p{{direction}}{{modifier}}-xs',
         'sm' => 'p{{direction}}{{modifier}}-sm',
         'md' => 'p{{direction}}{{modifier}}-md',
         'lg' => 'p{{direction}}{{modifier}}-lg',
         'xl' => 'p{{direction}}{{modifier}}-xl',
+        'xxl' => 'p{{direction}}{{modifier}}-xxl',
     ];
 
     protected array $arrSpacingsDefaults = ['xs' => 'default'];
