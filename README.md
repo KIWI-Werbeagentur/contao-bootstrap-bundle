@@ -11,7 +11,7 @@
       2. [Layouts](#layout)
       3. [Wrapping elements: articles, element groups & modules of type list](#article)
       4. [Elements: content elements, form fields & modules](#element)
-   3. [Vertical spacings](#spacing)
+   3. [Gutters, spacings and gaps](#spacing)
    4. [Widgets](#widget)
 
 ## Scope <a name="scope"></a>
@@ -40,6 +40,18 @@ Install the bundle via composer
  ```sh
 composer require kiwi/contao-bootstrap
  ```
+
+#### Configuration
+Some options can be configured via .env variables:
+```dotenv
+# Controls which spacing keys appear in the BE dropdowns and the generated SCSS.
+# unset / 0  → only the new spacer-based keys (implicit default — will be migrated to 1 if deprecated values are still in use)
+#         1  → only the deprecated keys (legacy default)
+#         2  → both sets (for legacy projects mid-migration)
+#         3  → only the new spacer-based keys (explicit opt-in — the migration
+#              will not touch this even when stored deprecated values exist)
+KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
+```
 
 ### Implementation <a name="implementation"></a>
 **Step 1: (Re-)store themes <a name="theme"></a>**
@@ -100,7 +112,52 @@ To remove the settings from a specific **module**, add an entry to `$GLOBALS['re
 To remove the settings from a specific **form field**, add an entry to `$GLOBALS['responsive']['tl_form_field']['excludePalettes']['column']` within your config file. 
 
 
-### Vertical spacings <a name="spacing"></a>
+### Gutters, spacings and gaps <a name="spacing"></a>
+Horizontal and vertical distances between articles and elements are based on Bootstrap's $spacers. You can modify and add values via `$modify-spacers`, or completely customize the available options by overwriting `$spacers`.
+
+#### Configuring the default top/bottom spacing
+
+`responsiveSpacingTop` and `responsiveSpacingBottom` can be customized without writing a custom configuration class, set `$GLOBALS['responsive']['spacingDefault']` in `contao/config/config.php`. Three input shapes are accepted:
+
+```php
+// Scalar — applies symmetrically to top and bottom at the xs breakpoint
+$GLOBALS['responsive']['spacingDefault'] = 6;
+
+// Asymmetric — different value per side, still at xs
+$GLOBALS['responsive']['spacingDefault'] = ['top' => 6, 'bottom' => 4];
+
+// Full control — per-breakpoint arrays per side
+$GLOBALS['responsive']['spacingDefault'] = [
+    'top'    => ['xs' => 4, 'lg' => 6],
+    'bottom' => ['xs' => 6],
+];
+```
+
+Each leaf value must be a key of `$arrSpacings` (e.g. `0`–`10`, `none`, `noop`); an invalid key throws `InvalidArgumentException` at construction time. Clear the cache after editing the value.
+
+#### Configuring the default container outer padding
+
+The container outer padding (`cx-*`) field defaults to `cx-2` on new records. You can change this without writing a custom configuration class by setting `$GLOBALS['responsive']['containerPaddingXDefault']` in `contao/config/config.php`. The same three input shapes are accepted; the side keys are `main` (content elements, articles and form fields), `header` and `footer` (the layout section containers):
+
+```php
+// Scalar — applies to main, header and footer at the xs breakpoint
+$GLOBALS['responsive']['containerPaddingXDefault'] = 3;
+
+// Per side, still at xs — clear header/footer back to opt-in, keep the main default
+$GLOBALS['responsive']['containerPaddingXDefault'] = ['header' => [], 'footer' => []];
+
+// Full control — per-breakpoint arrays per side
+$GLOBALS['responsive']['containerPaddingXDefault'] = [
+    'main' => ['xs' => 2, 'lg' => 4],
+];
+```
+
+Each leaf value must be a key of `$arrContainerPaddingXClasses` (`0`–`10`); an invalid key throws `InvalidArgumentException` at construction time. Pass an empty array for a side to clear its default (no preselected value). Clear the cache after editing the value.
+
+#### Legacy spacings (deprecated)
+
+The named options `default`, `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the numeric spacer scale (`0`–`10`) and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+
 For simple customization, you can overwrite the following variables in you (s)css file
 ```css
 :root {
@@ -116,36 +173,6 @@ For simple customization, you can overwrite the following variables in you (s)cs
   --spacing-xl: your_size;
   --spacing-xxl: your_size;
 }
-```
-
-To add custom spacing options, add the css variables in your own (s)css file. Additionally, you need to extend the `BootstrapConfiguration` class and modify the `$arrSpacings` property accordingly, and provide labels for the new options.
-```css
-:root {
-    --spacing-foo: your_size;
-    --spacing-bar: your_size;
-}
-```
-```php
-// /src/CustomBootstrapConfiguration.php
-namespace App;
-
-use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
-
-class CustomBootstrapConfiguration extends BootstrapConfiguration
-{
-    public function __construct($objDca = null)
-    {
-        parent::__construct($objDca);
-
-        $this->arrSpacings['foo'] = 'p{{direction}}{{modifier}}-foo';
-        $this->arrSpacings['bar'] = 'p{{direction}}{{modifier}}-bar';
-    }
-}
-```
-```php
-// /contao/languages/en/responsive.php
-$GLOBALS['TL_LANG']['responsive']['spacings']['foo'][0] = "Foo-sized [foo]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['bar'][0] = "Bar-sized [bar]";
 ```
 
 ### Widgets <a name="widget"></a>
