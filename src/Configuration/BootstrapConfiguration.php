@@ -75,17 +75,33 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array $arrOffsetsDefaults = ['xs' => 'none'];
 
     protected array $arrSpacings = [
-        'default' => 'p{{direction}}{{modifier}}-default',
-        'none' => 'p{{direction}}{{modifier}}-none',
-        'gap' => 'p{{direction}}{{modifier}}-gap',
+        // Bootstrap-aligned spacer sizes; emit dedicated ".p[t|b]-spacer-N" classes
+        // (see contao/templates/twig/responsive/spacings.scss.twig) to avoid collisions
+        // with Bootstrap's own ".p[t|b]-N" utilities, which set padding directly instead
+        // of going through the bundle's --spacing-* / [data-spacing-*] mechanism.
+        '0'   => 'p{{direction}}{{modifier}}-spacer-0',
+        '1'   => 'p{{direction}}{{modifier}}-spacer-1',
+        '2'   => 'p{{direction}}{{modifier}}-spacer-2',
+        '3'   => 'p{{direction}}{{modifier}}-spacer-3',
+        '4'   => 'p{{direction}}{{modifier}}-spacer-4',
+        '5'   => 'p{{direction}}{{modifier}}-spacer-5',
+        '6'   => 'p{{direction}}{{modifier}}-spacer-6',
+        '7'   => 'p{{direction}}{{modifier}}-spacer-7',
+        '8'   => 'p{{direction}}{{modifier}}-spacer-8',
+        '9'   => 'p{{direction}}{{modifier}}-spacer-9',
+        '10'  => 'p{{direction}}{{modifier}}-spacer-10',
+        // Named buckets (custom semantic sizes, project-defined values)
+        'default'  => 'p{{direction}}{{modifier}}-default',
+        'none'     => 'p{{direction}}{{modifier}}-none',
+        'gap'      => 'p{{direction}}{{modifier}}-gap',
         'gap-half' => 'p{{direction}}{{modifier}}-gap-half',
-        'xxs' => 'p{{direction}}{{modifier}}-xxs',
-        'xs' => 'p{{direction}}{{modifier}}-xs',
-        'sm' => 'p{{direction}}{{modifier}}-sm',
-        'md' => 'p{{direction}}{{modifier}}-md',
-        'lg' => 'p{{direction}}{{modifier}}-lg',
-        'xl' => 'p{{direction}}{{modifier}}-xl',
-        'xxl' => 'p{{direction}}{{modifier}}-xxl',
+        'xxs'      => 'p{{direction}}{{modifier}}-xxs',
+        'xs'       => 'p{{direction}}{{modifier}}-xs',
+        'sm'       => 'p{{direction}}{{modifier}}-sm',
+        'md'       => 'p{{direction}}{{modifier}}-md',
+        'lg'       => 'p{{direction}}{{modifier}}-lg',
+        'xl'       => 'p{{direction}}{{modifier}}-xl',
+        'xxl'      => 'p{{direction}}{{modifier}}-xxl',
     ];
 
     protected array $arrSpacingsDefaults = ['xs' => 'default'];
