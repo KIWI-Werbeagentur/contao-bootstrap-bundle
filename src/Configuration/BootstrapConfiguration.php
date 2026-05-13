@@ -72,22 +72,46 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array $arrOffsetsDefaults = ['xs' => 'none'];
 
     protected array $arrSpacings = [
-        'default' => 'p{{direction}}{{modifier}}-default',
-        'none' => 'p{{direction}}{{modifier}}-none',
-        'gap' => 'p{{direction}}{{modifier}}-gap',
+        // Bootstrap-aligned spacer sizes; emit dedicated ".p[t|b]-spacer-N" classes
+        // (see contao/templates/twig/responsive/spacings.scss.twig) to avoid collisions
+        // with Bootstrap's own ".p[t|b]-N" utilities, which set padding directly instead
+        // of going through the bundle's --spacing-* / [data-spacing-*] mechanism.
+        '0'   => 'p{{direction}}{{modifier}}-spacer-0',
+        '1'   => 'p{{direction}}{{modifier}}-spacer-1',
+        '2'   => 'p{{direction}}{{modifier}}-spacer-2',
+        '3'   => 'p{{direction}}{{modifier}}-spacer-3',
+        '4'   => 'p{{direction}}{{modifier}}-spacer-4',
+        '5'   => 'p{{direction}}{{modifier}}-spacer-5',
+        '6'   => 'p{{direction}}{{modifier}}-spacer-6',
+        '7'   => 'p{{direction}}{{modifier}}-spacer-7',
+        '8'   => 'p{{direction}}{{modifier}}-spacer-8',
+        '9'   => 'p{{direction}}{{modifier}}-spacer-9',
+        '10'  => 'p{{direction}}{{modifier}}-spacer-10',
+        // Named buckets (custom semantic sizes, project-defined values)
+        self::SPACING_NO_OP => '',
+        'default'  => 'p{{direction}}{{modifier}}-default',
+        'none'     => 'p{{direction}}{{modifier}}-none',
+        'gap'      => 'p{{direction}}{{modifier}}-gap',
         'gap-half' => 'p{{direction}}{{modifier}}-gap-half',
-        'xxs' => 'p{{direction}}{{modifier}}-xxs',
-        'xs' => 'p{{direction}}{{modifier}}-xs',
-        'sm' => 'p{{direction}}{{modifier}}-sm',
-        'md' => 'p{{direction}}{{modifier}}-md',
-        'lg' => 'p{{direction}}{{modifier}}-lg',
-        'xl' => 'p{{direction}}{{modifier}}-xl',
-        'xxl' => 'p{{direction}}{{modifier}}-xxl',
+        'xxs'      => 'p{{direction}}{{modifier}}-xxs',
+        'xs'       => 'p{{direction}}{{modifier}}-xs',
+        'sm'       => 'p{{direction}}{{modifier}}-sm',
+        'md'       => 'p{{direction}}{{modifier}}-md',
+        'lg'       => 'p{{direction}}{{modifier}}-lg',
+        'xl'       => 'p{{direction}}{{modifier}}-xl',
+        'xxl'      => 'p{{direction}}{{modifier}}-xxl',
     ];
 
-    protected array $arrSpacingsDefaults = ['xs' => 'default'];
-    protected array $arrSpacingTopDefaults = ['xs' => 'default'];
-    protected array $arrSpacingBottomDefaults = ['xs' => 'default'];
+    /**
+     * @deprecated since 1.x, will be removed in 2.0.
+     *             Use {@see self::$arrSpacingTopDefaults} / {@see self::$arrSpacingBottomDefaults}.
+     */
+    protected array $arrSpacingsDefaults = ['xs' => 7];
+    protected array $arrSpacingTopDefaults = ['xs' => 7];
+    protected array $arrSpacingBottomDefaults = ['xs' => 7];
+
+    protected array $arrElementGroupSpacingTopDefaults = ['xs' => self::SPACING_NO_OP];
+    protected array $arrElementGroupSpacingBottomDefaults = ['xs' => self::SPACING_NO_OP];
 
     protected array|string $varOrderClasses = [];
 
@@ -168,10 +192,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * Maps to the .cx-{N} utilities emitted by grid-overrides.scss, which apply
      * the container's own outer L/R padding (opt-in, fluid-gated, non-inheriting)
      * independently from the inter-column gutter.
-     *
-     * There is intentionally no `default` token: container padding is fully
-     * opt-in. An empty selection emits no class and the container has no
-     * outer padding.
      *
      * @var array<string, string>
      */
@@ -264,7 +284,134 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->arrIcons['justifyContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-evenly.svg";
         $this->arrIcons['justifyContent']['between'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-between.svg";
 
+        $this->applyDeprecatedSpacingsMode();
+
+        $this->retainLegacyDefaultsForBcMode();
+
+        $this->applyConfiguredFieldDefaults();
+
         $this->applyConfiguredContainerPaddingXDefaults();
+    }
+
+    /**
+     * The named spacings (`default`, `none`, `gap`, `gap-half`, `xxs` … `xxl`)
+     * are deprecated. Which keys actually appear
+     * in `$arrSpacings` is controlled by the env var `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`:
+     *
+     *   unset / 0  →  only the new spacer-based keys (numeric `0`–`10` + the `noop` sentinel)
+     *   1          →  only the deprecated keys (+ `noop`)
+     *   2          →  both sets (legacy behavior)
+     *   3          →  only the new spacer-based keys (explicit opt-in — same dropdown as the implicit
+     *                 default; signals intent to the migration so it won't auto-write a fallback even
+     *                 when stored content still uses deprecated values)
+     */
+    private function applyDeprecatedSpacingsMode(): void
+    {
+        $mode = $this->getDeprecatedSpacingsMode();
+
+        // Mode 2: keep both sets.
+        if ($mode === 2) {
+            return;
+        }
+
+        // Mode 1: keep only the deprecated keys plus the noop sentinel.
+        if ($mode === 1) {
+            $keep = array_flip(array_merge(self::DEPRECATED_SPACING_KEYS, [self::SPACING_NO_OP]));
+            $this->arrSpacings = array_intersect_key($this->arrSpacings, $keep);
+            return;
+        }
+
+        // Mode 3 and default fallback: keep only the new spacer-based keys.
+        foreach (self::DEPRECATED_SPACING_KEYS as $key) {
+            unset($this->arrSpacings[$key]);
+        }
+    }
+
+    /**
+     * For installations that still use the deprecated spacing options (env mode 1 or
+     * 2) the bundle's field defaults are reverted to `['xs' => 'default']`.
+     *
+     * If a subclass has redeclared any of the three defaults properties (detected
+     * via reflection by comparing the effective declared defaults to this bundle's
+     * declared defaults), the user-chosen value is left alone. An explicit
+     * `$GLOBALS['responsive']['spacingDefault']` set elsewhere is applied later by
+     * {@see self::applyConfiguredFieldDefaults()} and overrides whatever this method
+     * decided.
+     */
+    private function retainLegacyDefaultsForBcMode(): void
+    {
+        $mode = $this->getDeprecatedSpacingsMode();
+        if ($mode !== 1 && $mode !== 2) {
+            return;
+        }
+
+        $bundleDefaults    = (new \ReflectionClass(self::class))->getDefaultProperties();
+        $effectiveDefaults = (new \ReflectionClass(static::class))->getDefaultProperties();
+
+        foreach (['arrSpacingTopDefaults', 'arrSpacingBottomDefaults'] as $prop) {
+            // A subclass redeclared the property → respect the project's choice.
+            if (($effectiveDefaults[$prop] ?? null) !== ($bundleDefaults[$prop] ?? null)) {
+                continue;
+            }
+
+            $this->$prop = ['xs' => 'default'];
+        }
+    }
+
+    /**
+     * Read and normalize the `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS` env var. Non-numeric
+     * and unrecognised values collapse to mode 0 (the new default behaviour).
+     */
+    private function getDeprecatedSpacingsMode(): int
+    {
+        return (int) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? 0);
+    }
+
+    /**
+     * Read $GLOBALS['responsive']['spacingDefault'] and overwrite the content-spacing
+     * top/bottom field defaults without requiring a custom configuration subclass.
+     *
+     * Accepted shapes (each leaf value must be a key of $arrSpacings):
+     *
+     *   $GLOBALS['responsive']['spacingDefault'] = 6;
+     *       // → arrSpacingTopDefaults    = ['xs' => 6]
+     *       //   arrSpacingBottomDefaults = ['xs' => 6]
+     *
+     *   $GLOBALS['responsive']['spacingDefault'] = ['top' => 6, 'bottom' => 4];
+     *       // → arrSpacingTopDefaults    = ['xs' => 6]
+     *       //   arrSpacingBottomDefaults = ['xs' => 4]
+     *
+     *   $GLOBALS['responsive']['spacingDefault'] = [
+     *       'top'    => ['xs' => 4, 'lg' => 6],
+     *       'bottom' => ['xs' => 6],
+     *   ];
+     *       // assigned as-is
+     *
+     * Element-group field defaults are intentionally not covered by this hook — they
+     * remain customizable via a {@see BootstrapConfiguration} subclass.
+     *
+     * @throws \InvalidArgumentException if any leaf value is not a valid spacing key
+     */
+    private function applyConfiguredFieldDefaults(): void
+    {
+        $config = $GLOBALS['responsive']['spacingDefault'] ?? null;
+        if ($config === null) {
+            return;
+        }
+
+        $normalized = $this->normalizeDefaultOverride(
+            $config,
+            ['top', 'bottom'],
+            $this->arrSpacings,
+            'spacingDefault',
+        );
+
+        if (isset($normalized['top'])) {
+            $this->arrSpacingTopDefaults = $normalized['top'];
+        }
+        if (isset($normalized['bottom'])) {
+            $this->arrSpacingBottomDefaults = $normalized['bottom'];
+        }
     }
 
     /**
@@ -422,6 +569,27 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         return $normalized;
     }
+
+    /**
+     * Spacing keys deprecated in favour of the numeric spacer scale (`0`…`10`).
+     * Listed here so {@see self::applyDeprecatedSpacingsMode()}, the
+     * {@see \Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode}
+     * migration, and any future hard-removal release share a single source
+     * of truth.
+     */
+    public const DEPRECATED_SPACING_KEYS = [
+        'default',
+        'none',
+        'gap',
+        'gap-half',
+        'xxs',
+        'xs',
+        'sm',
+        'md',
+        'lg',
+        'xl',
+        'xxl',
+    ];
 
     public function __get(string $name)
     {
