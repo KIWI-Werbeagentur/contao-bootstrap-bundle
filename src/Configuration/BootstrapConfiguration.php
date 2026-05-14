@@ -253,21 +253,37 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     public function getDefaults(DataContainer $objDca): void
     {
-        if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols'])) {
-            $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
-        }
+        parent::getDefaults($objDca);
 
-        $gutterDefault = serialize($this->arrGutterDefaults);
+        $this->applyRowColsDefaults($objDca);
+        $this->applyGutterDefaults($objDca);
+        $this->applyRowGapDefaults($objDca);
+    }
+
+    protected function applyRowColsDefaults(DataContainer $dc): void
+    {
+        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        if (isset($fields['responsiveRowCols'])) {
+            $fields['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
+        }
+    }
+
+    protected function applyGutterDefaults(DataContainer $dc): void
+    {
+        $fields  = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        $default = serialize($this->arrGutterDefaults);
         foreach (['responsiveGutter', 'responsiveGutterHeader', 'responsiveGutterFooter'] as $field) {
-            if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields'][$field])) {
-                $GLOBALS['TL_DCA'][$objDca->table]['fields'][$field]['default'] = $gutterDefault;
+            if (isset($fields[$field])) {
+                $fields[$field]['default'] = $default;
             }
         }
+    }
 
-        if (isset($GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowGap'])) {
-            $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowGap']['default'] = serialize($this->arrRowGapDefaults);
+    protected function applyRowGapDefaults(DataContainer $dc): void
+    {
+        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        if (isset($fields['responsiveRowGap'])) {
+            $fields['responsiveRowGap']['default'] = serialize($this->arrRowGapDefaults);
         }
-
-        parent::getDefaults($objDca);
     }
 }
