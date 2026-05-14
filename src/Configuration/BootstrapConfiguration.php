@@ -109,6 +109,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array $arrSpacingTopDefaults = ['xs' => 'default'];
     protected array $arrSpacingBottomDefaults = ['xs' => 'default'];
 
+    protected array $arrElementGroupSpacingTopDefaults = ['xs' => self::SPACING_NO_OP];
+    protected array $arrElementGroupSpacingBottomDefaults = ['xs' => self::SPACING_NO_OP];
+
     protected array|string $varOrderClasses = [];
 
     protected array|string $varAlignSelfClasses = [];
