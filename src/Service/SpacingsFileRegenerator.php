@@ -37,7 +37,7 @@ class SpacingsFileRegenerator
         // this bundle's BootstrapConfiguration when Contao globals are not yet
         // initialized.
         $configClass = $GLOBALS['responsive']['config'] ?? BootstrapConfiguration::class;
-        $sizes       = implode(', ', (new $configClass())->getSpacings());
+        $sizes       = implode(', ', (new $configClass())->getSpacingsExcludingNoOp());
 
         $rendered = $this->twig->render(self::TWIG_TEMPLATE, ['sizes' => $sizes]);
         $current  = $this->filesystem->exists($targetFile) ? file_get_contents($targetFile) : null;

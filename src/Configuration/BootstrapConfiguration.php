@@ -91,6 +91,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         '9'   => 'p{{direction}}{{modifier}}-spacer-9',
         '10'  => 'p{{direction}}{{modifier}}-spacer-10',
         // Named buckets (custom semantic sizes, project-defined values)
+        self::SPACING_NO_OP => '',
         'default'  => 'p{{direction}}{{modifier}}-default',
         'none'     => 'p{{direction}}{{modifier}}-none',
         'gap'      => 'p{{direction}}{{modifier}}-gap',
