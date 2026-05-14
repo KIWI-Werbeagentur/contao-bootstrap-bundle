@@ -162,7 +162,16 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     public function getDefaults(DataContainer $objDca): void
     {
-        $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive']['config'])->arrRowColsDefaults;
         parent::getDefaults($objDca);
+
+        $this->applyRowColsDefaults($objDca);
+    }
+
+    protected function applyRowColsDefaults(DataContainer $dc): void
+    {
+        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        if (isset($fields['responsiveRowCols'])) {
+            $fields['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
+        }
     }
 }
