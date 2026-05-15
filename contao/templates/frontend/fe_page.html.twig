@@ -1,0 +1,42 @@
+{% extends '@Contao/fe_page.html5' %}
+
+{% if layout %}
+    {% set headerContainerAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutterHeader ?? ''))
+        .mergeWith(headerContainerAttributes|default(null))
+    %}
+    {% set headerWrapperAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutterHeader ?? ''))
+        .mergeWith(headerWrapperAttributes|default(null))
+    %}
+
+    {% set contentsContainerAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
+        .mergeWith(contentsContainerAttributes|default(null))
+    %}
+    {% set contentsWrapperAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
+        .mergeWith(contentsWrapperAttributes|default(null))
+    %}
+    {% set mainWrapperAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
+        .mergeWith(mainWrapperAttributes|default(null))
+    %}
+    {% set leftWrapperAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
+        .mergeWith(leftWrapperAttributes|default(null))
+    %}
+    {% set rightWrapperAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
+        .mergeWith(rightWrapperAttributes|default(null))
+    %}
+
+    {% set footerContainerAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutterFooter ?? ''))
+        .mergeWith(footerContainerAttributes|default(null))
+    %}
+    {% set footerWrapperAttributes = attrs()
+        .addClass(getGutterClasses(layout.responsiveGutterFooter ?? ''))
+        .mergeWith(footerWrapperAttributes|default(null))
+    %}
+{% endif %}

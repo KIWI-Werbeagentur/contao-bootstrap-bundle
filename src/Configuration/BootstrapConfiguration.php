@@ -7,6 +7,9 @@ use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
+    /** Menu token; emits .kiwi-gutter-x-default-{bp} only where it needs to override a prior gx-* size. */
+    public const GUTTER_DEFAULT = 'default';
+
     // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
     protected array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => '', 'container' => '100%'],
@@ -72,22 +75,42 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array $arrOffsetsDefaults = ['xs' => 'none'];
 
     protected array $arrSpacings = [
-        'default' => 'p{{direction}}{{modifier}}-default',
-        'none' => 'p{{direction}}{{modifier}}-none',
-        'gap' => 'p{{direction}}{{modifier}}-gap',
+        // Bootstrap-aligned spacer sizes; emit dedicated ".p[t|b]-spacer-N" classes
+        // (see contao/templates/twig/responsive/spacings.scss.twig) to avoid collisions
+        // with Bootstrap's own ".p[t|b]-N" utilities, which set padding directly instead
+        // of going through the bundle's --spacing-* / [data-spacing-*] mechanism.
+        '0'   => 'p{{direction}}{{modifier}}-spacer-0',
+        '1'   => 'p{{direction}}{{modifier}}-spacer-1',
+        '2'   => 'p{{direction}}{{modifier}}-spacer-2',
+        '3'   => 'p{{direction}}{{modifier}}-spacer-3',
+        '4'   => 'p{{direction}}{{modifier}}-spacer-4',
+        '5'   => 'p{{direction}}{{modifier}}-spacer-5',
+        '6'   => 'p{{direction}}{{modifier}}-spacer-6',
+        '7'   => 'p{{direction}}{{modifier}}-spacer-7',
+        '8'   => 'p{{direction}}{{modifier}}-spacer-8',
+        '9'   => 'p{{direction}}{{modifier}}-spacer-9',
+        '10'  => 'p{{direction}}{{modifier}}-spacer-10',
+        // Named buckets (custom semantic sizes, project-defined values)
+        self::SPACING_NO_OP => '',
+        'default'  => 'p{{direction}}{{modifier}}-default',
+        'none'     => 'p{{direction}}{{modifier}}-none',
+        'gap'      => 'p{{direction}}{{modifier}}-gap',
         'gap-half' => 'p{{direction}}{{modifier}}-gap-half',
-        'xxs' => 'p{{direction}}{{modifier}}-xxs',
-        'xs' => 'p{{direction}}{{modifier}}-xs',
-        'sm' => 'p{{direction}}{{modifier}}-sm',
-        'md' => 'p{{direction}}{{modifier}}-md',
-        'lg' => 'p{{direction}}{{modifier}}-lg',
-        'xl' => 'p{{direction}}{{modifier}}-xl',
-        'xxl' => 'p{{direction}}{{modifier}}-xxl',
+        'xxs'      => 'p{{direction}}{{modifier}}-xxs',
+        'xs'       => 'p{{direction}}{{modifier}}-xs',
+        'sm'       => 'p{{direction}}{{modifier}}-sm',
+        'md'       => 'p{{direction}}{{modifier}}-md',
+        'lg'       => 'p{{direction}}{{modifier}}-lg',
+        'xl'       => 'p{{direction}}{{modifier}}-xl',
+        'xxl'      => 'p{{direction}}{{modifier}}-xxl',
     ];
 
     protected array $arrSpacingsDefaults = ['xs' => 'default'];
     protected array $arrSpacingTopDefaults = ['xs' => 'default'];
     protected array $arrSpacingBottomDefaults = ['xs' => 'default'];
+
+    protected array $arrElementGroupSpacingTopDefaults = ['xs' => self::SPACING_NO_OP];
+    protected array $arrElementGroupSpacingBottomDefaults = ['xs' => self::SPACING_NO_OP];
 
     protected array|string $varOrderClasses = [];
 
@@ -114,6 +137,62 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     ];
 
     protected array|string $varRowColsClasses = [];
+
+    /**
+     * Full enumeration of all gutter tokens to their class templates.
+     * Order is preserved in the BE menu via {@see self::getGutterSizeKeys()}.
+     * Projects extending the available spacers override this property (and the SCSS `$gutters` map).
+     *
+     * @var array<string, string>
+     */
+    protected array $arrGutterClasses = [
+        self::GUTTER_DEFAULT => 'kiwi-gutter-x-default{{modifier}}',
+        '0'   => 'gx{{modifier}}-0',
+        '1'   => 'gx{{modifier}}-1',
+        '2'   => 'gx{{modifier}}-2',
+        '3'   => 'gx{{modifier}}-3',
+        '4'   => 'gx{{modifier}}-4',
+        '5'   => 'gx{{modifier}}-5',
+        '6'   => 'gx{{modifier}}-6',
+        '7'   => 'gx{{modifier}}-7',
+        '8'   => 'gx{{modifier}}-8',
+        '9'   => 'gx{{modifier}}-9',
+        '10'  => 'gx{{modifier}}-10',
+    ];
+
+    /**
+     * Default gutter selection per breakpoint.
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrGutterDefaults = ['xs' => self::GUTTER_DEFAULT];
+
+    /**
+     * Full enumeration of row-gap tokens to their class templates.
+     * Maps to the row-gap-{N} utilities backported from Bootstrap 5.3 via extend-utilities.scss.
+     *
+     * @var array<string, string>
+     */
+    protected array $arrRowGapClasses = [
+        '0'   => 'row-gap{{modifier}}-0',
+        '1'   => 'row-gap{{modifier}}-1',
+        '2'   => 'row-gap{{modifier}}-2',
+        '3'   => 'row-gap{{modifier}}-3',
+        '4'   => 'row-gap{{modifier}}-4',
+        '5'   => 'row-gap{{modifier}}-5',
+        '6'   => 'row-gap{{modifier}}-6',
+        '7'   => 'row-gap{{modifier}}-7',
+        '8'   => 'row-gap{{modifier}}-8',
+        '9'   => 'row-gap{{modifier}}-9',
+        '10'  => 'row-gap{{modifier}}-10',
+    ];
+
+    /**
+     * Default row-gap selection per breakpoint.
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrRowGapDefaults = ['xs' => 0];
 
     public function __construct($objDca = null)
     {
@@ -149,6 +228,8 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             'varAlignContentClasses' => "align-content{{modifier}}-{{value}}",
             'varFlexWrapClasses' => "flex{{modifier}}-{{value}}",
             'varRowColsClasses' => $this->arrRowCols,
+            'varGutterClasses' => $this->arrGutterClasses,
+            'varRowGapClasses' => $this->arrRowGapClasses,
             default => parent::__get($name),
         };
     }
@@ -160,9 +241,49 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     protected array $arrRowColsDefaults = ['xs' => 1];
 
+    public function getGutterSizeKeys(): array
+    {
+        return array_keys($this->arrGutterClasses);
+    }
+
+    public function getRowGapKeys(): array
+    {
+        return array_keys($this->arrRowGapClasses);
+    }
+
     public function getDefaults(DataContainer $objDca): void
     {
-        $GLOBALS['TL_DCA'][$objDca->table]['fields']['responsiveRowCols']['default'] = (new $GLOBALS['responsive']['config'])->arrRowColsDefaults;
         parent::getDefaults($objDca);
+
+        $this->applyRowColsDefaults($objDca);
+        $this->applyGutterDefaults($objDca);
+        $this->applyRowGapDefaults($objDca);
+    }
+
+    protected function applyRowColsDefaults(DataContainer $dc): void
+    {
+        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        if (isset($fields['responsiveRowCols'])) {
+            $fields['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
+        }
+    }
+
+    protected function applyGutterDefaults(DataContainer $dc): void
+    {
+        $fields  = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        $default = serialize($this->arrGutterDefaults);
+        foreach (['responsiveGutter', 'responsiveGutterHeader', 'responsiveGutterFooter'] as $field) {
+            if (isset($fields[$field])) {
+                $fields[$field]['default'] = $default;
+            }
+        }
+    }
+
+    protected function applyRowGapDefaults(DataContainer $dc): void
+    {
+        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        if (isset($fields['responsiveRowGap'])) {
+            $fields['responsiveRowGap']['default'] = serialize($this->arrRowGapDefaults);
+        }
     }
 }

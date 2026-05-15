@@ -1,0 +1,13 @@
+/* extend the default spacers with larger multiples of 1 (base rem) and 1.5 (default gutter)  */
+$spacers: map-merge($spacers, (
+  5: $spacer * 2,
+  6: $spacer * 2.5,
+  7: $spacer * 3,
+  8: $spacer * 4,
+  9: $spacer * 5,
+  10: $spacer * 6,
+));
+
+/* provide an easy extension point, so project-level extensions do not need to overwrite the whole $spacers variable */
+$modify-spacers: () !default;
+$spacers: map-merge($spacers, $modify-spacers);

@@ -4,17 +4,29 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['between'] = "Distributed [spac
 $GLOBALS['TL_LANG']['responsive']['flexContent']['around'] = "Distributed with half space outside [space-around]";
 $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Distributed with space outside [space-evenly]";
 
-$GLOBALS['TL_LANG']['responsive']['spacings']['default'][0] = "Default [default]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['none'][0] = "No spacing [none]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0] = "Default horizontal gutter [gap]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['0'][0]   = '0rem [spacer-0]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['1'][0]   = '0.25rem [spacer-1]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['2'][0]   = '0.5rem [spacer-2]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['3'][0]   = '1rem [spacer-3]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['4'][0]   = '1.5rem (default) [spacer-4]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['5'][0]   = '2rem [spacer-5]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['6'][0]   = '2.5rem [spacer-6]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['7'][0]   = '3rem [spacer-7]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['8'][0]   = '4rem [spacer-8]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['9'][0]   = '5rem [spacer-9]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['10'][0]  = '6rem [spacer-10]';
+
+$GLOBALS['TL_LANG']['responsive']['spacings']['default'][0]  = "Default [default]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "No spacing [none]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0]      = "Default horizontal gutter [gap]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Half default horizontal gutter [gap-half]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['xxs'][0] = "Extra extra small [xxs]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['xs'][0] = "Extra small [xs]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['sm'][0] = "Small [sm]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['md'][0] = "Medium [md]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['lg'][0] = "Large [lg]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['xl'][0] = "Extra large [xl]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['xxl'][0] = "Extra extra large [xxl]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['xxs'][0]      = "Extra extra small [xxs]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['xs'][0]       = "Extra small [xs]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['sm'][0]       = "Small [sm]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['md'][0]       = "Medium [md]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['lg'][0]       = "Large [lg]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['xl'][0]       = "Extra large [xl]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['xxl'][0]      = "Extra extra large [xxl]";
 
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['xs'][0] = "Default (Smartphone)";
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['sm'][0] = "Smartphone Landscape";
@@ -45,4 +57,57 @@ $GLOBALS['TL_LANG']['responsive']['flexContainer'] = [
 $GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
     'first' => "First",
     'last' => "Last"
+];
+
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
+    0 => 'Horizontal grid gutter',
+    1 => 'Bootstrap horizontal gutters (gx-*) per viewport. Vertical gutters are configured separately.',
+    'options' => [
+        'default' => 'Layout preset ($grid-gutter-width)',
+        '0' => '0rem [gx-0]',
+        '1' => '0.25rem [gx-1]',
+        '2' => '0.5rem [gx-2]',
+        '3' => '1rem [gx-3]',
+        '4' => '1.5rem (default) [gx-4]',
+        '5' => '2rem [gx-5]',
+        '6' => '2.5rem [gx-6]',
+        '7' => '3rem [gx-7]',
+        '8' => '4rem [gx-8]',
+        '9' => '5rem [gx-9]',
+        '10' => '6rem [gx-10]',
+    ],
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [
+    0 => 'Main horizontal grid gutter',
+    1 => 'Bootstrap horizontal gutters for main column and sidebars.',
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'] = [
+    0 => 'Header horizontal grid gutter',
+    1 => 'Bootstrap horizontal gutters for the header rows.',
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'] = [
+    0 => 'Footer horizontal grid gutter',
+    1 => 'Bootstrap horizontal gutters for the footer row.',
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
+    0 => 'Vertical gap between rows',
+    1 => 'Bootstrap row-gap per viewport. Applied between wrapped rows inside the container.',
+    'options' => [
+        '0'   => '0rem [row-gap-0]',
+        '1'   => '0.25rem [row-gap-1]',
+        '2'   => '0.5rem [row-gap-2]',
+        '3'   => '1rem [row-gap-3]',
+        '4'   => '1.5rem [row-gap-4]',
+        '5'   => '2rem [row-gap-5]',
+        '6'   => '2.5rem [row-gap-6]',
+        '7'   => '3rem [row-gap-7]',
+        '8'   => '4rem [row-gap-8]',
+        '9'   => '5rem [row-gap-9]',
+        '10'  => '6rem [row-gap-10]',
+    ],
 ];
