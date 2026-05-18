@@ -20,3 +20,8 @@ services:
       - '@twig'
       - '%kernel.project_dir%'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode:
+    arguments:
+      - '@database_connection'
+      - '@filesystem'
+      - '%kernel.project_dir%'
