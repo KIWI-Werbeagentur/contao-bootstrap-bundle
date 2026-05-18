@@ -8,7 +8,7 @@ $GLOBALS['TL_LANG']['responsive']['spacings']['0'][0]   = '0rem [spacer-0]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['1'][0]   = '0,25rem [spacer-1]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['2'][0]   = '0,5rem [spacer-2]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['3'][0]   = '1rem [spacer-3]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['4'][0]   = '1,5rem (Standard) [spacer-4]';
+$GLOBALS['TL_LANG']['responsive']['spacings']['4'][0]   = '1,5rem [spacer-4]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['5'][0]   = '2rem [spacer-5]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['6'][0]   = '2,5rem [spacer-6]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['7'][0]   = '3rem [spacer-7]';
@@ -17,7 +17,7 @@ $GLOBALS['TL_LANG']['responsive']['spacings']['9'][0]   = '5rem [spacer-9]';
 $GLOBALS['TL_LANG']['responsive']['spacings']['10'][0]  = '6rem [spacer-10]';
 
 $GLOBALS['TL_LANG']['responsive']['spacings']['default'][0]  = "Standard [default]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "Kein Abstand [none]";
+$GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "Null Abstand [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0]      = "Standard-Rasterabstand [gap]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Halber Standard-Rasterabstand [gap-half]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xxs'][0]      = "Extra extra klein [xxs]";
