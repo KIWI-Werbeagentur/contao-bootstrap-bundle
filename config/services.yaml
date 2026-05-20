@@ -20,6 +20,13 @@ services:
       - '@twig'
       - '%kernel.project_dir%'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator:
+    public: true
+    arguments:
+      - '@filesystem'
+      - '@twig'
+      - '%kernel.project_dir%'
+  Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer: ~
   Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode:
     arguments:
       - '@database_connection'
