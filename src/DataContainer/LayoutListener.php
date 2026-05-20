@@ -7,6 +7,7 @@ use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\ThemeModel;
+use Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator;
 use Symfony\Component\Filesystem\Filesystem;
 
 class LayoutListener
@@ -14,7 +15,6 @@ class LayoutListener
 
     public function generateLayoutCustomizationFiles(DataContainer $objDca)
     {
-        $strToRoot = "../../../..";
         $objTheme = ThemeModel::findByPk($objDca->activeRecord->pid);
         $fs = new Filesystem();
 
@@ -30,27 +30,10 @@ class LayoutListener
             $fs->mkdir($targetPath);
         }
 
-        if (!$fs->exists($targetPath . '_imports-' . $layoutAlias . '.scss')) {
-            $arrData = [
-                'themeName' => $themeAlias,
-                'layoutName' => $layoutAlias,
-                'bootstrapComponents' => "@import '../_imports-{$themeAlias}.scss';",
-                'bootstrapStyles' => str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['bootstrap']),
-                'customStyles' => str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['custom'])
-            ];
-            $strBuffer = System::getContainer()->get('twig')->render('@Contao/responsive/bootstrap_imports.scss.twig', $arrData);
+        System::getContainer()->get(LayoutImportsFileRegenerator::class)->regenerate($themeAlias, $layoutAlias);
 
-            if (isset($GLOBALS['TL_HOOKS']['alterBootstrapImports']) && \is_array($GLOBALS['TL_HOOKS']['alterBootstrapImports']))
-            {
-                foreach ($GLOBALS['TL_HOOKS']['alterBootstrapImports'] as $callback)
-                {
-                    $strBuffer = System::importStatic($callback[0])->{$callback[1]}($arrData, $strBuffer, $this);
-                }
-            }
-
-            file_put_contents($targetPath . '_imports-' . $layoutAlias . '.scss', $strBuffer);
-        }
-
+        // layoutvars and layout are user-owned scaffold files: created once,
+        // never overwritten, so editor customizations survive any rebuild.
         if (!$fs->exists($targetPath . 'layoutvars-' . $layoutAlias . '.scss')) {
             file_put_contents($targetPath . 'layoutvars-' . $layoutAlias . '.scss', '// Hier können Bootstrap-Variablen für das Layout überschrieben werden.' . "\n" . '// Eine Datei mit allen möglichen Variablen findet sich unter "vendor/twbs/scss/_variables.scss".' . "\n\n");
         }
