@@ -18,3 +18,13 @@ $GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['responsiveInputType']
 $GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['reference'] = &$GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'];
 $GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['options'] = ['0',1,2,3,4,5,6,'first','last'];
 unset($GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['eval']['rgxp']);
+
+$GLOBALS['TL_DCA']['container']['fields']['responsiveGutter'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
+    'eval' => ['tl_class' => 'clr w50'],
+    'sql' => 'blob NULL',
+];

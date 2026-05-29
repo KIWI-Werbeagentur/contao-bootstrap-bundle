@@ -2,9 +2,13 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+
+  Kiwi\Contao\BootstrapBundle\Service\BootstrapFrontendService: '@kiwi.contao.responsive.frontend'
   Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\AlterResponsiveValues: ~
+  Kiwi\Contao\BootstrapBundle\Twig\BootstrapResponsiveTwigExtension:
+    tags: ['twig.extension']
   Kiwi\Contao\BootstrapBundle\CacheWarmer\TwbsAssetSymlinkWarmer:
     arguments:
       - '@filesystem'
