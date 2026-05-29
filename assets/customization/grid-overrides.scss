@@ -1,0 +1,87 @@
+/* Marginless grid: gap-based replacement for Bootstrap's negative-margin grid model.
+ *
+ * Bootstrap 5.x ships a grid that uses negative L/R margins on .row to cancel the
+ * outer half-paddings of edge columns. That keeps `.col-N` width as a simple
+ * percentage (`width: N/12 * 100%`) regardless of how many siblings share a row.
+ *
+ * This override drops the negative-margin trick and uses `column-gap` / `row-gap`
+ * for inter-column spacing instead. The column widths are rewritten using a
+ * `calc()` formula that is algebraically equivalent:
+ *
+ *     width: calc(N/12 * (100% + var(--bs-gutter-x)) - var(--bs-gutter-x))
+ *
+ * Proof for any mix of cols summing to 12 across `c` siblings:
+ *   sum(width_i)         = (sum N_i)/12 * (100% + gap) - c*gap
+ *                        = 100% + gap - c*gap
+ *   sum(width_i) + (c-1)*gap = 100% + gap - c*gap + (c-1)*gap = 100% ✓
+ *
+ * make-container() emits no padding: a bare container has width + auto margins
+ * only. (Opt-in container padding is layered on top of this engine by a later
+ * commit via .cx-* utilities.)
+ *
+ * Browser support: flexbox `gap` requires Safari ≥ 14.5 / iOS ≥ 14.5 (Apr 2021).
+ * All other modern browsers (Chrome, Edge, Firefox) support it since 2020.
+ *
+ * Loaded between Bootstrap's _mixins.scss and _grid.scss / _containers.scss
+ * so the redefined mixins win over Bootstrap's originals.
+ */
+
+// --------------------------------------------------------------------------
+// Mixin overrides — redeclare with the same names so Bootstrap's _grid.scss
+// and _containers.scss pick up our versions when they invoke them.
+// --------------------------------------------------------------------------
+
+@mixin make-container() {
+  // No padding here — a bare container has width + auto margins only.
+  width: 100%;
+  margin-right: auto;
+  margin-left:  auto;
+}
+
+@mixin make-row($gutter: $grid-gutter-width) {
+  --#{$prefix}gutter-x: #{$gutter};
+  --#{$prefix}gutter-y: 0;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--#{$prefix}gutter-x);
+  row-gap:    var(--#{$prefix}gutter-y);
+}
+
+@mixin make-col-ready() {
+  // Add box sizing if only the grid is loaded
+  box-sizing: if(variable-exists(include-column-box-sizing) and $include-column-box-sizing, border-box, null);
+  flex-shrink: 0;
+  // Default base width: 100%. Same rationale as upstream Bootstrap — keeps
+  // .row > * (no .col-* class) full-width, and gives smaller-tier .col-* a
+  // sensible fallback before the explicit width-bearing rule kicks in at the
+  // matching breakpoint. The explicit .col-N rules (calc widths) win over
+  // this because they come later in the cascade.
+  width: 100%;
+  max-width: 100%;
+}
+
+@mixin make-col($size: false, $columns: $grid-columns) {
+  @if $size {
+    flex: 0 0 auto;
+    // The percentage form keeps the algebra readable. Sass `divide()` returns
+    // a plain ratio at compile time, so we get e.g. `0.5 * (100% + var(...)) - var(...)`
+    width: calc(#{divide($size, $columns)} * (100% + var(--#{$prefix}gutter-x)) - var(--#{$prefix}gutter-x));
+  } @else {
+    flex: 1 1 0;
+    max-width: 100%;
+  }
+}
+
+@mixin row-cols($count) {
+  > * {
+    flex: 0 0 auto;
+    // Same multiplicative shape as make-col(): a precomputed Sass fraction
+    // times (100% + gap), minus one gap. The fraction is `1 / $count`, evaluated
+    // at compile time so the emitted CSS has the form
+    //   calc(<number> * (100% + var(--bs-gutter-x)) - var(--bs-gutter-x))
+    // which avoids both unitless-zero multiplication (the N=1 case) and the
+    // length-percentage-divided-by-number form (which some SCSS compilers
+    // mis-evaluate when var() is involved).
+    width: calc(#{divide(1, $count)} * (100% + var(--#{$prefix}gutter-x)) - var(--#{$prefix}gutter-x));
+  }
+}
