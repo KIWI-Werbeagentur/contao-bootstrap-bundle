@@ -15,9 +15,17 @@
  *                        = 100% + gap - c*gap
  *   sum(width_i) + (c-1)*gap = 100% + gap - c*gap + (c-1)*gap = 100% ✓
  *
- * make-container() emits no padding: a bare container has width + auto margins
- * only. (Opt-in container padding is layered on top of this engine by a later
- * commit via .cx-* utilities.)
+ * As a separate benefit, the container's own outer padding is decoupled from
+ * the inter-column gutter. The `.cx-*` utilities apply `padding-left/right` *directly*
+ * (not through a custom property), gated by media queries so the padding only
+ * applies while the container is "fluid-like" — see the generator at the bottom
+ * of this file.
+ *
+ * Why direct padding instead of a `--bs-container-padding-x` custom property:
+ * custom properties inherit, so a nested container would pick up an ancestor's
+ * padding value ("bleed") and need explicit resets to suppress it. Plain
+ * `padding` declarations don't inherit, so nesting is correct with zero reset
+ * rules — a container only ever has padding if it itself carries a `.cx-*`.
  *
  * Browser support: flexbox `gap` requires Safari ≥ 14.5 / iOS ≥ 14.5 (Apr 2021).
  * All other modern browsers (Chrome, Edge, Firefox) support it since 2020.
@@ -32,7 +40,9 @@
 // --------------------------------------------------------------------------
 
 @mixin make-container() {
-  // No padding here — a bare container has width + auto margins only.
+  // No padding here — container padding is handled via .cx-* (see the
+  // fluid-gated generator at the bottom of this file). A bare container has
+  // width + auto margins only.
   width: 100%;
   margin-right: auto;
   margin-left:  auto;
@@ -83,5 +93,92 @@
     // length-percentage-divided-by-number form (which some SCSS compilers
     // mis-evaluate when var() is involved).
     width: calc(#{divide(1, $count)} * (100% + var(--#{$prefix}gutter-x)) - var(--#{$prefix}gutter-x));
+  }
+}
+
+// --------------------------------------------------------------------------
+// Container-padding utilities (.cx-*) — opt-in, fluid-gated.
+// --------------------------------------------------------------------------
+//
+// `.cx{infix}-{key}` apply the container's own outer L/R padding, decoupled
+// from the inter-column gutter and drawn from the same $gutters scale.
+//
+// Padding is applied *directly* (no custom property → no inheritance/bleed),
+// and only while the host container is "fluid-like":
+//
+//   .container-fluid          → fluid at every viewport          → always
+//   .container, .container-sm → fluid below the `sm` breakpoint  → < 576px
+//   .container-md             → fluid below `md`                 → < 768px
+//   .container-lg             → fluid below `lg`                 → < 992px
+//   .container-xl             → fluid below `xl`                 → < 1200px
+//   .container-xxl            → fluid below `xxl`                → < 1400px
+//
+// Once a responsive container reaches its own breakpoint it becomes a
+// fixed-width "container" and receives no .cx padding. As a consequence, a
+// .cx value chosen at a breakpoint at/above a container's own breakpoint has
+// no effect (e.g. `.container-md.cx-lg-3`) — the combination is pruned below.
+//
+// The selectors are compound (`.container-md.cx-3`): the container-size class
+// and the .cx-* class must sit on the SAME element. Both the article wrapper
+// (getAllContainerClasses) and the layout header/footer container
+// (responsiveContainerSize* + getContainerPaddingXClasses) satisfy this.
+
+// container-size class suffix → its "fluid ceiling" breakpoint (null = always
+// fluid). Plain `.container` shares `.container-sm`'s ceiling (fluid only < sm).
+$cx-container-ceilings: (
+  ""      : sm,
+  "-fluid": null,
+  "-sm"   : sm,
+  "-md"   : md,
+  "-lg"   : lg,
+  "-xl"   : xl,
+  "-xxl"  : xxl,
+);
+
+@mixin cx-padding($value) {
+  padding-right: #{$value};
+  padding-left:  #{$value};
+}
+
+@if $enable-grid-classes {
+  @each $csuffix, $ceil in $cx-container-ceilings {
+    // Upper bound (exclusive) of this container's fluid range, as a max-width.
+    $ceilMin: if($ceil == null, null, breakpoint-min($ceil, $grid-breakpoints));
+    $ceilMax: if($ceilMin == null, null, $ceilMin - 0.02);
+
+    @each $breakpoint in map-keys($grid-breakpoints) {
+      $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+      $min:   breakpoint-min($breakpoint, $grid-breakpoints); // null for xs
+
+      // Prune dead combinations: skip when the .cx breakpoint starts at or
+      // after the container has already become fixed-width.
+      $skip: $ceilMin != null and $min != null and $min >= $ceilMin;
+
+      @if not $skip {
+        @each $key, $value in $gutters {
+          $sel: ".container#{$csuffix}.cx#{$infix}-#{$key}";
+
+          @if $ceilMax == null and $min == null {
+            // container-fluid, xs cx: applies everywhere, no media query.
+            #{$sel} { @include cx-padding($value); }
+          } @else if $ceilMax == null {
+            // container-fluid, cx at >= a breakpoint: min-width only.
+            @media (min-width: $min) {
+              #{$sel} { @include cx-padding($value); }
+            }
+          } @else if $min == null {
+            // Bounded container, xs cx: max-width only (the fluid ceiling).
+            @media (max-width: $ceilMax) {
+              #{$sel} { @include cx-padding($value); }
+            }
+          } @else {
+            // Bounded container, cx at >= a breakpoint: clipped band.
+            @media (min-width: $min) and (max-width: $ceilMax) {
+              #{$sel} { @include cx-padding($value); }
+            }
+          }
+        }
+      }
+    }
   }
 }

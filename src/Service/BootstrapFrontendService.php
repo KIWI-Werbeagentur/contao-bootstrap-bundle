@@ -64,10 +64,28 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varRowGapClasses');
     }
 
+    /**
+     * Container's own outer L/R padding utilities (.cx-* per breakpoint). Decoupled from the
+     * inter-column gutter, so a container can have its own outer breathing room
+     * independent of how its child columns are spaced.
+     *
+     * Map is fully enumerated in {@see \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration}.
+     *
+     * @return list<string>
+     */
+    public function getContainerPaddingXClasses($varData, $table = 'tl_article', $strField = 'responsiveContainerPaddingX'): array
+    {
+        $type = self::getProp($varData, 'type') ?: null;
+        if (!$this->isFieldInPalette($strField, $type, $table)) {
+            return [];
+        }
+        return $this->getResponsiveClasses(self::getProp($varData, $strField), 'varContainerPaddingXClasses');
+    }
+
     public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article'): array
     {
         $arrSpecs = [
-            ['gutter', 'responsiveGutter', 'getGutterClasses'],
+            ['containerPaddingX', 'responsiveContainerPaddingX',  'getContainerPaddingXClasses'],
         ];
 
         $type = self::getProp($varData, 'type') ?: null;
@@ -78,7 +96,7 @@ class BootstrapFrontendService extends ResponsiveFrontendService
             if (!$this->isFieldInPalette($strField, $type, $table)) {
                 continue;
             }
-            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod(self::getProp($varData, $strField)));
+            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod($varData, $table, $strField));
         }
 
         return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table), $arrBootstrapClasses);

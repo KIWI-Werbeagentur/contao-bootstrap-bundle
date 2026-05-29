@@ -98,3 +98,31 @@ $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
         '10'  => '6rem [row-gap-10]',
     ],
 ];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
+    0 => 'Container padding',
+    1 => "The container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
+    'options' => [
+        '0'  => '0rem [cx-0]',
+        '1'  => '0.25rem [cx-1]',
+        '2'  => '0.5rem [cx-2]',
+        '3'  => '1rem [cx-3]',
+        '4'  => '1.5rem [cx-4]',
+        '5'  => '2rem [cx-5]',
+        '6'  => '2.5rem [cx-6]',
+        '7'  => '3rem [cx-7]',
+        '8'  => '4rem [cx-8]',
+        '9'  => '5rem [cx-9]',
+        '10' => '6rem [cx-10]',
+    ],
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'] = [
+    0 => 'Header container padding',
+    1 => "The header section container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'] = [
+    0 => 'Footer container padding',
+    1 => "The footer section container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
+];

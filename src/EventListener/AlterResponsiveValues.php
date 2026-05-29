@@ -22,5 +22,8 @@ class AlterResponsiveValues
                 }
             }
         }
+        // Note: varContainerPaddingXClasses needs no special handling. The class
+        // map has no `default` token and no per-breakpoint reset class, so the raw
+        // responsive values map straight to .cx-* classes.
     }
 }

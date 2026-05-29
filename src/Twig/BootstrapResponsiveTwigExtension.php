@@ -16,6 +16,7 @@ class BootstrapResponsiveTwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction('getGutterClasses', [$this->bootstrapFrontend, 'getGutterClasses']),
+            new TwigFunction('getContainerPaddingXClasses', [$this->bootstrapFrontend, 'getContainerPaddingXClasses']),
         ];
     }
 }

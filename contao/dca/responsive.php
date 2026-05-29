@@ -38,3 +38,24 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
     'eval' => ['tl_class' => 'w50'],
     'sql' => 'blob NULL',
 ];
+
+/* Container's own outer L/R padding, independent of the inter-column gutter
+ * (responsiveGutter). Emits .cx-* utilities (opt-in, fluid-gated); see
+ * grid-overrides.scss.
+ *
+ * IMPORTANT: this field is intentionally NOT part of the generic `container`
+ * field group. The `container` group auto-merges into content elements and
+ * form fields (see contao-responsive-base tl_content.php / tl_form_field.php),
+ * which must NOT carry a container-padding option. It lives under its own
+ * `containerPadding` bucket and is added explicitly only where wanted:
+ *   - tl_article  (this bundle's tl_article.php)
+ *   - tl_layout   header/footer (this bundle's tl_layout.php) */
+$GLOBALS['TL_DCA']['containerPadding']['fields']['responsiveContainerPaddingX'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'eval' => ['tl_class' => 'clr w50'],
+    'sql' => 'blob NULL',
+];
