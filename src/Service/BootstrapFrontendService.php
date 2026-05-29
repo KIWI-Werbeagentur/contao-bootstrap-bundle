@@ -42,6 +42,37 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varRowColsClasses');
     }
 
+    /**
+     * Bootstrap responsive horizontal-gutter utilities (gx-* per breakpoint). Vertical gutters are handled separately by the bundle.
+     * Map is fully enumerated in {@see \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration}.
+     *
+     * @return list<string>
+     */
+    public function getGutterClasses(?string $strData): array
+    {
+        return $this->getResponsiveClasses($strData, 'varGutterClasses');
+    }
+
+    public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article'): array
+    {
+        $arrSpecs = [
+            ['gutter', 'responsiveGutter', 'getGutterClasses'],
+        ];
+
+        $type = self::getProp($varData, 'type') ?: null;
+
+        $arrBootstrapClasses = [];
+        foreach ($arrSpecs as [$strKey, $strDefaultField, $strMethod]) {
+            $strField = $arrFields[$strKey] ?? $strDefaultField;
+            if (!$this->isFieldInPalette($strField, $type, $table)) {
+                continue;
+            }
+            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod(self::getProp($varData, $strField)));
+        }
+
+        return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table), $arrBootstrapClasses);
+    }
+
     public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content', bool $skipPaletteCheck = false): array
     {
         // Checked here as well: the fields below live in the same subpalette as the parent's, so
@@ -55,7 +86,8 @@ class BootstrapFrontendService extends ResponsiveFrontendService
             [
                 "row"
             ],
-            $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols'))
+            $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols')),
+            $this->getGutterClasses(self::getProp($varData, $arrFields['gutter'] ?? 'responsiveGutter')),
         );
 
         return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields, $table, $skipPaletteCheck));
