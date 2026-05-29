@@ -1,6 +1,10 @@
 {% extends '@Contao/fe_page.html5' %}
 
 {% if layout %}
+    {% set headerContainerAttributes = attrs()
+        .addClass(getContainerPaddingXClasses(layout, 'tl_layout', 'responsiveContainerPaddingXHeader'))
+        .mergeWith(headerContainerAttributes|default(null))
+    %}
     {% set headerWrapperAttributes = attrs()
         .addClass(getGutterClasses(layout.responsiveGutterHeader ?? ''))
         .mergeWith(headerWrapperAttributes|default(null))
@@ -23,6 +27,10 @@
         .mergeWith(rightWrapperAttributes|default(null))
     %}
 
+    {% set footerContainerAttributes = attrs()
+        .addClass(getContainerPaddingXClasses(layout, 'tl_layout', 'responsiveContainerPaddingXFooter'))
+        .mergeWith(footerContainerAttributes|default(null))
+    %}
     {% set footerWrapperAttributes = attrs()
         .addClass(getGutterClasses(layout.responsiveGutterFooter ?? ''))
         .mergeWith(footerWrapperAttributes|default(null))

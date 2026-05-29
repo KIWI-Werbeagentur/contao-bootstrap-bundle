@@ -97,3 +97,31 @@ $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
         '10'  => '6rem [row-gap-10]',
     ],
 ];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
+    0 => 'Container-Padding',
+    1 => 'Der linke/rechte Abstand nach außen des Containers (cx-*) je Viewport.  Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
+    'options' => [
+        '0'  => '0rem [cx-0]',
+        '1'  => '0,25rem [cx-1]',
+        '2'  => '0,5rem [cx-2]',
+        '3'  => '1rem [cx-3]',
+        '4'  => '1,5rem [cx-4]',
+        '5'  => '2rem [cx-5]',
+        '6'  => '2,5rem [cx-6]',
+        '7'  => '3rem [cx-7]',
+        '8'  => '4rem [cx-8]',
+        '9'  => '5rem [cx-9]',
+        '10' => '6rem [cx-10]',
+    ],
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'] = [
+    0 => 'Header Container-Padding',
+    1 => 'Der linke/rechte Abstand nach außen des Header-Abschnitt-Containers (cx-*) je Viewport. Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
+];
+
+$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'] = [
+    0 => 'Footer Container-Padding',
+    1 => 'Der linke/rechte Abstand nach außen des Footer-Abschnitt-Containers (cx-*) je Viewport. Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
+];

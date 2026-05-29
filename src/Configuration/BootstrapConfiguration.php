@@ -116,6 +116,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array|string $varRowColsClasses = [];
 
     /**
+     * Holds the resolved per-breakpoint container-padding-x classes for the current element.
+     * Populated by the responsive engine via the {@see self::__get()} mapping below.
+     */
+    protected array|string $varContainerPaddingXClasses = [];
+
+    /**
      * Full enumeration of all gutter tokens to their class templates.
      * Order is preserved in the BE menu via {@see self::getGutterSizeKeys()}.
      * Projects extending the available spacers override this property (and the SCSS `$gutters` map).
@@ -156,6 +162,58 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * @var array<string, int|string>
      */
     protected array $arrGutterFooterDefaults = ['xs' => '4'];
+
+    /**
+     * Full enumeration of container-padding-x tokens to their class templates.
+     * Maps to the .cx-{N} utilities emitted by grid-overrides.scss, which apply
+     * the container's own outer L/R padding (opt-in, fluid-gated, non-inheriting)
+     * independently from the inter-column gutter.
+     *
+     * There is intentionally no `default` token: container padding is fully
+     * opt-in. An empty selection emits no class and the container has no
+     * outer padding.
+     *
+     * @var array<string, string>
+     */
+    protected array $arrContainerPaddingXClasses = [
+        '0'   => 'cx{{modifier}}-0',
+        '1'   => 'cx{{modifier}}-1',
+        '2'   => 'cx{{modifier}}-2',
+        '3'   => 'cx{{modifier}}-3',
+        '4'   => 'cx{{modifier}}-4',
+        '5'   => 'cx{{modifier}}-5',
+        '6'   => 'cx{{modifier}}-6',
+        '7'   => 'cx{{modifier}}-7',
+        '8'   => 'cx{{modifier}}-8',
+        '9'   => 'cx{{modifier}}-9',
+        '10'  => 'cx{{modifier}}-10',
+    ];
+
+    /**
+     * Default container-padding-x selection per breakpoint.
+     *
+     * Override without subclassing via $GLOBALS['responsive']['containerPaddingXDefault']
+     * (side key 'main'); see {@see self::applyConfiguredContainerPaddingXDefaults()}.
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrContainerPaddingXDefaults = ['xs' => '2'];
+
+    /**
+     * Default container-padding-x selection for the layout header section.
+     * Override via the 'header' side key of $GLOBALS['responsive']['containerPaddingXDefault'].
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrContainerPaddingXHeaderDefaults = ['xs' => '2'];
+
+    /**
+     * Default container-padding-x selection for the layout footer section.
+     * Override via the 'footer' side key of $GLOBALS['responsive']['containerPaddingXDefault'].
+     *
+     * @var array<string, int|string>
+     */
+    protected array $arrContainerPaddingXFooterDefaults = ['xs' => '2'];
 
     /**
      * Full enumeration of row-gap tokens to their class templates.
@@ -205,6 +263,164 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->arrIcons['justifyContent']['around'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-around.svg";
         $this->arrIcons['justifyContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-evenly.svg";
         $this->arrIcons['justifyContent']['between'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-between.svg";
+
+        $this->applyConfiguredContainerPaddingXDefaults();
+    }
+
+    /**
+     * Read $GLOBALS['responsive']['containerPaddingXDefault'] and overwrite the
+     * container-padding-x field defaults without requiring a custom configuration
+     * subclass. Mirrors {@see self::applyConfiguredFieldDefaults()}; the side keys
+     * are 'main' (content/article/form fields), 'header' and 'footer' (the layout
+     * section containers). Each leaf value must be a key of $arrContainerPaddingXClasses
+     * (`0`–`10`).
+     *
+     *   $GLOBALS['responsive']['containerPaddingXDefault'] = 3;
+     *       // → main/header/footer defaults = ['xs' => 3]
+     *
+     *   $GLOBALS['responsive']['containerPaddingXDefault'] = ['header' => 0, 'footer' => 0];
+     *       // → header/footer = ['xs' => 0]; main keeps its bundle default
+     *
+     *   $GLOBALS['responsive']['containerPaddingXDefault'] = [
+     *       'main' => ['xs' => 2, 'lg' => 4],
+     *   ];
+     *       // assigned as-is
+     *
+     * Pass an empty array for a side (e.g. ['header' => []]) to clear its default
+     * back to opt-in (no preselected value).
+     *
+     * @throws \InvalidArgumentException if any leaf value is not a valid padding key
+     */
+    private function applyConfiguredContainerPaddingXDefaults(): void
+    {
+        $config = $GLOBALS['responsive']['containerPaddingXDefault'] ?? null;
+        if ($config === null) {
+            return;
+        }
+
+        $normalized = $this->normalizeDefaultOverride(
+            $config,
+            ['main', 'header', 'footer'],
+            $this->arrContainerPaddingXClasses,
+            'containerPaddingXDefault',
+        );
+
+        if (isset($normalized['main'])) {
+            $this->arrContainerPaddingXDefaults = $normalized['main'];
+        }
+        if (isset($normalized['header'])) {
+            $this->arrContainerPaddingXHeaderDefaults = $normalized['header'];
+        }
+        if (isset($normalized['footer'])) {
+            $this->arrContainerPaddingXFooterDefaults = $normalized['footer'];
+        }
+    }
+
+    /**
+     * Normalize a "default override" config — as accepted by the
+     * $GLOBALS['responsive'] hooks above — into a `['<side>' => ['<breakpoint>' => <value>]]`
+     * map. Three input shapes are accepted:
+     *
+     *   - scalar                          → applied to every side at the xs breakpoint
+     *   - ['<side>' => scalar]            → that side at the xs breakpoint
+     *   - ['<side>' => ['<bp>' => ...]]   → assigned as-is (an empty array clears the side)
+     *
+     * Every side key is checked against $validSides, every breakpoint against
+     * $this->arrBreakpoints and every leaf value against the keys of $validValues.
+     * Any unknown side, unknown breakpoint or invalid leaf value throws.
+     *
+     * @param mixed                    $config      the raw $GLOBALS['responsive'][$globalKey] value
+     * @param list<string>             $validSides  accepted side keys
+     * @param array<int|string, mixed> $validValues map whose keys enumerate the allowed leaf values
+     * @param string                   $globalKey   global array key, used verbatim in error messages
+     *
+     * @return array<string, array<string, int|string>>
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function normalizeDefaultOverride($config, array $validSides, array $validValues, string $globalKey): array
+    {
+        $label = sprintf('$GLOBALS[\'responsive\'][\'%s\']', $globalKey);
+
+        // Scalar → applies to every side at the xs breakpoint.
+        if (is_scalar($config)) {
+            $normalized = [];
+            foreach ($validSides as $side) {
+                $normalized[$side] = ['xs' => $config];
+            }
+        } elseif (is_array($config)) {
+            // Reject unknown side keys (e.g. typos like 'Top', 'heaer').
+            $unknownSides = array_diff(array_keys($config), $validSides);
+            if ($unknownSides !== []) {
+                throw new \InvalidArgumentException(sprintf(
+                    '%s has unknown side key(s): %s. Valid sides: %s.',
+                    $label,
+                    implode(', ', array_map(static fn ($k) => var_export($k, true), $unknownSides)),
+                    implode(', ', array_map(static fn ($k) => var_export($k, true), $validSides)),
+                ));
+            }
+
+            $normalized = [];
+            foreach ($validSides as $side) {
+                if (!array_key_exists($side, $config)) {
+                    continue;
+                }
+                $value = $config[$side];
+                if (is_scalar($value)) {
+                    $normalized[$side] = ['xs' => $value];
+                } elseif (is_array($value)) {
+                    $normalized[$side] = $value;
+                } else {
+                    throw new \InvalidArgumentException(sprintf(
+                        '%s[\'%s\'] must be a scalar or array, got %s.',
+                        $label,
+                        $side,
+                        get_debug_type($value),
+                    ));
+                }
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                '%s must be a scalar or array, got %s.',
+                $label,
+                get_debug_type($config),
+            ));
+        }
+
+        $validBreakpoints = array_keys($this->arrBreakpoints);
+
+        foreach ($normalized as $side => $breakpoints) {
+            foreach ($breakpoints as $breakpoint => $value) {
+                if (!in_array($breakpoint, $validBreakpoints, true)) {
+                    throw new \InvalidArgumentException(sprintf(
+                        '%s[\'%s\'] has unknown breakpoint key %s. Valid breakpoints: %s',
+                        $label,
+                        $side,
+                        var_export($breakpoint, true),
+                        implode(', ', array_map(
+                            static fn ($k) => var_export($k, true),
+                            $validBreakpoints,
+                        )),
+                    ));
+                }
+
+                if ((!is_int($value) && !is_string($value)) || !array_key_exists($value, $validValues)) {
+                    throw new \InvalidArgumentException(sprintf(
+                        '%s[\'%s\'][\'%s\'] = %s is not a valid value. Valid values: %s',
+                        $label,
+                        $side,
+                        $breakpoint,
+                        var_export($value, true),
+                        implode(', ', array_map(
+                            static fn ($k) => var_export($k, true),
+                            array_keys($validValues),
+                        )),
+                    ));
+                }
+            }
+        }
+
+        return $normalized;
     }
 
     public function __get(string $name)
@@ -220,6 +436,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             'varRowColsClasses' => $this->arrRowCols,
             'varGutterClasses' => $this->arrGutterClasses,
             'varRowGapClasses' => $this->arrRowGapClasses,
+            'varContainerPaddingXClasses' => $this->arrContainerPaddingXClasses,
             default => parent::__get($name),
         };
     }
@@ -241,6 +458,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return array_keys($this->arrRowGapClasses);
     }
 
+    public function getContainerPaddingXKeys(): array
+    {
+        return array_keys($this->arrContainerPaddingXClasses);
+    }
+
     public function getDefaults(DataContainer $objDca): void
     {
         parent::getDefaults($objDca);
@@ -248,6 +470,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->applyRowColsDefaults($objDca);
         $this->applyGutterDefaults($objDca);
         $this->applyRowGapDefaults($objDca);
+        $this->applyContainerPaddingXDefaults($objDca);
     }
 
     protected function applyRowColsDefaults(DataContainer $dc): void
@@ -278,6 +501,21 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
         if (isset($fields['responsiveRowGap'])) {
             $fields['responsiveRowGap']['default'] = $this->arrRowGapDefaults;
+        }
+    }
+
+    protected function applyContainerPaddingXDefaults(DataContainer $dc): void
+    {
+        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
+        $defaults = [
+            'responsiveContainerPaddingX'       => $this->arrContainerPaddingXDefaults,
+            'responsiveContainerPaddingXHeader' => $this->arrContainerPaddingXHeaderDefaults,
+            'responsiveContainerPaddingXFooter' => $this->arrContainerPaddingXFooterDefaults,
+        ];
+        foreach ($defaults as $field => $default) {
+            if (isset($fields[$field])) {
+                $fields[$field]['default'] = $default;
+            }
         }
     }
 }

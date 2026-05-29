@@ -46,9 +46,33 @@ foreach (['cols_2cll', 'cols_2clr', 'cols_3cl'] as $palette) {
     $GLOBALS['TL_DCA']['tl_layout']['subpalettes'][$palette] .= ',responsiveGutter';
 }
 
-$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_2rwh'] .= ',responsiveGutterHeader';
-$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_2rwf'] .= ',responsiveGutterFooter';
-$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_3rw'] .= ',responsiveGutterHeader,responsiveGutterFooter';
+// Container's own outer padding (.cx-*) for the header / footer sections.
+// Decoupled from the section gutter (responsiveGutterHeader/Footer), which is
+// kept: padding controls the section container's own breathing room, the
+// gutter controls spacing between columns inside that section's row.
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXHeader'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXFooter'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_2rwh'] .= ',responsiveGutterHeader,responsiveContainerPaddingXHeader';
+$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_2rwf'] .= ',responsiveGutterFooter,responsiveContainerPaddingXFooter';
+$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_3rw'] .= ',responsiveGutterHeader,responsiveContainerPaddingXHeader,responsiveGutterFooter,responsiveContainerPaddingXFooter';
 
 $GLOBALS['TL_DCA']['tl_layout']['fields']['alias'] = [
     'exclude' => true,

@@ -29,6 +29,8 @@ $GLOBALS['TL_DCA']['tl_form_field']['fields']['responsiveInputAttributePosition'
 $GLOBALS['TL_DCA']['tl_form_field']['palettes']['__selector__'][] = 'responsiveInputAttribute';
 $GLOBALS['TL_DCA']['tl_form_field']['subpalettes']['responsiveInputAttribute'] = 'responsiveInputAttributeContent,responsiveInputAttributePosition';
 
+$GLOBALS['TL_DCA']['tl_form_field']['fields']['responsiveContainerPaddingX'] = $GLOBALS['TL_DCA']['containerPadding']['fields']['responsiveContainerPaddingX'];
+$GLOBALS['TL_DCA']['tl_form_field']['subpalettes']['responsiveContainer_responsiveContainerSizes'] .= ',responsiveContainerPaddingX';
 
 
 // Positioning next to each other
