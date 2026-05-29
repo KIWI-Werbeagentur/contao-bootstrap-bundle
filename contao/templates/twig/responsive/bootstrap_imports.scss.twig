@@ -12,8 +12,13 @@
     @import "layoutvars-{{ layoutName }}";
     @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/row-cols-import.scss";
     @import "{{ bootstrapStyles }}/variables";
+    {% block config_post_variables %}
+        @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-spacers.scss";
+    {% endblock %}
     @import "{{ bootstrapStyles }}/maps";
-    $theme-colors: map-merge($theme-colors, $colors);
+    {% block config_post_maps %}
+        $theme-colors: map-merge($theme-colors, $colors);
+    {% endblock %}
     @import "{{ bootstrapStyles }}/mixins";
     @import "{{ bootstrapStyles }}/utilities";
     @import "../../_spacings.scss";
