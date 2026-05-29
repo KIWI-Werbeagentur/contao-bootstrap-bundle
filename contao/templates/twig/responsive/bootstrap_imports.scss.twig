@@ -20,6 +20,12 @@
         $theme-colors: map-merge($theme-colors, $colors);
     {% endblock %}
     @import "{{ bootstrapStyles }}/mixins";
+    {% block config_post_mixins %}
+        /* Marginless grid override — must come AFTER {{ bootstrapStyles }}/mixins
+         * (so the redefined make-row / make-col* / make-container mixins win) and BEFORE
+         * the .row/.col/.container rule emission inside the component imports below. */
+        @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/grid-overrides.scss";
+    {% endblock %}
     @import "{{ bootstrapStyles }}/utilities";
     @import "../../_spacings.scss";
     @import "../../../../vendor/kiwi/contao-bootstrap/assets/scss/responsive.scss";

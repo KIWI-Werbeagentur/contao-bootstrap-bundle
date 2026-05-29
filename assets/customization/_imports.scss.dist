@@ -16,6 +16,7 @@
 @import "__BOOTSTRAP-STYLES__/maps";
 $theme-colors: map-merge($theme-colors, $colors);
 @import "__BOOTSTRAP-STYLES__/mixins";
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/grid-overrides.scss";
 @import "__BOOTSTRAP-STYLES__/utilities";
 
 // Layout & components from theme
