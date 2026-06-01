@@ -14,55 +14,55 @@
 
 // Configuration
 {% block config %}
-    @import "{{ bootstrapStyles }}/functions";
-    @import "../themevars-{{ themeName }}";
-    @import "layoutvars-{{ layoutName }}";
-    @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/row-cols-import.scss";
-    @import "{{ bootstrapStyles }}/variables";
-    {% block config_post_variables %}
-        @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-spacers.scss";
-    {% endblock %}
-    @import "{{ bootstrapStyles }}/maps";
-    {% block config_post_maps %}
-        $theme-colors: map-merge($theme-colors, $colors);
-    {% endblock %}
-    @import "{{ bootstrapStyles }}/mixins";
-    {% block config_post_mixins %}
-        /* Marginless grid override — must come AFTER {{ bootstrapStyles }}/mixins
-         * (so the redefined make-row / make-col* / make-container mixins win) and BEFORE
-         * the .row/.col/.container rule emission inside the component imports below. */
-        @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/grid-overrides.scss";
-    {% endblock %}
-    @import "{{ bootstrapStyles }}/utilities";
-    {% block config_post_utilities %}
-        @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-utilities.scss";
-    {% endblock %}
-    @import "../../_spacings.scss";
-    @import "../../../../vendor/kiwi/contao-bootstrap/assets/scss/responsive.scss";
+@import "{{ bootstrapStyles }}/functions";
+@import "../themevars-{{ themeName }}";
+@import "layoutvars-{{ layoutName }}";
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/row-cols-import.scss";
+@import "{{ bootstrapStyles }}/variables";
+{% block config_post_variables %}
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-spacers.scss";
+{% endblock %}
+@import "{{ bootstrapStyles }}/maps";
+{% block config_post_maps %}
+$theme-colors: map-merge($theme-colors, $colors);
+{% endblock %}
+@import "{{ bootstrapStyles }}/mixins";
+{% block config_post_mixins %}
+/* Marginless grid override — must come AFTER {{ bootstrapStyles }}/mixins
+ * (so the redefined make-row / make-col* / make-container mixins win) and BEFORE
+ * the .row/.col/.container rule emission inside the component imports below. */
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/grid-overrides.scss";
+{% endblock %}
+@import "{{ bootstrapStyles }}/utilities";
+{% block config_post_utilities %}
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-utilities.scss";
+{% endblock %}
+@import "../../_spacings.scss";
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/scss/responsive.scss";
 {% endblock config %}
 
 // Layout & components from theme
 {% block components %}
-    {{ bootstrapComponents|raw }}
+{{ bootstrapComponents|raw }}
 {% endblock components %}
 
 // Helpers
 {% block helpers %}
-    @import "{{ bootstrapStyles }}/helpers";
+@import "{{ bootstrapStyles }}/helpers";
 {% endblock helpers %}
 
 // Utilities
 {% block utils %}
-    @import "{{ bootstrapStyles }}/utilities/api";
+@import "{{ bootstrapStyles }}/utilities/api";
 {% endblock utils %}
 
 // Custom
 {% block custom %}
-    {{ customStyles|raw }};
+{{ customStyles|raw }};
 {% endblock custom %}
 
 // Custom Styling
 {% block design %}
-    @import "../theme-{{ themeName }}";
-    // @import "layout-{{ layoutName }}";
+@import "../theme-{{ themeName }}";
+// @import "layout-{{ layoutName }}";
 {% endblock design %}
