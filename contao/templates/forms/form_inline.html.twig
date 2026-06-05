@@ -1,5 +1,5 @@
 {% set bodyClasses = bodyClasses|default('') %}
-{% set innerClasses = getAllInnerContainerClasses(_context)|join(' ') %}
+{% set innerClasses = getAllInnerContainerClasses(_context, table='tl_form', skipPaletteCheck=true)|join(' ') %}
 
 <form{{ attrs()
     .setIfExists('action', action|default)
