@@ -73,16 +73,16 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getContainerPaddingXClasses($varData, $table = 'tl_article', $strField = 'responsiveContainerPaddingX'): array
+    public function getContainerPaddingXClasses($varData, $table = 'tl_article', $strField = 'responsiveContainerPaddingX', bool $skipPaletteCheck = false): array
     {
         $type = self::getProp($varData, 'type') ?: null;
-        if (!$this->isFieldInPalette($strField, $type, $table)) {
+        if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
             return [];
         }
         return $this->getResponsiveClasses(self::getProp($varData, $strField), 'varContainerPaddingXClasses');
     }
 
-    public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article'): array
+    public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article', bool $skipPaletteCheck = false): array
     {
         $arrSpecs = [
             ['containerPaddingX', 'responsiveContainerPaddingX',  'getContainerPaddingXClasses'],
@@ -93,16 +93,16 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         $arrBootstrapClasses = [];
         foreach ($arrSpecs as [$strKey, $strDefaultField, $strMethod]) {
             $strField = $arrFields[$strKey] ?? $strDefaultField;
-            if (!$this->isFieldInPalette($strField, $type, $table)) {
+            if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
                 continue;
             }
-            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod($varData, $table, $strField));
+            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod($varData, $table, $strField, $skipPaletteCheck));
         }
 
-        return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table), $arrBootstrapClasses);
+        return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table, $skipPaletteCheck), $arrBootstrapClasses);
     }
 
-    public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content'): array
+    public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content', bool $skipPaletteCheck = false): array
     {
         $arrSpecs = [
             ['rowCols', 'responsiveRowCols', 'getRowColsClasses'],
@@ -115,13 +115,13 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         $arrBootstrapClasses = [];
         foreach ($arrSpecs as [$strKey, $strDefaultField, $strMethod]) {
             $strField = $arrFields[$strKey] ?? $strDefaultField;
-            if (!$this->isFieldInPalette($strField, $type, $table)) {
+            if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
                 continue;
             }
             $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod(self::getProp($varData, $strField)));
         }
 
-        $arrParentClasses = parent::getAllInnerContainerClasses($varData, $arrFields, $table);
+        $arrParentClasses = parent::getAllInnerContainerClasses($varData, $arrFields, $table, $skipPaletteCheck);
 
         // The structural `row` class enables the Bootstrap flex layout that makes the col-*,
         // flex-direction, justify-content, etc. utilities produced above and by the parent
