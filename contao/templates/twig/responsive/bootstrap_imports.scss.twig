@@ -17,7 +17,9 @@
 @import "{{ bootstrapStyles }}/functions";
 @import "../themevars-{{ themeName }}";
 @import "layoutvars-{{ layoutName }}";
-@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/row-cols-import.scss";
+{% block config_pre_variables %}
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/bundle-variables.scss";
+{% endblock %}
 @import "{{ bootstrapStyles }}/variables";
 {% block config_post_variables %}
 @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-spacers.scss";
