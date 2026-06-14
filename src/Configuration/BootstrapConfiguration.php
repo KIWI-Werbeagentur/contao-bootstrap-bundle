@@ -631,6 +631,22 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return array_keys($this->arrContainerPaddingXClasses);
     }
 
+    /**
+     * Breakpoint id => min width in px (xs => 0). Used by the grid CSS-variable
+     * generation to emit responsive defaults as min-width media queries.
+     *
+     * @return array<string, int>
+     */
+    public function getBreakpointMinWidths(): array
+    {
+        $widths = [];
+        foreach ($this->arrBreakpoints as $key => $definition) {
+            $widths[$key] = (int) ($definition['breakpoint'] ?? 0);
+        }
+
+        return $widths;
+    }
+
     public function getDefaults(DataContainer $objDca): void
     {
         parent::getDefaults($objDca);
@@ -685,5 +701,32 @@ class BootstrapConfiguration extends ResponsiveConfiguration
                 $fields[$field]['default'] = $default;
             }
         }
+    }
+
+    /**
+     * Dropdown option labels (key => label) for a grid subsystem, built from its
+     * configured scale, for the responsive language files. Steps use the
+     * SpacingScale label with the given decimal separator; `default` and variables
+     * get a descriptive label. Returns [] when the subsystem isn't configured.
+     *
+     * @return array<string, string>
+     */
+    public static function subsystemOptionLabels(string $subsystem, string $decimalSeparator = '.'): array
+    {
+        try {
+            $container = \Contao\System::getContainer();
+            $grid = ($container !== null && $container->hasParameter('kiwi_bootstrap.grid'))
+                ? $container->getParameter('kiwi_bootstrap.grid')
+                : [];
+        } catch (\Throwable) {
+            $grid = [];
+        }
+
+        if (!\is_array($grid) || empty($grid[$subsystem])) {
+            return [];
+        }
+
+        return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], []))
+            ->optionLabels($subsystem, $decimalSeparator);
     }
 }

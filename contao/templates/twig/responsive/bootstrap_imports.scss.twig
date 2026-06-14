@@ -61,6 +61,12 @@ $theme-colors: map-merge($theme-colors, $colors);
 // Utilities
 {% block utils %}
 @import "{{ bootstrapStyles }}/utilities/api";
+/* Grid subsystem CSS custom properties + utility classes (e.g. .gx-space-N). Emitted
+ * in the utilities layer, after the components, so the utility classes override the
+ * base .row gutter (--bs-gutter-x) — the same layering Bootstrap uses for its own
+ * gutter utilities. (The :root custom properties resolve at use, so their position
+ * here is irrelevant.) */
+@import "../../_grid.scss";
 {% endblock utils %}
 
 // Custom
