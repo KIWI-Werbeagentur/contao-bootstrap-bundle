@@ -22,6 +22,11 @@
 {% endblock %}
 @import "{{ bootstrapStyles }}/variables";
 {% block config_post_variables %}
+// Value-derived spacing scale helpers (kiwi-space/kiwi-space-subset). Keep before
+// maps so wiring can feed a curated subset into $gutters here. Do NOT merge into
+// $spacers: Bootstrap turns $spacers keys into .p*/.m* utilities (with !important)
+// that collide with the bundle's own .p[t|b]-space-N spacing classes.
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/space-scale.scss";
 @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-spacers.scss";
 {% endblock %}
 @import "{{ bootstrapStyles }}/maps";
