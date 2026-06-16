@@ -214,16 +214,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     /**
      * Default container-padding-x selection per breakpoint.
      *
-     * Override without subclassing via $GLOBALS['responsive']['containerPaddingXDefault']
-     * (side key 'main'); see {@see self::applyConfiguredContainerPaddingXDefaults()}.
-     *
      * @var array<string, int|string>
      */
     protected array $arrContainerPaddingXDefaults = ['xs' => '2'];
 
     /**
      * Default container-padding-x selection for the layout header section.
-     * Override via the 'header' side key of $GLOBALS['responsive']['containerPaddingXDefault'].
      *
      * @var array<string, int|string>
      */
@@ -231,7 +227,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     /**
      * Default container-padding-x selection for the layout footer section.
-     * Override via the 'footer' side key of $GLOBALS['responsive']['containerPaddingXDefault'].
      *
      * @var array<string, int|string>
      */
@@ -295,14 +290,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         $this->retainLegacyDefaultsForBcMode();
 
-        $this->applyConfiguredFieldDefaults();
-
-        // Re-key cx to space-N before the $GLOBALS override below, so a project
-        // override (containerPaddingXDefault) validates against the new option keys
-        // and wins over the dynamic `default` this sets.
         $this->applyContainerPaddingXScale();
-
-        $this->applyConfiguredContainerPaddingXDefaults();
 
         $this->applyGutterScale();
 
@@ -510,10 +498,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      *
      * If a subclass has redeclared any of the three defaults properties (detected
      * via reflection by comparing the effective declared defaults to this bundle's
-     * declared defaults), the user-chosen value is left alone. An explicit
-     * `$GLOBALS['responsive']['spacingDefault']` set elsewhere is applied later by
-     * {@see self::applyConfiguredFieldDefaults()} and overrides whatever this method
-     * decided.
+     * declared defaults), the user-chosen value is left alone.
      */
     private function retainLegacyDefaultsForBcMode(): void
     {
@@ -544,101 +529,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return (int) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? 0);
     }
 
-    /**
-     * Read $GLOBALS['responsive']['spacingDefault'] and overwrite the content-spacing
-     * top/bottom field defaults without requiring a custom configuration subclass.
-     *
-     * Accepted shapes (each leaf value must be a key of $arrSpacings):
-     *
-     *   $GLOBALS['responsive']['spacingDefault'] = 6;
-     *       // → arrSpacingTopDefaults    = ['xs' => 6]
-     *       //   arrSpacingBottomDefaults = ['xs' => 6]
-     *
-     *   $GLOBALS['responsive']['spacingDefault'] = ['top' => 6, 'bottom' => 4];
-     *       // → arrSpacingTopDefaults    = ['xs' => 6]
-     *       //   arrSpacingBottomDefaults = ['xs' => 4]
-     *
-     *   $GLOBALS['responsive']['spacingDefault'] = [
-     *       'top'    => ['xs' => 4, 'lg' => 6],
-     *       'bottom' => ['xs' => 6],
-     *   ];
-     *       // assigned as-is
-     *
-     * Element-group field defaults are intentionally not covered by this hook — they
-     * remain customizable via a {@see BootstrapConfiguration} subclass.
-     *
-     * @throws \InvalidArgumentException if any leaf value is not a valid spacing key
-     */
-    private function applyConfiguredFieldDefaults(): void
-    {
-        $config = $GLOBALS['responsive']['spacingDefault'] ?? null;
-        if ($config === null) {
-            return;
-        }
 
-        $normalized = $this->normalizeDefaultOverride(
-            $config,
-            ['top', 'bottom'],
-            $this->arrSpacings,
-            'spacingDefault',
-        );
-
-        if (isset($normalized['top'])) {
-            $this->arrSpacingTopDefaults = $normalized['top'];
-        }
-        if (isset($normalized['bottom'])) {
-            $this->arrSpacingBottomDefaults = $normalized['bottom'];
-        }
-    }
-
-    /**
-     * Read $GLOBALS['responsive']['containerPaddingXDefault'] and overwrite the
-     * container-padding-x field defaults without requiring a custom configuration
-     * subclass. Mirrors {@see self::applyConfiguredFieldDefaults()}; the side keys
-     * are 'main' (content/article/form fields), 'header' and 'footer' (the layout
-     * section containers). Each leaf value must be a key of $arrContainerPaddingXClasses
-     * (`0`–`10`).
-     *
-     *   $GLOBALS['responsive']['containerPaddingXDefault'] = 3;
-     *       // → main/header/footer defaults = ['xs' => 3]
-     *
-     *   $GLOBALS['responsive']['containerPaddingXDefault'] = ['header' => 0, 'footer' => 0];
-     *       // → header/footer = ['xs' => 0]; main keeps its bundle default
-     *
-     *   $GLOBALS['responsive']['containerPaddingXDefault'] = [
-     *       'main' => ['xs' => 2, 'lg' => 4],
-     *   ];
-     *       // assigned as-is
-     *
-     * Pass an empty array for a side (e.g. ['header' => []]) to clear its default
-     * back to opt-in (no preselected value).
-     *
-     * @throws \InvalidArgumentException if any leaf value is not a valid padding key
-     */
-    private function applyConfiguredContainerPaddingXDefaults(): void
-    {
-        $config = $GLOBALS['responsive']['containerPaddingXDefault'] ?? null;
-        if ($config === null) {
-            return;
-        }
-
-        $normalized = $this->normalizeDefaultOverride(
-            $config,
-            ['main', 'header', 'footer'],
-            $this->arrContainerPaddingXClasses,
-            'containerPaddingXDefault',
-        );
-
-        if (isset($normalized['main'])) {
-            $this->arrContainerPaddingXDefaults = $normalized['main'];
-        }
-        if (isset($normalized['header'])) {
-            $this->arrContainerPaddingXHeaderDefaults = $normalized['header'];
-        }
-        if (isset($normalized['footer'])) {
-            $this->arrContainerPaddingXFooterDefaults = $normalized['footer'];
-        }
-    }
 
     /**
      * Normalize a "default override" config — as accepted by the
@@ -662,90 +553,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      *
      * @throws \InvalidArgumentException
      */
-    private function normalizeDefaultOverride($config, array $validSides, array $validValues, string $globalKey): array
-    {
-        $label = sprintf('$GLOBALS[\'responsive\'][\'%s\']', $globalKey);
 
-        // Scalar → applies to every side at the xs breakpoint.
-        if (is_scalar($config)) {
-            $normalized = [];
-            foreach ($validSides as $side) {
-                $normalized[$side] = ['xs' => $config];
-            }
-        } elseif (is_array($config)) {
-            // Reject unknown side keys (e.g. typos like 'Top', 'heaer').
-            $unknownSides = array_diff(array_keys($config), $validSides);
-            if ($unknownSides !== []) {
-                throw new \InvalidArgumentException(sprintf(
-                    '%s has unknown side key(s): %s. Valid sides: %s.',
-                    $label,
-                    implode(', ', array_map(static fn ($k) => var_export($k, true), $unknownSides)),
-                    implode(', ', array_map(static fn ($k) => var_export($k, true), $validSides)),
-                ));
-            }
-
-            $normalized = [];
-            foreach ($validSides as $side) {
-                if (!array_key_exists($side, $config)) {
-                    continue;
-                }
-                $value = $config[$side];
-                if (is_scalar($value)) {
-                    $normalized[$side] = ['xs' => $value];
-                } elseif (is_array($value)) {
-                    $normalized[$side] = $value;
-                } else {
-                    throw new \InvalidArgumentException(sprintf(
-                        '%s[\'%s\'] must be a scalar or array, got %s.',
-                        $label,
-                        $side,
-                        get_debug_type($value),
-                    ));
-                }
-            }
-        } else {
-            throw new \InvalidArgumentException(sprintf(
-                '%s must be a scalar or array, got %s.',
-                $label,
-                get_debug_type($config),
-            ));
-        }
-
-        $validBreakpoints = array_keys($this->arrBreakpoints);
-
-        foreach ($normalized as $side => $breakpoints) {
-            foreach ($breakpoints as $breakpoint => $value) {
-                if (!in_array($breakpoint, $validBreakpoints, true)) {
-                    throw new \InvalidArgumentException(sprintf(
-                        '%s[\'%s\'] has unknown breakpoint key %s. Valid breakpoints: %s',
-                        $label,
-                        $side,
-                        var_export($breakpoint, true),
-                        implode(', ', array_map(
-                            static fn ($k) => var_export($k, true),
-                            $validBreakpoints,
-                        )),
-                    ));
-                }
-
-                if ((!is_int($value) && !is_string($value)) || !array_key_exists($value, $validValues)) {
-                    throw new \InvalidArgumentException(sprintf(
-                        '%s[\'%s\'][\'%s\'] = %s is not a valid value. Valid values: %s',
-                        $label,
-                        $side,
-                        $breakpoint,
-                        var_export($value, true),
-                        implode(', ', array_map(
-                            static fn ($k) => var_export($k, true),
-                            array_keys($validValues),
-                        )),
-                    ));
-                }
-            }
-        }
-
-        return $normalized;
-    }
 
     /**
      * Named-bucket spacing keys deprecated in favour of the value-derived space-N
