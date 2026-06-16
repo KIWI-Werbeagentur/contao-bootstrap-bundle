@@ -63,19 +63,9 @@ $GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
 $GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
     0 => 'Horizontal grid gutter',
     1 => 'Bootstrap horizontal gutters (gx-*) per viewport. Vertical gutters are configured separately.',
-    'options' => [
-        '0' => '0rem [gx-0]',
-        '1' => '0.5rem [gx-1]',
-        '2' => '0.75rem [gx-2]',
-        '3' => '1rem [gx-3]',
-        '4' => '1.5rem [gx-4]',
-        '5' => '2rem [gx-5]',
-        '6' => '2.5rem [gx-6]',
-        '7' => '3rem [gx-7]',
-        '8' => '4rem [gx-8]',
-        '9' => '5rem [gx-9]',
-        '10' => '6rem [gx-10]',
-    ],
+    // Option labels are derived from the kiwi_bootstrap.grid.gutter config (steps,
+    // the dynamic `default`, and one per configured variable).
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::gutterOptionLabels('.'),
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [

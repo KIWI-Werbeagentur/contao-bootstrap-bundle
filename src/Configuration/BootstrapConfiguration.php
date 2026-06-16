@@ -3,6 +3,8 @@
 namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
 use Contao\DataContainer;
+use Contao\System;
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
@@ -291,6 +293,71 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->applyConfiguredFieldDefaults();
 
         $this->applyConfiguredContainerPaddingXDefaults();
+
+        $this->applyGutterScale();
+    }
+
+    /**
+     * Wire the gutter subsystem to the value-derived space scale: build the
+     * option/class map and the per-section field defaults from the
+     * `kiwi_bootstrap.grid.gutter` configuration (shipped by the bundle,
+     * overridable per project). The dropdown then offers the configured space-N
+     * steps, the dynamic `default` option (→ var(--kiwi-gutter-default-<partial>)),
+     * and one option per configured variable; the matching classes are generated
+     * into _grid.scss. Labels live in the responsive language files.
+     */
+    private function applyGutterScale(): void
+    {
+        $grid = $this->gridConfig();
+        if (empty($grid['gutter'])) {
+            return;
+        }
+
+        $styles = new GridStyles(['gutter' => $grid['gutter']], $this->getBreakpointMinWidths());
+
+        $this->arrGutterClasses = $styles->classMap('gutter');
+
+        // New elements default to the dynamic `default` option, so they render at
+        // the configured default and follow config changes; per-section partial is
+        // supplied at the call site (getGutterClasses($data, $partial)).
+        $this->arrGutterDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrGutterHeaderDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrGutterFooterDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+    }
+
+    /**
+     * Gutter dropdown option labels (key => label) built from the configured
+     * gutter scale, for the responsive language files. Steps use the SpacingScale
+     * label with the given decimal separator; `default` and variables get a
+     * descriptive label. Returns [] when no gutter config is available.
+     *
+     * @return array<string, string>
+     */
+    public static function gutterOptionLabels(string $decimalSeparator = '.'): array
+    {
+        return self::subsystemOptionLabels('gutter', $decimalSeparator);
+    }
+
+    /**
+     * The processed `kiwi_bootstrap.grid` configuration, or [] when unavailable
+     * (e.g. CLI without a booted container).
+     *
+     * @return array<string, mixed>
+     */
+    private function gridConfig(): array
+    {
+        try {
+            $container = System::getContainer();
+            if ($container !== null && $container->hasParameter('kiwi_bootstrap.grid')) {
+                $config = $container->getParameter('kiwi_bootstrap.grid');
+
+                return \is_array($config) ? $config : [];
+            }
+        } catch (\Throwable) {
+            // Fall through.
+        }
+
+        return [];
     }
 
     /**

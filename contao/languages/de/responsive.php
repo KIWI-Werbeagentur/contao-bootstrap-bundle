@@ -62,20 +62,13 @@ $GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
 $GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
     0 => 'Horizontaler Rasterabstand',
     1 => 'Bootstrap horizontale Gutter (gx-*) je Viewport. Vertikale Gutter werden separat gesteuert.',
-    'options' => [
-        '0' => '0rem [gx-0]',
-        '1' => '0,5rem [gx-1]',
-        '2' => '0,75rem [gx-2]',
-        '3' => '1rem [gx-3]',
-        '4' => '1,5rem [gx-4]',
-        '5' => '2rem [gx-5]',
-        '6' => '2,5rem [gx-6]',
-        '7' => '3rem [gx-7]',
-        '8' => '4rem [gx-8]',
-        '9' => '5rem [gx-9]',
-        '10' => '6rem [gx-10]',
-    ],
+    // Optionslabels werden aus der kiwi_bootstrap.grid.gutter-Konfiguration abgeleitet.
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::gutterOptionLabels(','),
 ];
+// Lokalisiertes Label für die dynamische Standard-Option.
+if (isset($GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options']['default'] = 'Standard [default]';
+}
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [
     0 => 'Horizontaler Rasterabstand Inhaltsbereich',
