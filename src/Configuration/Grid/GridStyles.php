@@ -30,6 +30,16 @@ final class GridStyles
     public const GENERIC_DEFAULT = 'default';
 
     /**
+     * A `defaults` value meaning "no output": the `default` option, for that partial,
+     * emits no class at all (matching the responsive engine's SPACING_NO_OP sentinel).
+     * Unlike a scale step or special option it has no CSS value, so it emits no
+     * --kiwi-<subsystem>-default-<partial> variable and no utility class; the wiring
+     * suppresses the class at render. Only meaningful for subsystems whose rendering
+     * can omit the class (the vertical content spacing's [data-spacing-*] mechanism).
+     */
+    public const NO_OP = 'noop';
+
+    /**
      * @param array<string, array{options?: list<string>, defaults?: array<string, mixed>, variables?: array<string, string>}> $grid
      * @param array<string, int> $breakpoints breakpoint id => min width in px (xs => 0)
      */
@@ -114,10 +124,29 @@ final class GridStyles
 
         $values = [];
         foreach ($this->normalizeResponsive($raw, $subsystem, "defaults.$partial") as $breakpoint => $option) {
-            $values[$breakpoint] = $this->resolveOption($subsystem, $option, "defaults.$partial.$breakpoint");
+            // A `noop` default has no CSS value; label it as "no spacing".
+            $values[$breakpoint] = $option === self::NO_OP
+                ? 'none'
+                : $this->resolveOption($subsystem, $option, "defaults.$partial.$breakpoint");
         }
 
         return $values;
+    }
+
+    /**
+     * Whether a subsystem's configured default for the given partial is `noop`
+     * (i.e. the `default` option should emit no class for that partial). Reads only
+     * the xs/scalar value — a responsive default is value-based, not noop.
+     */
+    public function defaultIsNoOp(string $subsystem, string $partial = self::GENERIC_DEFAULT): bool
+    {
+        $raw = $this->grid[$subsystem]['defaults'][$partial] ?? null;
+
+        if (is_scalar($raw)) {
+            return (string) $raw === self::NO_OP;
+        }
+
+        return \is_array($raw) && ($raw['xs'] ?? null) === self::NO_OP;
     }
 
     /**
@@ -366,15 +395,22 @@ final class GridStyles
             ];
         }
 
+        // A `noop` default emits no class (and no var); skip those partials so no
+        // class referencing a non-existent --kiwi-…-default-<partial> is generated.
         $partials = SubsystemRegistry::partials($subsystem);
         if ($partials === []) {
             // No partials: a single generic default class.
-            $entries[] = [
-                'suffix' => 'default',
-                'value' => self::defaultVar($subsystem, null),
-            ];
+            if (!$this->defaultIsNoOp($subsystem)) {
+                $entries[] = [
+                    'suffix' => 'default',
+                    'value' => self::defaultVar($subsystem, null),
+                ];
+            }
         } else {
             foreach ($partials as $partial) {
+                if ($this->defaultIsNoOp($subsystem, $partial)) {
+                    continue;
+                }
                 $entries[] = [
                     'suffix' => 'default-' . $partial,
                     'value' => self::defaultVar($subsystem, $partial),
@@ -434,6 +470,11 @@ final class GridStyles
                 $this->assertKnownPartial($subsystem, (string) $partial);
                 $varName = self::defaultVarName($subsystem, (string) $partial);
                 foreach ($this->normalizeResponsive($raw, $subsystem, "defaults.$partial") as $breakpoint => $option) {
+                    // `noop`: the field renders no class for this partial, so there is
+                    // no value and no --kiwi-<subsystem>-default-<partial> var to emit.
+                    if ($option === self::NO_OP) {
+                        continue;
+                    }
                     $this->assertListed($subsystem, $option, $options, "defaults.$partial.$breakpoint");
                     $value = $this->resolveOption($subsystem, $option, "defaults.$partial.$breakpoint");
 
