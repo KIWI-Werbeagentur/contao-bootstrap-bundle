@@ -178,10 +178,16 @@ class KiwiBootstrapBundle extends AbstractBundle
                 'vertical-spacing' => [
                     'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-16', 'space-20'],
                     'defaults' => [
-                        // The dynamic `default` option: new article spacing fields use it
-                        // (→ 3rem), so they follow this config. Content-element groups
-                        // default to space-0 (set in the configuration class).
-                        'default' => 'space-12',
+                        // One default per DCA-field partial. Articles default to 3rem;
+                        // element groups default to `noop` — the `default` option renders
+                        // no class/attribute for them, so a group adds no spacing unless an
+                        // editor opts in. `default` is the generic fallback (parity with
+                        // the other subsystems).
+                        'default'       => 'space-12',
+                        'articleTop'    => 'space-12',
+                        'articleBottom' => 'space-12',
+                        'groupTop'      => 'noop',
+                        'groupBottom'   => 'noop',
                     ],
                 ],
             ],

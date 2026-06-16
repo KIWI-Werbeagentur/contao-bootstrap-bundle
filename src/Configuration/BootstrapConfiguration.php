@@ -5,6 +5,7 @@ namespace Kiwi\Contao\BootstrapBundle\Configuration;
 use Contao\DataContainer;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\SubsystemRegistry;
 use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
@@ -304,9 +305,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * keeping the deprecated named buckets and the noop sentinel intact (still gated
      * by {@see self::applyDeprecatedSpacingsMode()}). The class templates stay
      * direction-aware (p{{direction}}{{modifier}}-…); the matching --spacing-* rules
-     * are generated into _spacings.scss and `default` resolves to
-     * var(--kiwi-vertical-spacing-default). Article spacing fields follow the dynamic
-     * `default` (→ the configured 3rem); content-element groups default to space-0.
+     * are generated into _spacings.scss. The subsystem registers four partials
+     * (articleTop / articleBottom / groupTop / groupBottom), so the dynamic `default`
+     * resolves per field to var(--kiwi-vertical-spacing-default-<partial>). All four
+     * spacing fields default to `default`, following the configured per-partial values.
      */
     private function applyVerticalSpacingScale(): void
     {
@@ -329,20 +331,37 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         }
 
         // Config-driven scale (space-N) + the dynamic `default`, direction-aware.
+        // The four registered partials (articleTop / articleBottom / groupTop /
+        // groupBottom) make the `default` option's class partial-aware, so the
+        // runtime class chain can reach the per-partial CSS variables emitted by
+        // GridStyles::baseVariables() (--kiwi-vertical-spacing-default-<partial>).
+        // The responsive-base engine fills {{partial}} from the options array
+        // passed to getResponsiveClasses — see BootstrapFrontendService overrides.
+        $hasPartials = SubsystemRegistry::partials('vertical-spacing') !== [];
         $scale = [];
         foreach ($styles->optionKeys('vertical-spacing') as $key) {
-            $scale[$key] = 'p{{direction}}{{modifier}}-' . $key;
+            if ($key === GridStyles::GENERIC_DEFAULT && $hasPartials) {
+                $scale[$key] = 'p{{direction}}{{modifier}}-default-{{partial}}';
+            } else {
+                $scale[$key] = 'p{{direction}}{{modifier}}-' . $key;
+            }
         }
 
         $this->arrSpacings = $scale + $preserved;
 
-        // Articles follow the dynamic default (→ configured 3rem); content-element
-        // groups default to no extra spacing.
-        $this->arrSpacingsDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrSpacingTopDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrSpacingBottomDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrElementGroupSpacingTopDefaults = ['xs' => 'space-0'];
-        $this->arrElementGroupSpacingBottomDefaults = ['xs' => 'space-0'];
+        // Every vertical-spacing DCA field defaults to the dynamic `default` option,
+        // the same as gutter/row-gap/container-padding-x. Its value is resolved per
+        // field from the matching partial (articleTop / articleBottom / groupTop /
+        // groupBottom) via --kiwi-vertical-spacing-default-<partial>, so changing
+        // kiwi_bootstrap.grid.vertical-spacing.defaults propagates to every field left
+        // at its default. The partial is supplied at render time (getSpacingClasses /
+        // getSpacingTop/Bottom for articles, getGroupSpacingClasses for element groups;
+        // see BootstrapFrontendService).
+        $this->arrSpacingsDefaults                  = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrSpacingTopDefaults                = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrSpacingBottomDefaults             = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrElementGroupSpacingTopDefaults    = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrElementGroupSpacingBottomDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
     }
 
     /**
@@ -727,5 +746,29 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], $breakpoints))
             ->optionLabels($subsystem, $decimalSeparator, $partial);
+    }
+
+    /**
+     * Whether the configured default of a subsystem partial is `noop` — i.e. the
+     * `default` option should render no class for that partial. Used by the wiring
+     * (e.g. getSpacingClasses) to exclude `default` for noop partials, so a field
+     * left on its default produces no spacing at all. Returns false when unavailable.
+     */
+    public static function defaultIsNoOp(string $subsystem, string $partial = GridStyles::GENERIC_DEFAULT): bool
+    {
+        try {
+            $container = \Contao\System::getContainer();
+            $grid = ($container !== null && $container->hasParameter('kiwi_bootstrap.grid'))
+                ? $container->getParameter('kiwi_bootstrap.grid')
+                : [];
+        } catch (\Throwable) {
+            $grid = [];
+        }
+
+        if (!\is_array($grid) || empty($grid[$subsystem])) {
+            return false;
+        }
+
+        return (new GridStyles([$subsystem => $grid[$subsystem]], []))->defaultIsNoOp($subsystem, $partial);
     }
 }

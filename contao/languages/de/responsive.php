@@ -4,19 +4,9 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['between'] = "Verteilt [space-b
 $GLOBALS['TL_LANG']['responsive']['flexContent']['around'] = "Verteilt mit halben Platz nach außen [space-around]";
 $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Verteilt mit Platz nach außen [space-evenly]";
 
-// Vertical-spacing-Optionslabels (die wertbasierte space-N-Skala + die dynamische
-// `default`-Option) werden aus kiwi_bootstrap.grid.vertical-spacing abgeleitet.
-// Die iconedSelect-Referenz ist nach [key][0] verschlüsselt. Das automatisch
-// erzeugte `default`-Label enthält bereits den aufgelösten Wert (z.B. "Default
-// - 1,5rem [default]"); nur den vorderen "Default"-Präfix auf "Standard"
-// lokalisieren und Wertsuffix sowie Optionsschlüssel in Klammern beibehalten.
-foreach (\Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('vertical-spacing', ',') as $spacingKey => $spacingLabel) {
-    $GLOBALS['TL_LANG']['responsive']['spacings'][$spacingKey][0] = $spacingKey === 'default'
-        ? preg_replace('/^Default /', 'Standard ', $spacingLabel)
-        : $spacingLabel;
-}
-
-// Veraltete benannte Buckets (nur sichtbar, solange KIWI_BOOTSTRAP_DEPRECATED_SPACINGS sie behält).
+// Veraltete benannte Buckets auf der gemeinsamen `spacings`-Referenz — nur sichtbar,
+// solange KIWI_BOOTSTRAP_DEPRECATED_SPACINGS sie behält. (Das noop-Label kommt aus
+// dem responsive-base-Bundle.)
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "Null Abstand [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0]      = "Standard-Rasterabstand [gap]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Halber Standard-Rasterabstand [gap-half]";
@@ -27,6 +17,31 @@ $GLOBALS['TL_LANG']['responsive']['spacings']['md'][0]       = "Mittel [md]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['lg'][0]       = "Groß [lg]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xl'][0]       = "Extra Groß [xl]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xxl'][0]      = "Extra Extra Groß [xxl]";
+
+// Pro-DCA-Feld-Optionslabels. Jedes der vier vertical-spacing-Felder ist an einen
+// registrierten Partial gebunden (articleTop / articleBottom / groupTop / groupBottom;
+// die DCA-Referenz wird pro Feld in contao/dca/responsive.php überschrieben), sodass
+// sein `default`-Label nur den eigenen aufgelösten Wert zeigt. Die konfigurierte Skala
+// + `default` werden über die Nicht-Konfig-Labels (noop + veraltete Buckets) der
+// gemeinsamen `spacings`-Referenz gelegt; der "Default"-Präfix wird auf "Standard"
+// lokalisiert.
+$spacingFallbackLabels = array_map(
+    static fn ($label) => \is_array($label) ? ($label[0] ?? '') : $label,
+    $GLOBALS['TL_LANG']['responsive']['spacings'],
+);
+foreach ([
+    'responsiveSpacingTop'         => 'articleTop',
+    'responsiveSpacingBottom'      => 'articleBottom',
+    'responsiveGroupSpacingTop'    => 'groupTop',
+    'responsiveGroupSpacingBottom' => 'groupBottom',
+] as $spacingField => $spacingPartial) {
+    $spacingOptions = \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('vertical-spacing', ',', $spacingPartial)
+        + $spacingFallbackLabels;
+    if (isset($spacingOptions['default'])) {
+        $spacingOptions['default'] = preg_replace('/^Default /', 'Standard ', $spacingOptions['default']);
+    }
+    $GLOBALS['TL_LANG']['responsive'][$spacingField]['options'] = $spacingOptions;
+}
 
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['xs'][0] = "Standard (Smartphone)";
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['sm'][0] = "Smartphone Landscape";
