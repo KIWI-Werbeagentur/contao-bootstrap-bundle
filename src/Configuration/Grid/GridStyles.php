@@ -224,14 +224,29 @@ final class GridStyles
      * Option key => human label for the dropdown. Steps use the SpacingScale
      * label; `default` and variables get a descriptive label.
      *
+     * The `default` label embeds the resolved value(s) it currently points at, so a
+     * backend editor sees what the option will actually render as: a scalar default
+     * becomes `Default - 1.5rem [default]`; a responsive map becomes
+     * `Default - xs:1rem lg:1.5rem [default]`. Partial-aware subsystems (gutter,
+     * container-padding-x) additionally list each partial's resolved default
+     * (e.g. `Default - main:1.5rem, header:0rem, footer:1.5rem [default]`).
+     *
+     * The bracketed suffix always holds the option key (`[default]`), so the
+     * option name and the value are visually separated: human-readable name first,
+     * machine-readable key in brackets.
+     *
+     * Pass a partial name to scope the suffix to that one partial — used by
+     * per-partial DCA fields (main/header/footer gutter, etc.) so each one shows
+     * only the value relevant to it.
+     *
      * @return array<string, string>
      */
-    public function optionLabels(string $subsystem, string $decimalSeparator = '.'): array
+    public function optionLabels(string $subsystem, string $decimalSeparator = '.', ?string $partial = null): array
     {
         $labels = [];
         foreach ($this->optionKeys($subsystem) as $key) {
             if ($key === self::GENERIC_DEFAULT) {
-                $labels[$key] = 'Default [default]';
+                $labels[$key] = 'Default' . $this->defaultLabelSuffix($subsystem, $partial) . ' [' . $key . ']';
             } elseif (preg_match('/^space-(\d+)$/', $key, $m)) {
                 $labels[$key] = SpacingScale::label((int) $m[1], $decimalSeparator);
             } else {
@@ -240,6 +255,62 @@ final class GridStyles
         }
 
         return $labels;
+    }
+
+    /**
+     * Build the `- …` segment appended after the human-readable "Default" prefix
+     * and before the bracketed option key: a comma-separated list of the
+     * configured default's resolved value(s), breakpoint-by-breakpoint, optionally
+     * prefixed per partial.
+     *
+     * When $partial is null, emits a segment for every registered partial that
+     * has a configured default (plus the generic default for partial-less
+     * subsystems). When $partial is a partial name, restricts the output to that
+     * one partial — used by the per-partial DCA fields (e.g. the header/footer
+     * gutter fields) so each one shows only the value relevant to it.
+     *
+     * Returns an empty string when the subsystem has no configured defaults.
+     */
+    private function defaultLabelSuffix(string $subsystem, ?string $partial = null): string
+    {
+        $partials = SubsystemRegistry::partials($subsystem);
+
+        if ($partial !== null) {
+            $targets = [$partial];
+        } elseif ($partials === []) {
+            $targets = [null];
+        } else {
+            $targets = $partials;
+        }
+
+        $segments = [];
+        foreach ($targets as $target) {
+            $values = $this->defaultValues($subsystem, $target ?? self::GENERIC_DEFAULT);
+            if ($values === []) {
+                continue;
+            }
+            // A single-value default (the common case) is rendered as its raw CSS
+            // value: "1.5rem". A responsive map keeps the breakpoint prefixes so
+            // the editor can tell which viewport each value applies to:
+            // "xs:1rem lg:1.5rem".
+            $rendered = count($values) === 1
+                ? implode('', $values)
+                : implode(' ', array_map(
+                    static fn (string $bp, string $value): string => $bp . ':' . $value,
+                    array_keys($values),
+                    array_values($values),
+                ));
+            // In per-partial mode the field *is* the partial (its label names it),
+            // so a "header:" / "footer:" / "main:" prefix is redundant — the value
+            // alone is unambiguous. In the "all partials" mode (no $partial passed)
+            // we keep the prefix so the editor sees at a glance which section each
+            // value applies to.
+            $segments[] = $target === null || $partial !== null
+                ? $rendered
+                : $target . ':' . $rendered;
+        }
+
+        return $segments === [] ? '' : ' - ' . implode(', ', $segments);
     }
 
     /**

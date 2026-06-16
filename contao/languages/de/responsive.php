@@ -6,13 +6,14 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Verteilt mit Platz
 
 // Vertical-spacing-Optionslabels (die wertbasierte space-N-Skala + die dynamische
 // `default`-Option) werden aus kiwi_bootstrap.grid.vertical-spacing abgeleitet.
-// Die iconedSelect-Referenz ist nach [key][0] verschlüsselt.
+// Die iconedSelect-Referenz ist nach [key][0] verschlüsselt. Das automatisch
+// erzeugte `default`-Label enthält bereits den aufgelösten Wert (z.B. "Default
+// - 1,5rem [default]"); nur den vorderen "Default"-Präfix auf "Standard"
+// lokalisieren und Wertsuffix sowie Optionsschlüssel in Klammern beibehalten.
 foreach (\Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('vertical-spacing', ',') as $spacingKey => $spacingLabel) {
-    $GLOBALS['TL_LANG']['responsive']['spacings'][$spacingKey][0] = $spacingLabel;
-}
-// Lokalisiertes Label für die dynamische Standard-Option.
-if (isset($GLOBALS['TL_LANG']['responsive']['spacings']['default'])) {
-    $GLOBALS['TL_LANG']['responsive']['spacings']['default'][0] = "Standard [default]";
+    $GLOBALS['TL_LANG']['responsive']['spacings'][$spacingKey][0] = $spacingKey === 'default'
+        ? preg_replace('/^Default /', 'Standard ', $spacingLabel)
+        : $spacingLabel;
 }
 
 // Veraltete benannte Buckets (nur sichtbar, solange KIWI_BOOTSTRAP_DEPRECATED_SPACINGS sie behält).
@@ -62,11 +63,18 @@ $GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
     0 => 'Horizontaler Rasterabstand',
     1 => 'Bootstrap horizontale Gutter (gx-*) je Viewport. Vertikale Gutter werden separat gesteuert.',
     // Optionslabels werden aus der kiwi_bootstrap.grid.gutter-Konfiguration abgeleitet.
-    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::gutterOptionLabels(','),
+    // Das `default`-Label ist auf den Main-Partial beschränkt, da Header/Footer
+    // eigene, unabhängige DCA-Felder haben.
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::gutterOptionLabels('main', ','),
 ];
-// Lokalisiertes Label für die dynamische Standard-Option.
+// Lokalisierter vorderer "Default"-Präfix (automatisch erzeugter Wertsuffix
+// und Optionsschlüssel "[default]" werden beibehalten).
 if (isset($GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options']['default'])) {
-    $GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options']['default'] = 'Standard [default]';
+    $GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options']['default'],
+    );
 }
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [
@@ -77,12 +85,31 @@ $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'] = [
     0 => 'Horizontaler Rasterabstand Header',
     1 => 'Bootstrap horizontale Gutter für die Kopfzeilen.',
+    // Pro-Partial-Optionslabels (auf den Header-Partial beschränkt, damit nur der
+    // aufgelöste Header-Defaultwert angezeigt wird).
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::gutterOptionLabels('header', ','),
 ];
+if (isset($GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader']['options']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader']['options']['default'],
+    );
+}
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'] = [
     0 => 'Horizontaler Rasterabstand Footer',
     1 => 'Bootstrap horizontale Gutter für die Fußzeile.',
+    // Pro-Partial-Optionslabels (auf den Footer-Partial beschränkt).
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::gutterOptionLabels('footer', ','),
 ];
+if (isset($GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter']['options']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter']['options']['default'],
+    );
+}
 
 $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
     0 => 'Vertikaler Abstand zwischen Reihen',
@@ -90,28 +117,58 @@ $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
     // Optionslabels werden aus der kiwi_bootstrap.grid.row-gap-Konfiguration abgeleitet.
     'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('row-gap', ','),
 ];
-// Lokalisiertes Label für die dynamische Standard-Option.
+// Lokalisierter vorderer "Default"-Präfix (automatisch erzeugter Wertsuffix
+// und Optionsschlüssel "[default]" werden beibehalten).
 if (isset($GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options']['default'])) {
-    $GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options']['default'] = 'Standard [default]';
+    $GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options']['default'],
+    );
 }
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
     0 => 'Container-Padding',
     1 => 'Der linke/rechte Abstand nach außen des Containers (cx-*) je Viewport.  Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
-    // Optionslabels werden aus der kiwi_bootstrap.grid.container-padding-x-Konfiguration abgeleitet.
-    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', ','),
+    // Optionslabels werden aus der kiwi_bootstrap.grid.container-padding-x-Konfiguration
+    // abgeleitet. Das `default`-Label ist auf den Main-Partial beschränkt, da
+    // Header/Footer eigene, unabhängige DCA-Felder haben.
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', ',', 'main'),
 ];
-// Lokalisiertes Label für die dynamische Standard-Option.
+// Lokalisierter vorderer "Default"-Präfix (automatisch erzeugter Wertsuffix
+// und Optionsschlüssel "[default]" werden beibehalten).
 if (isset($GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options']['default'])) {
-    $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options']['default'] = 'Standard [default]';
+    $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options']['default'],
+    );
 }
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'] = [
     0 => 'Header Container-Padding',
     1 => 'Der linke/rechte Abstand nach außen des Header-Abschnitt-Containers (cx-*) je Viewport. Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
+    // Pro-Partial-Optionslabels (auf den Header-Partial beschränkt).
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', ',', 'header'),
 ];
+if (isset($GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader']['options']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader']['options']['default'],
+    );
+}
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'] = [
     0 => 'Footer Container-Padding',
     1 => 'Der linke/rechte Abstand nach außen des Footer-Abschnitt-Containers (cx-*) je Viewport. Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
+    // Pro-Partial-Optionslabels (auf den Footer-Partial beschränkt).
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', ',', 'footer'),
 ];
+if (isset($GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter']['options']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter']['options']['default'] = preg_replace(
+        '/^Default /',
+        'Standard ',
+        $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter']['options']['default'],
+    );
+}
