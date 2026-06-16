@@ -93,19 +93,8 @@ $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
     0 => 'Container padding',
     1 => "The container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
-    'options' => [
-        '0'  => '0rem [cx-0]',
-        '1'  => '0.5rem [cx-1]',
-        '2'  => '0.75rem [cx-2]',
-        '3'  => '1rem [cx-3]',
-        '4'  => '1.5rem [cx-4]',
-        '5'  => '2rem [cx-5]',
-        '6'  => '2.5rem [cx-6]',
-        '7'  => '3rem [cx-7]',
-        '8'  => '4rem [cx-8]',
-        '9'  => '5rem [cx-9]',
-        '10' => '6rem [cx-10]',
-    ],
+    // Option labels are derived from the kiwi_bootstrap.grid.container-padding-x config.
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', '.'),
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'] = [

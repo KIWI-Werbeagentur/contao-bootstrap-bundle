@@ -44,10 +44,17 @@ class GridStylesRegenerator
         // Populate the SpacingScale dropdown union with the steps this config needs.
         $styles->registerRequiredSteps();
 
+        // container-padding-x has no flat apply-spec; its fluid-gated classes are
+        // emitted by a bespoke loop in the template, fed from the same config.
+        $cxUtilities = isset($this->grid['container-padding-x'])
+            ? $styles->utilityEntries('container-padding-x')
+            : [];
+
         $rendered = $this->twig->render(self::TWIG_TEMPLATE, [
             'baseVariables' => $styles->baseVariables(),
             'mediaGroups' => $styles->mediaVariableGroups(),
             'utilitySets' => $styles->utilityClassSets(),
+            'cxUtilities' => $cxUtilities,
         ]);
 
         $current = $this->filesystem->exists($targetFile) ? file_get_contents($targetFile) : null;

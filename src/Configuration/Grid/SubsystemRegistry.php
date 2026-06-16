@@ -41,13 +41,15 @@ final class SubsystemRegistry
      *
      * The `$apply` descriptor lets the grid generator emit the subsystem's
      * responsive utility classes (.<prefix>{infix}-<key>) setting a single CSS
-     * property, e.g. the gutter applies via `gx` → `--bs-gutter-x`. Subsystems
+     * property, e.g. the gutter applies via `gx` → `--bs-gutter-x`. A subsystem
      * with a more complex application (fluid-gated cx, the [data-spacing]
-     * mechanism, …) omit it and generate their classes themselves.
+     * mechanism, …) generates its classes itself: it passes a prefix-only apply
+     * (`['prefix' => 'cx']`, no `property`) so the class map still uses the right
+     * prefix while the flat utility-class loop skips it; or omits `$apply` entirely.
      *
      * @param array<string, string|callable>     $specialOptions key => CSS value or fn(string $key): string
      * @param list<string>                        $partials       partial names beyond the generic `default`
-     * @param array{prefix: string, property: string}|null $apply  utility-class prefix + target CSS property
+     * @param array{prefix: string, property?: string}|null $apply  class prefix + (optional) target CSS property
      */
     public static function register(string $id, array $specialOptions = [], array $partials = [], ?array $apply = null): void
     {
@@ -60,10 +62,11 @@ final class SubsystemRegistry
     }
 
     /**
-     * The utility-class application descriptor (prefix + property), or null when
-     * the subsystem generates its classes itself.
+     * The utility-class application descriptor (prefix + optional property), or
+     * null when the subsystem registered no apply at all. A descriptor without a
+     * `property` is prefix-only: the subsystem generates its own classes.
      *
-     * @return array{prefix: string, property: string}|null
+     * @return array{prefix: string, property?: string}|null
      */
     public static function apply(string $id): ?array
     {

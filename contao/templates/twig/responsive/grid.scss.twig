@@ -26,3 +26,56 @@
 {% endfor %}  }
 }
 {% endfor %}
+{% if cxUtilities %}
+// Container-padding utilities (.cx-*) — opt-in, fluid-gated. Bespoke (not the flat
+// loop above): the compound, media-banded selectors apply the container's own L/R
+// padding directly, and only while the container is "fluid-like" (see $cx-container-ceilings
+// and cx-padding(), defined in grid-overrides.scss). Keys/values come straight from
+// kiwi_bootstrap.grid.container-padding-x — the single source of truth.
+$kiwi-cx-utilities: (
+{% for e in cxUtilities %}  "{{ e.suffix }}": {{ e.value }},
+{% endfor %});
+
+@if $enable-grid-classes {
+  @each $csuffix, $ceil in $cx-container-ceilings {
+    // Upper bound (exclusive) of this container's fluid range, as a max-width.
+    $ceilMin: if($ceil == null, null, breakpoint-min($ceil, $grid-breakpoints));
+    $ceilMax: if($ceilMin == null, null, $ceilMin - 0.02);
+
+    @each $breakpoint in map-keys($grid-breakpoints) {
+      $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+      $min:   breakpoint-min($breakpoint, $grid-breakpoints); // null for xs
+
+      // Prune dead combinations: skip when the .cx breakpoint starts at or
+      // after the container has already become fixed-width.
+      $skip: $ceilMin != null and $min != null and $min >= $ceilMin;
+
+      @if not $skip {
+        @each $key, $value in $kiwi-cx-utilities {
+          $sel: ".container#{$csuffix}.cx#{$infix}-#{$key}";
+
+          @if $ceilMax == null and $min == null {
+            // container-fluid, xs cx: applies everywhere, no media query.
+            #{$sel} { @include cx-padding($value); }
+          } @else if $ceilMax == null {
+            // container-fluid, cx at >= a breakpoint: min-width only.
+            @media (min-width: $min) {
+              #{$sel} { @include cx-padding($value); }
+            }
+          } @else if $min == null {
+            // Bounded container, xs cx: max-width only (the fluid ceiling).
+            @media (max-width: $ceilMax) {
+              #{$sel} { @include cx-padding($value); }
+            }
+          } @else {
+            // Bounded container, cx at >= a breakpoint: clipped band.
+            @media (min-width: $min) and (max-width: $ceilMax) {
+              #{$sel} { @include cx-padding($value); }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+{% endif %}

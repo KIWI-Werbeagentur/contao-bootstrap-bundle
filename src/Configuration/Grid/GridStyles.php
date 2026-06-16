@@ -257,50 +257,68 @@ final class GridStyles
 
         foreach ($this->grid as $subsystem => $config) {
             $apply = SubsystemRegistry::apply($subsystem);
-            if ($apply === null) {
+            // A prefix-only apply (no `property`) means the subsystem generates its
+            // own classes (e.g. the fluid-gated cx); skip it from the flat loop.
+            if ($apply === null || !isset($apply['property'])) {
                 continue;
-            }
-
-            $entries = [];
-
-            foreach ($config['options'] ?? [] as $option) {
-                $entries[] = [
-                    'suffix' => (string) $option,
-                    'value' => $this->resolveOption($subsystem, (string) $option, 'options'),
-                ];
-            }
-
-            $partials = SubsystemRegistry::partials($subsystem);
-            if ($partials === []) {
-                // No partials: a single generic default class.
-                $entries[] = [
-                    'suffix' => 'default',
-                    'value' => self::defaultVar($subsystem, null),
-                ];
-            } else {
-                foreach ($partials as $partial) {
-                    $entries[] = [
-                        'suffix' => 'default-' . $partial,
-                        'value' => self::defaultVar($subsystem, $partial),
-                    ];
-                }
-            }
-
-            foreach (array_keys($config['variables'] ?? []) as $name) {
-                $entries[] = [
-                    'suffix' => (string) $name,
-                    'value' => 'var(--kiwi-' . $subsystem . '-' . $name . ')',
-                ];
             }
 
             $sets[] = [
                 'prefix' => $apply['prefix'],
                 'property' => $apply['property'],
-                'entries' => $entries,
+                'entries' => $this->utilityEntries($subsystem),
             ];
         }
 
         return $sets;
+    }
+
+    /**
+     * The emittable utility-class entries for one subsystem — one `suffix => value`
+     * per concrete step, per default (generic, or `default-<partial>` for each
+     * declared partial), and per semantic variable. Shared by {@see self::utilityClassSets()}
+     * (subsystems applied via the generic flat loop) and by subsystems whose wiring
+     * emits its classes itself (e.g. the fluid-gated container-padding-x).
+     *
+     * @return list<array{suffix: string, value: string}>
+     */
+    public function utilityEntries(string $subsystem): array
+    {
+        $config = $this->grid[$subsystem] ?? [];
+
+        $entries = [];
+
+        foreach ($config['options'] ?? [] as $option) {
+            $entries[] = [
+                'suffix' => (string) $option,
+                'value' => $this->resolveOption($subsystem, (string) $option, 'options'),
+            ];
+        }
+
+        $partials = SubsystemRegistry::partials($subsystem);
+        if ($partials === []) {
+            // No partials: a single generic default class.
+            $entries[] = [
+                'suffix' => 'default',
+                'value' => self::defaultVar($subsystem, null),
+            ];
+        } else {
+            foreach ($partials as $partial) {
+                $entries[] = [
+                    'suffix' => 'default-' . $partial,
+                    'value' => self::defaultVar($subsystem, $partial),
+                ];
+            }
+        }
+
+        foreach (array_keys($config['variables'] ?? []) as $name) {
+            $entries[] = [
+                'suffix' => (string) $name,
+                'value' => 'var(--kiwi-' . $subsystem . '-' . $name . ')',
+            ];
+        }
+
+        return $entries;
     }
 
     /**

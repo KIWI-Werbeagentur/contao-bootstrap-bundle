@@ -84,7 +84,16 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
             return [];
         }
-        return $this->getResponsiveClasses(self::getProp($varData, $strField), 'varContainerPaddingXClasses');
+
+        // Which section this field belongs to fills the {{partial}} placeholder, so the
+        // dynamic `default` option resolves to var(--kiwi-container-padding-x-default-<partial>).
+        $partial = match (true) {
+            str_ends_with($strField, 'Header') => 'header',
+            str_ends_with($strField, 'Footer') => 'footer',
+            default => 'main',
+        };
+
+        return $this->getResponsiveClasses(self::getProp($varData, $strField), 'varContainerPaddingXClasses', ['partial' => $partial]);
     }
 
     public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article', bool $skipPaletteCheck = false): array
