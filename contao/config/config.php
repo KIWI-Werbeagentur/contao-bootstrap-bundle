@@ -12,6 +12,10 @@ $GLOBALS['responsive']['config'] = BootstrapConfiguration::class;
 // partials. Bundle default config is prepended in KiwiBootstrapBundle::prependExtension().
 SubsystemRegistry::register('gutter', [], ['main', 'header', 'footer'], ['prefix' => 'gx', 'property' => '--bs-gutter-x']);
 
+// Wire the vertical row-gap: applies an option as `.row-gap{infix}-<key>` setting the
+// `row-gap` property. Single content context (no sections) → no partials, generic default.
+SubsystemRegistry::register('row-gap', [], [], ['prefix' => 'row-gap', 'property' => 'row-gap']);
+
 $GLOBALS['responsive']['bootstrap'] = '__ROOT__/vendor/twbs/bootstrap/scss';
 $GLOBALS['responsive']['custom'] = "@import '__ROOT__/vendor/kiwi/contao-bootstrap/assets/scss/kiwi'";
 

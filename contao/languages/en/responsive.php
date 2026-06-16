@@ -86,19 +86,8 @@ $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'] = [
 $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
     0 => 'Vertical gap between rows',
     1 => 'Bootstrap row-gap per viewport. Applied between wrapped rows inside the container.',
-    'options' => [
-        '0'   => '0rem [row-gap-0]',
-        '1'   => '0.5rem [row-gap-1]',
-        '2'   => '0.75rem [row-gap-2]',
-        '3'   => '1rem [row-gap-3]',
-        '4'   => '1.5rem [row-gap-4]',
-        '5'   => '2rem [row-gap-5]',
-        '6'   => '2.5rem [row-gap-6]',
-        '7'   => '3rem [row-gap-7]',
-        '8'   => '4rem [row-gap-8]',
-        '9'   => '5rem [row-gap-9]',
-        '10'  => '6rem [row-gap-10]',
-    ],
+    // Option labels are derived from the kiwi_bootstrap.grid.row-gap config.
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('row-gap', '.'),
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
