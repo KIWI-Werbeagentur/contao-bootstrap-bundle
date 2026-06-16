@@ -424,11 +424,14 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * label with the given decimal separator; `default` and variables get a
      * descriptive label. Returns [] when no gutter config is available.
      *
+     * Pass a partial name (main/header/footer) to scope the `default` option's
+     * value suffix to that one partial — used by the per-partial DCA fields.
+     *
      * @return array<string, string>
      */
-    public static function gutterOptionLabels(string $decimalSeparator = '.'): array
+    public static function gutterOptionLabels(?string $partial = null, string $decimalSeparator = '.'): array
     {
-        return self::subsystemOptionLabels('gutter', $decimalSeparator);
+        return self::subsystemOptionLabels('gutter', $decimalSeparator, $partial);
     }
 
     /**
@@ -695,9 +698,14 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * SpacingScale label with the given decimal separator; `default` and variables
      * get a descriptive label. Returns [] when the subsystem isn't configured.
      *
+     * Pass a partial name to scope the `default` option's value suffix to that
+     * one partial — used by the per-partial DCA fields (header/footer gutter,
+     * header/footer container-padding-x) so each shows only the value relevant
+     * to it.
+     *
      * @return array<string, string>
      */
-    public static function subsystemOptionLabels(string $subsystem, string $decimalSeparator = '.'): array
+    public static function subsystemOptionLabels(string $subsystem, string $decimalSeparator = '.', ?string $partial = null): array
     {
         try {
             $container = \Contao\System::getContainer();
@@ -712,7 +720,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             return [];
         }
 
-        return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], []))
-            ->optionLabels($subsystem, $decimalSeparator);
+        $breakpoints = [];
+        foreach ((new self())->arrBreakpoints as $key => $definition) {
+            $breakpoints[(string) $key] = (int) ($definition['breakpoint'] ?? 0);
+        }
+
+        return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], $breakpoints))
+            ->optionLabels($subsystem, $decimalSeparator, $partial);
     }
 }
