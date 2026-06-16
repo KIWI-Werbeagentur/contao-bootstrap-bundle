@@ -4,19 +4,14 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['between'] = "Distributed [spac
 $GLOBALS['TL_LANG']['responsive']['flexContent']['around'] = "Distributed with half space outside [space-around]";
 $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Distributed with space outside [space-evenly]";
 
-$GLOBALS['TL_LANG']['responsive']['spacings']['0'][0]   = '0rem [spacer-0]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['1'][0]   = '0.5rem [spacer-1]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['2'][0]   = '0.75rem [spacer-2]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['3'][0]   = '1rem [spacer-3]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['4'][0]   = '1.5rem [spacer-4]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['5'][0]   = '2rem [spacer-5]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['6'][0]   = '2.5rem [spacer-6]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['7'][0]   = '3rem [spacer-7]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['8'][0]   = '4rem [spacer-8]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['9'][0]   = '5rem [spacer-9]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['10'][0]  = '6rem [spacer-10]';
+// Vertical-spacing option labels (the value-derived space-N scale + the dynamic
+// `default`) are derived from kiwi_bootstrap.grid.vertical-spacing. The iconedSelect
+// reference is keyed [key][0].
+foreach (\Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('vertical-spacing', '.') as $spacingKey => $spacingLabel) {
+    $GLOBALS['TL_LANG']['responsive']['spacings'][$spacingKey][0] = $spacingLabel;
+}
 
-$GLOBALS['TL_LANG']['responsive']['spacings']['default'][0]  = "Default [default]";
+// Deprecated named buckets (shown only while KIWI_BOOTSTRAP_DEPRECATED_SPACINGS keeps them).
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "Zero spacing [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0]      = "Default horizontal gutter [gap]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Half default horizontal gutter [gap-half]";

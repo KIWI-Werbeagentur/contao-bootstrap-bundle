@@ -23,6 +23,13 @@ SubsystemRegistry::register('row-gap', [], [], ['prefix' => 'row-gap', 'property
 // _grid.scss (fed from this config). The `cx` prefix still drives the class map.
 SubsystemRegistry::register('container-padding-x', [], ['main', 'header', 'footer'], ['prefix' => 'cx']);
 
+// Wire the vertical content spacing (content-element/article top+bottom padding) to
+// the space scale. No apply: the classes are not flat utilities but the bespoke
+// `p[t|b]{infix}-<key>` → --spacing-top/bottom → [data-spacing-*] indirection emitted
+// in the generated _spacings.scss (fed from this config). The deprecated named buckets
+// + KIWI_BOOTSTRAP_DEPRECATED_SPACINGS modes are layered on top, unchanged.
+SubsystemRegistry::register('vertical-spacing');
+
 $GLOBALS['responsive']['bootstrap'] = '__ROOT__/vendor/twbs/bootstrap/scss';
 $GLOBALS['responsive']['custom'] = "@import '__ROOT__/vendor/kiwi/contao-bootstrap/assets/scss/kiwi'";
 

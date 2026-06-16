@@ -286,6 +286,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->arrIcons['justifyContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-evenly.svg";
         $this->arrIcons['justifyContent']['between'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-between.svg";
 
+        // Re-key the vertical-spacing scale to config-driven space-N (+ dynamic
+        // `default`) before the deprecation mode runs, so the mode still gates only
+        // the legacy named buckets on top of the new scale.
+        $this->applyVerticalSpacingScale();
+
         $this->applyDeprecatedSpacingsMode();
 
         $this->retainLegacyDefaultsForBcMode();
@@ -302,6 +307,54 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->applyGutterScale();
 
         $this->applyRowGapScale();
+    }
+
+    /**
+     * Wire the vertical content spacing to the value-derived space scale. Replaces
+     * the legacy numeric spacer scale ('0'…'10', drawn from Bootstrap's $spacers) in
+     * $arrSpacings with the configured space-N options + the dynamic `default`,
+     * keeping the deprecated named buckets and the noop sentinel intact (still gated
+     * by {@see self::applyDeprecatedSpacingsMode()}). The class templates stay
+     * direction-aware (p{{direction}}{{modifier}}-…); the matching --spacing-* rules
+     * are generated into _spacings.scss and `default` resolves to
+     * var(--kiwi-vertical-spacing-default). Article spacing fields follow the dynamic
+     * `default` (→ the configured 3rem); content-element groups default to space-0.
+     */
+    private function applyVerticalSpacingScale(): void
+    {
+        $grid = $this->gridConfig();
+        if (empty($grid['vertical-spacing'])) {
+            return;
+        }
+
+        $styles = new GridStyles(['vertical-spacing' => $grid['vertical-spacing']], $this->getBreakpointMinWidths());
+
+        // Preserve the noop sentinel and the deprecated named buckets; drop the
+        // legacy numeric spacer keys ('0'…'10') and the old `default` bucket (rebuilt
+        // below as the dynamic option).
+        $preserved = [];
+        foreach ($this->arrSpacings as $key => $template) {
+            if (preg_match('/^\d+$/', (string) $key) || $key === GridStyles::GENERIC_DEFAULT) {
+                continue;
+            }
+            $preserved[$key] = $template;
+        }
+
+        // Config-driven scale (space-N) + the dynamic `default`, direction-aware.
+        $scale = [];
+        foreach ($styles->optionKeys('vertical-spacing') as $key) {
+            $scale[$key] = 'p{{direction}}{{modifier}}-' . $key;
+        }
+
+        $this->arrSpacings = $scale + $preserved;
+
+        // Articles follow the dynamic default (→ configured 3rem); content-element
+        // groups default to no extra spacing.
+        $this->arrSpacingsDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrSpacingTopDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrSpacingBottomDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrElementGroupSpacingTopDefaults = ['xs' => 'space-0'];
+        $this->arrElementGroupSpacingBottomDefaults = ['xs' => 'space-0'];
     }
 
     /**
@@ -413,16 +466,17 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     }
 
     /**
-     * The named spacings (`default`, `none`, `gap`, `gap-half`, `xxs` … `xxl`)
-     * are deprecated. Which keys actually appear
-     * in `$arrSpacings` is controlled by the env var `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`:
+     * The named spacings (`none`, `gap`, `gap-half`, `xxs` … `xxl`) are deprecated.
+     * Which keys actually appear in `$arrSpacings` is controlled by the env var
+     * `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS` (the config-driven space-N scale and the
+     * dynamic `default` are always kept, on top of which the modes gate the buckets):
      *
-     *   unset / 0  →  only the new spacer-based keys (numeric `0`–`10` + the `noop` sentinel)
-     *   1          →  only the deprecated keys (+ `noop`)
+     *   unset / 0  →  only the space-N scale + `default` + the `noop` sentinel
+     *   1          →  only the deprecated buckets (+ `default` + `noop`)
      *   2          →  both sets (legacy behavior)
-     *   3          →  only the new spacer-based keys (explicit opt-in — same dropdown as the implicit
-     *                 default; signals intent to the migration so it won't auto-write a fallback even
-     *                 when stored content still uses deprecated values)
+     *   3          →  only the space-N scale + `default` (explicit opt-in — same dropdown as the
+     *                 implicit default; signals intent to the migration so it won't auto-write a
+     *                 fallback even when stored content still uses deprecated values)
      */
     private function applyDeprecatedSpacingsMode(): void
     {
@@ -433,9 +487,13 @@ class BootstrapConfiguration extends ResponsiveConfiguration
             return;
         }
 
-        // Mode 1: keep only the deprecated keys plus the noop sentinel.
+        // Mode 1: keep only the deprecated buckets, plus the dynamic `default` and
+        // the noop sentinel (both part of every mode).
         if ($mode === 1) {
-            $keep = array_flip(array_merge(self::DEPRECATED_SPACING_KEYS, [self::SPACING_NO_OP]));
+            $keep = array_flip(array_merge(
+                self::DEPRECATED_SPACING_KEYS,
+                [self::SPACING_NO_OP, GridStyles::GENERIC_DEFAULT],
+            ));
             $this->arrSpacings = array_intersect_key($this->arrSpacings, $keep);
             return;
         }
@@ -690,14 +748,15 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     }
 
     /**
-     * Spacing keys deprecated in favour of the numeric spacer scale (`0`…`10`).
+     * Named-bucket spacing keys deprecated in favour of the value-derived space-N
+     * scale. `default` is intentionally NOT listed: it is the permanent dynamic
+     * default option (→ var(--kiwi-vertical-spacing-default)), kept in every mode.
      * Listed here so {@see self::applyDeprecatedSpacingsMode()}, the
      * {@see \Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode}
      * migration, and any future hard-removal release share a single source
      * of truth.
      */
     public const DEPRECATED_SPACING_KEYS = [
-        'default',
         'none',
         'gap',
         'gap-half',

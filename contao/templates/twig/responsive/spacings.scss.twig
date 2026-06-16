@@ -2,7 +2,10 @@
 // Overwrite the CSS variables you want to modify in your own CSS. See README.md on how to add custom options.
 
 :root{
-  --spacing-default: 2.5rem;
+  /* Deprecated named buckets — only referenced while KIWI_BOOTSTRAP_DEPRECATED_SPACINGS
+     keeps them in the dropdown (modes 1/2). The value-derived space-N scale and the
+     dynamic `default` (var(--kiwi-vertical-spacing-default), emitted in _grid.scss from
+     kiwi_bootstrap.grid.vertical-spacing) are config-driven and applied inline below. */
   --spacing-none: 0;
   --spacing-gap: #{$grid-gutter-width};
   --spacing-gap-half: #{$grid-gutter-width / 2};
@@ -13,47 +16,41 @@
   --spacing-lg: 4rem;
   --spacing-xl: 6rem;
   --spacing-xxl: 8rem;
-
-  /* Bootstrap-aligned spacer values; reflects extend-spacers.scss additions and
-     any project-level $modify-spacers extensions automatically. */
-  @each $size, $value in $spacers {
-    --spacing-spacer-#{$size}: #{$value};
-  }
 }
 
 $sizes: {{ sizes }};
-$named-sizes: default, none, gap, gap-half, xxs, xs, sm, md, lg, xl, xxl;
+$named-sizes: none, gap, gap-half, xxs, xs, sm, md, lg, xl, xxl;
 
-/* Named buckets: keep CSS-variable mapping driven by the PHP $arrSpacings list,
-   restricted to known named-bucket keys so numeric/spacer keys in $sizes are
-   handled by the dedicated spacer loop below instead. */
+/* Value-derived vertical-spacing scale + dynamic `default`. Single source of truth:
+   kiwi_bootstrap.grid.vertical-spacing. `default` resolves to the configured default
+   custom property; the space-N steps carry their literal value. */
+$kiwi-spacing-utilities: (
+{% for e in spacingUtilities %}  "{{ e.suffix }}": {{ e.value }},
+{% endfor %});
+
+/* One class per option in the PHP $arrSpacings list ($sizes), keeping the
+   --spacing-* / [data-spacing-*] indirection: a config-driven space-N / `default`
+   takes its value from $kiwi-spacing-utilities; a still-enabled named bucket reads
+   its --spacing-<bucket> variable. Both directions (pt/pb) are emitted. */
 @each $breakpoint in map-keys($grid-breakpoints) {
   @each $size in $sizes {
-    @if index($named-sizes, $size) != null {
-      @include media-breakpoint-up($breakpoint) {
-        $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    @include media-breakpoint-up($breakpoint) {
+      $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+      @if map-has-key($kiwi-spacing-utilities, $size) {
+        $value: map-get($kiwi-spacing-utilities, $size);
+        .pt#{$infix}-#{$size} {
+          --spacing-top: #{$value};
+        }
+        .pb#{$infix}-#{$size} {
+          --spacing-bottom: #{$value};
+        }
+      } @else if index($named-sizes, $size) != null {
         .pt#{$infix}-#{$size} {
           --spacing-top: var(--spacing-#{$size});
         }
         .pb#{$infix}-#{$size} {
           --spacing-bottom: var(--spacing-#{$size});
         }
-      }
-    }
-  }
-}
-
-/* Bootstrap $spacers buckets: emit dedicated "*-spacer-N" classes so the new
-   spacing options do not collide with Bootstrap's own .p[t|b]-N utilities. */
-@each $breakpoint in map-keys($grid-breakpoints) {
-  @each $size, $value in $spacers {
-    @include media-breakpoint-up($breakpoint) {
-      $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
-      .pt#{$infix}-spacer-#{$size} {
-        --spacing-top: var(--spacing-spacer-#{$size});
-      }
-      .pb#{$infix}-spacer-#{$size} {
-        --spacing-bottom: var(--spacing-spacer-#{$size});
       }
     }
   }

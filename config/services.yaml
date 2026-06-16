@@ -19,6 +19,7 @@ services:
       - '@filesystem'
       - '@twig'
       - '%kernel.project_dir%'
+      - '%kiwi_bootstrap.grid%'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer: ~
   Kiwi\Contao\BootstrapBundle\Service\GridStylesRegenerator:
     public: true
