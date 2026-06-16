@@ -115,44 +115,6 @@ To remove the settings from a specific **form field**, add an entry to `$GLOBALS
 ### Gutters, spacings and gaps <a name="spacing"></a>
 Horizontal and vertical distances between articles and elements are based on Bootstrap's $spacers. You can modify and add values via `$modify-spacers`, or completely customize the available options by overwriting `$spacers`.
 
-#### Configuring the default top/bottom spacing
-
-`responsiveSpacingTop` and `responsiveSpacingBottom` can be customized without writing a custom configuration class, set `$GLOBALS['responsive']['spacingDefault']` in `contao/config/config.php`. Three input shapes are accepted:
-
-```php
-// Scalar — applies symmetrically to top and bottom at the xs breakpoint
-$GLOBALS['responsive']['spacingDefault'] = 6;
-
-// Asymmetric — different value per side, still at xs
-$GLOBALS['responsive']['spacingDefault'] = ['top' => 6, 'bottom' => 4];
-
-// Full control — per-breakpoint arrays per side
-$GLOBALS['responsive']['spacingDefault'] = [
-    'top'    => ['xs' => 4, 'lg' => 6],
-    'bottom' => ['xs' => 6],
-];
-```
-
-Each leaf value must be a key of `$arrSpacings` (e.g. `0`–`10`, `none`, `noop`); an invalid key throws `InvalidArgumentException` at construction time. Clear the cache after editing the value.
-
-#### Configuring the default container outer padding
-
-The container outer padding (`cx-*`) field defaults to `cx-2` on new records. You can change this without writing a custom configuration class by setting `$GLOBALS['responsive']['containerPaddingXDefault']` in `contao/config/config.php`. The same three input shapes are accepted; the side keys are `main` (content elements, articles and form fields), `header` and `footer` (the layout section containers):
-
-```php
-// Scalar — applies to main, header and footer at the xs breakpoint
-$GLOBALS['responsive']['containerPaddingXDefault'] = 3;
-
-// Per side, still at xs — clear header/footer back to opt-in, keep the main default
-$GLOBALS['responsive']['containerPaddingXDefault'] = ['header' => [], 'footer' => []];
-
-// Full control — per-breakpoint arrays per side
-$GLOBALS['responsive']['containerPaddingXDefault'] = [
-    'main' => ['xs' => 2, 'lg' => 4],
-];
-```
-
-Each leaf value must be a key of `$arrContainerPaddingXClasses` (`0`–`10`); an invalid key throws `InvalidArgumentException` at construction time. Pass an empty array for a side to clear its default (no preselected value). Clear the cache after editing the value.
 
 #### Legacy spacings (deprecated)
 
