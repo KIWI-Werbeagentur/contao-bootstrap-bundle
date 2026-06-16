@@ -185,6 +185,6 @@ class KiwiBootstrapBundle extends AbstractBundle
                     ],
                 ],
             ],
-        ]);
+        ], true);
     }
 }
