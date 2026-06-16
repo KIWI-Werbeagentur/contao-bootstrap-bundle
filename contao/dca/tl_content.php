@@ -24,6 +24,7 @@ $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveOverwriteRowCols'] = 
 
 //CONTAINER
 $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveRowCols'] = [
+    'default' => ['xs' => 1],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols'],
     'inputType' => 'responsive',
     'responsiveInputType' => 'select',

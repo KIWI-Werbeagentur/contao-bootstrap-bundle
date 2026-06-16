@@ -10,6 +10,7 @@ $GLOBALS['TL_DCA']['tl_layout']['config']['onsubmit_callback'][] = [LayoutListen
 $GLOBALS['TL_DCA']['tl_layout']['config']['onsubmit_callback'][] = [LayoutListener::class, 'generateLayoutCustomizationFiles'];
 
 $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutter'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
@@ -20,6 +21,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutter'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterHeader'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
@@ -30,6 +32,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterHeader'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterFooter'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
@@ -51,6 +54,7 @@ foreach (['cols_2cll', 'cols_2clr', 'cols_3cl'] as $palette) {
 // kept: padding controls the section container's own breathing room, the
 // gutter controls spacing between columns inside that section's row.
 $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXHeader'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
@@ -61,6 +65,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXHeader'] =
 ];
 
 $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXFooter'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
