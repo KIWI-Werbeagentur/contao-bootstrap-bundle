@@ -59,3 +59,50 @@ $GLOBALS['TL_DCA']['containerPadding']['fields']['responsiveContainerPaddingX'] 
     'eval' => ['tl_class' => 'clr w50'],
     'sql' => 'blob NULL',
 ];
+
+/* Vertical content spacing. The responsive-base bundle ships these four fields
+ * (article top/bottom + element-group top/bottom) with a shared `spacings`
+ * reference, so the `default` option label is the same for all four. We override
+ * each field to point at its own per-partial options array (populated by the
+ * bundle's language file), so each field shows only the value relevant to its
+ * partial — the same pattern the gutter / container-padding-x header/footer
+ * fields use. */
+$GLOBALS['TL_DCA']['space']['fields']['responsiveSpacingTop'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveSpacingTop'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'eval' => ['tl_class' => "w50 clr"],
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getSpacings'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveSpacingTop']['options'],
+    'sql' => "blob NULL"
+];
+
+$GLOBALS['TL_DCA']['space']['fields']['responsiveSpacingBottom'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveSpacingBottom'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'eval' => ['tl_class' => "w50"],
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getSpacings'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveSpacingBottom']['options'],
+    'sql' => "blob NULL"
+];
+
+$GLOBALS['TL_DCA']['elementGroupSpace']['fields']['responsiveGroupSpacingTop'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveSpacingTop'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'eval' => ['tl_class' => "w50 clr"],
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getSpacings'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGroupSpacingTop']['options'],
+    'sql' => "blob NULL",
+];
+
+$GLOBALS['TL_DCA']['elementGroupSpace']['fields']['responsiveGroupSpacingBottom'] = [
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveSpacingBottom'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'iconedSelect',
+    'eval' => ['tl_class' => "w50"],
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getSpacings'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGroupSpacingBottom']['options'],
+    'sql' => "blob NULL",
+];

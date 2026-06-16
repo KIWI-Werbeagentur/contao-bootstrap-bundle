@@ -28,7 +28,10 @@ SubsystemRegistry::register('container-padding-x', [], ['main', 'header', 'foote
 // `p[t|b]{infix}-<key>` → --spacing-top/bottom → [data-spacing-*] indirection emitted
 // in the generated _spacings.scss (fed from this config). The deprecated named buckets
 // + KIWI_BOOTSTRAP_DEPRECATED_SPACINGS modes are layered on top, unchanged.
-SubsystemRegistry::register('vertical-spacing');
+//
+// Partials expose the four DCA fields that the responsive-base bundle ships.
+// Each resolves to its own --kiwi-vertical-spacing-default-<partial> CSS variable.
+SubsystemRegistry::register('vertical-spacing', [], ['articleTop', 'articleBottom', 'groupTop', 'groupBottom']);
 
 $GLOBALS['responsive']['bootstrap'] = '__ROOT__/vendor/twbs/bootstrap/scss';
 $GLOBALS['responsive']['custom'] = "@import '__ROOT__/vendor/kiwi/contao-bootstrap/assets/scss/kiwi'";

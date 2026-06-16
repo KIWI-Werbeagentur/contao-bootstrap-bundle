@@ -4,12 +4,9 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['between'] = "Distributed [spac
 $GLOBALS['TL_LANG']['responsive']['flexContent']['around'] = "Distributed with half space outside [space-around]";
 $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Distributed with space outside [space-evenly]";
 
-// Vertical-spacing option labels (the value-derived space-N scale + the dynamic
-// `default`) are derived from kiwi_bootstrap.grid.vertical-spacing. The iconedSelect
-// reference is keyed [key][0]. The auto-generated `default` label already includes
-// the resolved value (e.g. "Default [default · 1.5rem]"); keep it as-is.
-
-// Deprecated named buckets (shown only while KIWI_BOOTSTRAP_DEPRECATED_SPACINGS keeps them).
+// Deprecated named buckets on the shared `spacings` reference — shown only while
+// KIWI_BOOTSTRAP_DEPRECATED_SPACINGS keeps them. (The noop sentinel label comes from
+// the responsive-base bundle.)
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "Zero spacing [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0]      = "Default horizontal gutter [gap]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Half default horizontal gutter [gap-half]";
@@ -20,6 +17,28 @@ $GLOBALS['TL_LANG']['responsive']['spacings']['md'][0]       = "Medium [md]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['lg'][0]       = "Large [lg]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xl'][0]       = "Extra large [xl]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['xxl'][0]      = "Extra extra large [xxl]";
+
+// Per-DCA-field option labels. Each of the four vertical-spacing fields maps to one
+// registered partial (articleTop / articleBottom / groupTop / groupBottom) — the DCA
+// reference is overridden per field in contao/dca/responsive.php — so its `default`
+// label shows only its own resolved value (like the gutter/cx header/footer fields).
+// The config-driven scale + `default` (from kiwi_bootstrap.grid.vertical-spacing) are
+// merged over the non-config labels (noop + deprecated buckets) flattened from the
+// shared `spacings` reference, so every dropdown entry stays labelled in every mode.
+$spacingFallbackLabels = array_map(
+    static fn ($label) => \is_array($label) ? ($label[0] ?? '') : $label,
+    $GLOBALS['TL_LANG']['responsive']['spacings'],
+);
+foreach ([
+    'responsiveSpacingTop'         => 'articleTop',
+    'responsiveSpacingBottom'      => 'articleBottom',
+    'responsiveGroupSpacingTop'    => 'groupTop',
+    'responsiveGroupSpacingBottom' => 'groupBottom',
+] as $spacingField => $spacingPartial) {
+    $GLOBALS['TL_LANG']['responsive'][$spacingField]['options'] =
+        \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('vertical-spacing', '.', $spacingPartial)
+        + $spacingFallbackLabels;
+}
 
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['xs'][0] = "Default (Smartphone)";
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['sm'][0] = "Smartphone Landscape";

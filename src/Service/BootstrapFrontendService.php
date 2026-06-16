@@ -3,6 +3,9 @@
 namespace Kiwi\Contao\BootstrapBundle\Service;
 
 use Contao\Controller;
+use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
+use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 use Kiwi\Contao\ResponsiveBaseBundle\Service\ResponsiveFrontendService;
 
 class BootstrapFrontendService extends ResponsiveFrontendService
@@ -94,6 +97,71 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         };
 
         return $this->getResponsiveClasses(self::getProp($varData, $strField), 'varContainerPaddingXClasses', ['partial' => $partial]);
+    }
+
+    /**
+     * Bootstrap responsive vertical-spacing utilities (`pt-…`/`pb-…` per breakpoint).
+     *
+     * The vertical-spacing subsystem registers four partials (articleTop,
+     * articleBottom, groupTop, groupBottom) so each DCA field resolves to its own
+     * --kiwi-vertical-spacing-default-<partial> CSS variable. Article is the default
+     * context: a bare (value, direction) call — the mod_article wrapper and
+     * getSpacingTop/BottomClasses — resolves to the article partial. Element groups
+     * call {@see self::getGroupSpacingClasses()} for the group partials.
+     */
+    public function getSpacingClasses($strData, $strDirection = ""): array
+    {
+        return $this->resolveSpacingClasses(
+            $strData,
+            $strDirection,
+            $strDirection === 'b' ? 'articleBottom' : 'articleTop',
+        );
+    }
+
+    /**
+     * Element-group vertical spacing — resolves to the group partials
+     * (groupTop / groupBottom) instead of the article default.
+     */
+    public function getGroupSpacingClasses($strData, $strDirection = ""): array
+    {
+        return $this->resolveSpacingClasses(
+            $strData,
+            $strDirection,
+            $strDirection === 'b' ? 'groupBottom' : 'groupTop',
+        );
+    }
+
+    private function resolveSpacingClasses($strData, $strDirection, string $partial): array
+    {
+        // When this partial's configured default is `noop`, a field resolving to the
+        // `default` option must also render nothing — exclude it alongside the noop
+        // sentinel, so a default-left field on a noop partial produces no class.
+        $excludeValues = [ResponsiveConfiguration::SPACING_NO_OP];
+        if (BootstrapConfiguration::defaultIsNoOp('vertical-spacing', $partial)) {
+            $excludeValues[] = GridStyles::GENERIC_DEFAULT;
+        }
+
+        return $this->getResponsiveClasses($strData, 'varSpacingClasses', [
+            'direction' => $strDirection,
+            'partial' => $partial,
+            'excludeValues' => $excludeValues,
+        ]);
+    }
+
+    /**
+     * Convenience wrapper for the article top spacing DCA field.
+     */
+    public function getSpacingTopClasses($strData): array
+    {
+        return $this->getSpacingClasses($strData, 't');
+    }
+
+    /**
+     * Convenience wrapper for the article bottom spacing DCA field.
+     */
+    public function getSpacingBottomClasses($strData): array
+    {
+        return $this->getSpacingClasses($strData, 'b');
     }
 
     public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article', bool $skipPaletteCheck = false): array

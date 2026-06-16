@@ -4,8 +4,9 @@
 :root{
   /* Deprecated named buckets — only referenced while KIWI_BOOTSTRAP_DEPRECATED_SPACINGS
      keeps them in the dropdown (modes 1/2). The value-derived space-N scale and the
-     dynamic `default` (var(--kiwi-vertical-spacing-default), emitted in _grid.scss from
-     kiwi_bootstrap.grid.vertical-spacing) are config-driven and applied inline below. */
+     dynamic `default-<partial>` (one --kiwi-vertical-spacing-default-<partial> per
+     declared partial, emitted in _grid.scss from kiwi_bootstrap.grid.vertical-spacing)
+     are config-driven and applied inline below. */
   --spacing-none: 0;
   --spacing-gap: #{$grid-gutter-width};
   --spacing-gap-half: #{$grid-gutter-width / 2};
@@ -21,30 +22,35 @@
 $sizes: {{ sizes }};
 $named-sizes: none, gap, gap-half, xxs, xs, sm, md, lg, xl, xxl;
 
-/* Value-derived vertical-spacing scale + dynamic `default`. Single source of truth:
-   kiwi_bootstrap.grid.vertical-spacing. `default` resolves to the configured default
-   custom property; the space-N steps carry their literal value. */
+/* Value-derived vertical-spacing scale + dynamic `default-<partial>` per declared
+   partial. Single source of truth: kiwi_bootstrap.grid.vertical-spacing. A
+   `space-N` entry carries its literal value; a `default-<partial>` entry
+   resolves to its --kiwi-vertical-spacing-default-<partial> custom property. */
 $kiwi-spacing-utilities: (
 {% for e in spacingUtilities %}  "{{ e.suffix }}": {{ e.value }},
 {% endfor %});
 
-/* One class per option in the PHP $arrSpacings list ($sizes), keeping the
-   --spacing-* / [data-spacing-*] indirection: a config-driven space-N / `default`
-   takes its value from $kiwi-spacing-utilities; a still-enabled named bucket reads
-   its --spacing-<bucket> variable. Both directions (pt/pb) are emitted. */
+/* One class per entry in the value-derived utility map (space-N + default-<partial>),
+   keeping the --spacing-* / [data-spacing-*] indirection: the class sets the
+   --spacing-{top,bottom} CSS variable to the entry's value, and [data-spacing-*]
+   selectors then apply the actual padding. Both directions (pt/pb) are emitted.
+   Deprecated named buckets (still enabled in modes 1/2) read their --spacing-<bucket>
+   variable and are not part of the utility map. */
 @each $breakpoint in map-keys($grid-breakpoints) {
-  @each $size in $sizes {
-    @include media-breakpoint-up($breakpoint) {
-      $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
-      @if map-has-key($kiwi-spacing-utilities, $size) {
-        $value: map-get($kiwi-spacing-utilities, $size);
-        .pt#{$infix}-#{$size} {
-          --spacing-top: #{$value};
-        }
-        .pb#{$infix}-#{$size} {
-          --spacing-bottom: #{$value};
-        }
-      } @else if index($named-sizes, $size) != null {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    @each $suffix, $value in $kiwi-spacing-utilities {
+      .pt#{$infix}-#{$suffix} {
+        --spacing-top: #{$value};
+      }
+      .pb#{$infix}-#{$suffix} {
+        --spacing-bottom: #{$value};
+      }
+    }
+
+    @each $size in $sizes {
+      @if index($named-sizes, $size) != null and not map-has-key($kiwi-spacing-utilities, $size) {
         .pt#{$infix}-#{$size} {
           --spacing-top: var(--spacing-#{$size});
         }
