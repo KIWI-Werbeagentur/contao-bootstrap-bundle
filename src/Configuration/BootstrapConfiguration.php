@@ -2,7 +2,6 @@
 
 namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
-use Contao\DataContainer;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Kiwi\Contao\BootstrapBundle\Configuration\Grid\SubsystemRegistry;
@@ -170,27 +169,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     ];
 
     /**
-     * Default gutter selection per breakpoint for the main content area.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrGutterDefaults = ['xs' => '4'];
-
-    /**
-     * Default gutter selection per breakpoint for the header section.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrGutterHeaderDefaults = ['xs' => '4'];
-
-    /**
-     * Default gutter selection per breakpoint for the footer section.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrGutterFooterDefaults = ['xs' => '4'];
-
-    /**
      * Full enumeration of container-padding-x tokens to their class templates.
      * Maps to the .cx-{N} utilities emitted by grid-overrides.scss, which apply
      * the container's own outer L/R padding (opt-in, fluid-gated, non-inheriting)
@@ -213,27 +191,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     ];
 
     /**
-     * Default container-padding-x selection per breakpoint.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrContainerPaddingXDefaults = ['xs' => '2'];
-
-    /**
-     * Default container-padding-x selection for the layout header section.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrContainerPaddingXHeaderDefaults = ['xs' => '2'];
-
-    /**
-     * Default container-padding-x selection for the layout footer section.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrContainerPaddingXFooterDefaults = ['xs' => '2'];
-
-    /**
      * Full enumeration of row-gap tokens to their class templates.
      * Maps to the row-gap-{N} utilities backported from Bootstrap 5.3 via extend-utilities.scss.
      *
@@ -252,13 +209,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         '9'   => 'row-gap{{modifier}}-9',
         '10'  => 'row-gap{{modifier}}-10',
     ];
-
-    /**
-     * Default row-gap selection per breakpoint.
-     *
-     * @var array<string, int|string>
-     */
-    protected array $arrRowGapDefaults = ['xs' => 0];
 
     public function __construct($objDca = null)
     {
@@ -366,10 +316,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     /**
      * Wire the row-gap subsystem to the value-derived space scale: build its
-     * option/class map and field default from `kiwi_bootstrap.grid.row-gap`. The
-     * dropdown offers the configured steps plus the dynamic `default` option
-     * (→ var(--kiwi-row-gap-default)); row-gap has no partials. Labels live in the
-     * responsive language files.
+     * option/class map from `kiwi_bootstrap.grid.row-gap`. The dropdown offers the
+     * configured steps plus the dynamic `default` option (→ var(--kiwi-row-gap-default));
+     * row-gap has no partials. The field preselects `default` via its DCA definition.
+     * Labels live in the responsive language files.
      */
     private function applyRowGapScale(): void
     {
@@ -381,17 +331,16 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $styles = new GridStyles(['row-gap' => $grid['row-gap']], $this->getBreakpointMinWidths());
 
         $this->arrRowGapClasses = $styles->classMap('row-gap');
-        $this->arrRowGapDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
     }
 
     /**
      * Wire the container-padding-x subsystem (.cx-*) to the value-derived space
-     * scale: build its option/class map and the per-section field defaults from
-     * `kiwi_bootstrap.grid.container-padding-x`. The dropdown offers the configured
-     * space-N steps plus the dynamic `default` option, which resolves to
-     * var(--kiwi-container-padding-x-default-<partial>) — the partial (main/header/
-     * footer) is filled per section in getContainerPaddingXClasses(). The fluid-gated
-     * .cx-* classes are generated into _grid.scss. Labels live in the language files.
+     * scale: build its option/class map from `kiwi_bootstrap.grid.container-padding-x`.
+     * The dropdown offers the configured space-N steps plus the dynamic `default`
+     * option, which resolves to var(--kiwi-container-padding-x-default-<partial>) — the
+     * partial (main/header/footer) is filled per section in getContainerPaddingXClasses().
+     * The fields preselect `default` via their DCA definitions. The fluid-gated .cx-*
+     * classes are generated into _grid.scss. Labels live in the language files.
      */
     private function applyContainerPaddingXScale(): void
     {
@@ -403,20 +352,16 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $styles = new GridStyles(['container-padding-x' => $grid['container-padding-x']], $this->getBreakpointMinWidths());
 
         $this->arrContainerPaddingXClasses = $styles->classMap('container-padding-x');
-
-        $this->arrContainerPaddingXDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrContainerPaddingXHeaderDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrContainerPaddingXFooterDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
     }
 
     /**
      * Wire the gutter subsystem to the value-derived space scale: build the
-     * option/class map and the per-section field defaults from the
-     * `kiwi_bootstrap.grid.gutter` configuration (shipped by the bundle,
-     * overridable per project). The dropdown then offers the configured space-N
-     * steps, the dynamic `default` option (→ var(--kiwi-gutter-default-<partial>)),
+     * option/class map from the `kiwi_bootstrap.grid.gutter` configuration (shipped
+     * by the bundle, overridable per project). The dropdown then offers the configured
+     * space-N steps, the dynamic `default` option (→ var(--kiwi-gutter-default-<partial>)),
      * and one option per configured variable; the matching classes are generated
-     * into _grid.scss. Labels live in the responsive language files.
+     * into _grid.scss. The fields preselect `default` via their DCA definitions.
+     * Labels live in the responsive language files.
      */
     private function applyGutterScale(): void
     {
@@ -428,13 +373,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $styles = new GridStyles(['gutter' => $grid['gutter']], $this->getBreakpointMinWidths());
 
         $this->arrGutterClasses = $styles->classMap('gutter');
-
-        // New elements default to the dynamic `default` option, so they render at
-        // the configured default and follow config changes; per-section partial is
-        // supplied at the call site (getGutterClasses($data, $partial)).
-        $this->arrGutterDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrGutterHeaderDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrGutterFooterDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
     }
 
     /**
@@ -622,8 +560,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         return array_keys($this->arrRowCols);
     }
 
-    protected array $arrRowColsDefaults = ['xs' => 1];
-
     public function getGutterSizeKeys(): array
     {
         return array_keys($this->arrGutterClasses);
@@ -653,62 +589,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         }
 
         return $widths;
-    }
-
-    public function getDefaults(DataContainer $objDca): void
-    {
-        parent::getDefaults($objDca);
-
-        $this->applyRowColsDefaults($objDca);
-        $this->applyGutterDefaults($objDca);
-        $this->applyRowGapDefaults($objDca);
-        $this->applyContainerPaddingXDefaults($objDca);
-    }
-
-    protected function applyRowColsDefaults(DataContainer $dc): void
-    {
-        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
-        if (isset($fields['responsiveRowCols'])) {
-            $fields['responsiveRowCols']['default'] = $this->arrRowColsDefaults;
-        }
-    }
-
-    protected function applyGutterDefaults(DataContainer $dc): void
-    {
-        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
-        $defaults = [
-            'responsiveGutter'       => $this->arrGutterDefaults,
-            'responsiveGutterHeader' => $this->arrGutterHeaderDefaults,
-            'responsiveGutterFooter' => $this->arrGutterFooterDefaults,
-        ];
-        foreach ($defaults as $field => $default) {
-            if (isset($fields[$field])) {
-                $fields[$field]['default'] = $default;
-            }
-        }
-    }
-
-    protected function applyRowGapDefaults(DataContainer $dc): void
-    {
-        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
-        if (isset($fields['responsiveRowGap'])) {
-            $fields['responsiveRowGap']['default'] = $this->arrRowGapDefaults;
-        }
-    }
-
-    protected function applyContainerPaddingXDefaults(DataContainer $dc): void
-    {
-        $fields = &$GLOBALS['TL_DCA'][$dc->table]['fields'];
-        $defaults = [
-            'responsiveContainerPaddingX'       => $this->arrContainerPaddingXDefaults,
-            'responsiveContainerPaddingXHeader' => $this->arrContainerPaddingXHeaderDefaults,
-            'responsiveContainerPaddingXFooter' => $this->arrContainerPaddingXFooterDefaults,
-        ];
-        foreach ($defaults as $field => $default) {
-            if (isset($fields[$field])) {
-                $fields[$field]['default'] = $default;
-            }
-        }
     }
 
     /**

@@ -5,6 +5,7 @@ use Contao\System;
 System::loadLanguageFile('responsive');
 
 $GLOBALS['TL_DCA']['rowCols']['fields']['responsiveRowCols'] = [
+    'default' => ['xs' => 1],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols'],
     'inputType' => 'responsive',
     'responsiveInputType' => 'iconedSelect',
@@ -20,6 +21,7 @@ $GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['options'] = ['0',1,2,
 unset($GLOBALS['TL_DCA']['column']['fields']['responsiveOrder']['eval']['rgxp']);
 
 $GLOBALS['TL_DCA']['container']['fields']['responsiveGutter'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'iconedSelect',
@@ -30,6 +32,7 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveGutter'] = [
 ];
 
 $GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowGap'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'iconedSelect',
@@ -51,6 +54,7 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
  *   - tl_article  (this bundle's tl_article.php)
  *   - tl_layout   header/footer (this bundle's tl_layout.php) */
 $GLOBALS['TL_DCA']['containerPadding']['fields']['responsiveContainerPaddingX'] = [
+    'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'],
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'iconedSelect',
