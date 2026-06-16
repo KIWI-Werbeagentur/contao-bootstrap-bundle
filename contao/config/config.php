@@ -16,6 +16,13 @@ SubsystemRegistry::register('gutter', [], ['main', 'header', 'footer'], ['prefix
 // `row-gap` property. Single content context (no sections) → no partials, generic default.
 SubsystemRegistry::register('row-gap', [], [], ['prefix' => 'row-gap', 'property' => 'row-gap']);
 
+// Wire the container's own horizontal padding (.cx-*) to the space scale, with
+// main/header/footer partials. Prefix-only apply (no `property`): the cx classes are
+// not flat utilities but compound, fluid-gated, media-banded selectors
+// (.container-md.cx-lg-space-4) emitted by the bespoke loop in the generated
+// _grid.scss (fed from this config). The `cx` prefix still drives the class map.
+SubsystemRegistry::register('container-padding-x', [], ['main', 'header', 'footer'], ['prefix' => 'cx']);
+
 $GLOBALS['responsive']['bootstrap'] = '__ROOT__/vendor/twbs/bootstrap/scss';
 $GLOBALS['responsive']['custom'] = "@import '__ROOT__/vendor/kiwi/contao-bootstrap/assets/scss/kiwi'";
 

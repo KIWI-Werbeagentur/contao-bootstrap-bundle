@@ -99,20 +99,13 @@ if (isset($GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options']['defa
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
     0 => 'Container-Padding',
     1 => 'Der linke/rechte Abstand nach außen des Containers (cx-*) je Viewport.  Wird nur angewendet, wenn sich der Container über den ganzen Viewport erstreckt.',
-    'options' => [
-        '0'  => '0rem [cx-0]',
-        '1'  => '0,5rem [cx-1]',
-        '2'  => '0,75rem [cx-2]',
-        '3'  => '1rem [cx-3]',
-        '4'  => '1,5rem [cx-4]',
-        '5'  => '2rem [cx-5]',
-        '6'  => '2,5rem [cx-6]',
-        '7'  => '3rem [cx-7]',
-        '8'  => '4rem [cx-8]',
-        '9'  => '5rem [cx-9]',
-        '10' => '6rem [cx-10]',
-    ],
+    // Optionslabels werden aus der kiwi_bootstrap.grid.container-padding-x-Konfiguration abgeleitet.
+    'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', ','),
 ];
+// Lokalisiertes Label für die dynamische Standard-Option.
+if (isset($GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options']['default'] = 'Standard [default]';
+}
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'] = [
     0 => 'Header Container-Padding',

@@ -292,6 +292,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         $this->applyConfiguredFieldDefaults();
 
+        // Re-key cx to space-N before the $GLOBALS override below, so a project
+        // override (containerPaddingXDefault) validates against the new option keys
+        // and wins over the dynamic `default` this sets.
+        $this->applyContainerPaddingXScale();
+
         $this->applyConfiguredContainerPaddingXDefaults();
 
         $this->applyGutterScale();
@@ -317,6 +322,31 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         $this->arrRowGapClasses = $styles->classMap('row-gap');
         $this->arrRowGapDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+    }
+
+    /**
+     * Wire the container-padding-x subsystem (.cx-*) to the value-derived space
+     * scale: build its option/class map and the per-section field defaults from
+     * `kiwi_bootstrap.grid.container-padding-x`. The dropdown offers the configured
+     * space-N steps plus the dynamic `default` option, which resolves to
+     * var(--kiwi-container-padding-x-default-<partial>) — the partial (main/header/
+     * footer) is filled per section in getContainerPaddingXClasses(). The fluid-gated
+     * .cx-* classes are generated into _grid.scss. Labels live in the language files.
+     */
+    private function applyContainerPaddingXScale(): void
+    {
+        $grid = $this->gridConfig();
+        if (empty($grid['container-padding-x'])) {
+            return;
+        }
+
+        $styles = new GridStyles(['container-padding-x' => $grid['container-padding-x']], $this->getBreakpointMinWidths());
+
+        $this->arrContainerPaddingXClasses = $styles->classMap('container-padding-x');
+
+        $this->arrContainerPaddingXDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrContainerPaddingXHeaderDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        $this->arrContainerPaddingXFooterDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
     }
 
     /**
