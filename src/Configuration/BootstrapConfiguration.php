@@ -295,6 +295,28 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->applyConfiguredContainerPaddingXDefaults();
 
         $this->applyGutterScale();
+
+        $this->applyRowGapScale();
+    }
+
+    /**
+     * Wire the row-gap subsystem to the value-derived space scale: build its
+     * option/class map and field default from `kiwi_bootstrap.grid.row-gap`. The
+     * dropdown offers the configured steps plus the dynamic `default` option
+     * (→ var(--kiwi-row-gap-default)); row-gap has no partials. Labels live in the
+     * responsive language files.
+     */
+    private function applyRowGapScale(): void
+    {
+        $grid = $this->gridConfig();
+        if (empty($grid['row-gap'])) {
+            return;
+        }
+
+        $styles = new GridStyles(['row-gap' => $grid['row-gap']], $this->getBreakpointMinWidths());
+
+        $this->arrRowGapClasses = $styles->classMap('row-gap');
+        $this->arrRowGapDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
     }
 
     /**

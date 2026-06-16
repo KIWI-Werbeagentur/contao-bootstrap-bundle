@@ -159,6 +159,12 @@ class KiwiBootstrapBundle extends AbstractBundle
                         'footer' => 'space-6',
                     ],
                 ],
+                'row-gap' => [
+                    'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-20'],
+                    'defaults' => [
+                        'default' => 'space-0',
+                    ],
+                ],
             ],
         ]);
     }
