@@ -1,7 +1,7 @@
 {# Custom section that inherits container width, container padding + gutter from the layout's header section #}
 {% set _containerSize = layout.responsiveContainerSizeHeader|default %}
 {% set _containerPaddingX = getContainerPaddingXClasses(layout, 'tl_layout', 'responsiveContainerPaddingXHeader')|join(' ') %}
-{% set _gutter = getGutterClasses(layout.responsiveGutterHeader|default)|join(' ') %}
+{% set _gutter = getGutterClasses(layout.responsiveGutterHeader|default, 'header')|join(' ') %}
 
 <div id="{{ id }}" class="{{ id }}">
     <div class="{{ id }}__container custom-container {{ _containerSize }} {{ _containerPaddingX }}">

@@ -139,4 +139,27 @@ class KiwiBootstrapBundle extends AbstractBundle
 
         return $keys;
     }
+
+    /**
+     * Ship the default gutter subsystem config (steps + per-partial defaults).
+     * Projects tweak it in config/config.yml: `options` is additive (+key / -key
+     * deltas, resolved in loadExtension), `defaults` merge per key. The subsystem
+     * itself is registered in contao/config/config.php.
+     */
+    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        $container->extension('kiwi_bootstrap', [
+            'grid' => [
+                'gutter' => [
+                    'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-20'],
+                    'defaults' => [
+                        'default' => 'space-6',
+                        'main' => 'space-6',
+                        'header' => 'space-6',
+                        'footer' => 'space-6',
+                    ],
+                ],
+            ],
+        ]);
+    }
 }

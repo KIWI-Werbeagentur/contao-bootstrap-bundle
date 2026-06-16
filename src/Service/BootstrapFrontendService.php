@@ -48,9 +48,14 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getGutterClasses(?string $strData): array
+    /**
+     * @param string $partial which gutter section the value belongs to (main/header/footer);
+     *                         fills the {{partial}} placeholder so the `default` option resolves
+     *                         to var(--kiwi-gutter-default-<partial>).
+     */
+    public function getGutterClasses(?string $strData, string $partial = 'main'): array
     {
-        return $this->getResponsiveClasses($strData, 'varGutterClasses');
+        return $this->getResponsiveClasses($strData, 'varGutterClasses', ['partial' => $partial]);
     }
 
     /**
