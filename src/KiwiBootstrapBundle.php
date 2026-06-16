@@ -175,6 +175,15 @@ class KiwiBootstrapBundle extends AbstractBundle
                         'footer' => 'space-3',
                     ],
                 ],
+                'vertical-spacing' => [
+                    'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-16', 'space-20'],
+                    'defaults' => [
+                        // The dynamic `default` option: new article spacing fields use it
+                        // (→ 3rem), so they follow this config. Content-element groups
+                        // default to space-0 (set in the configuration class).
+                        'default' => 'space-12',
+                    ],
+                ],
             ],
         ]);
     }

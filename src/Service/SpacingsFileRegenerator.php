@@ -3,6 +3,7 @@
 namespace Kiwi\Contao\BootstrapBundle\Service;
 
 use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
@@ -16,6 +17,7 @@ class SpacingsFileRegenerator
         private readonly Filesystem $filesystem,
         private readonly Environment $twig,
         private readonly string $projectDir,
+        private readonly array $grid = [],
     ) {}
 
     /**
@@ -39,7 +41,16 @@ class SpacingsFileRegenerator
         $configClass = $GLOBALS['responsive']['config'] ?? BootstrapConfiguration::class;
         $sizes       = implode(', ', (new $configClass())->getSpacingsExcludingNoOp());
 
-        $rendered = $this->twig->render(self::TWIG_TEMPLATE, ['sizes' => $sizes]);
+        // The value-derived scale + dynamic `default` (suffix => CSS value), from the
+        // same kiwi_bootstrap.grid.vertical-spacing config that drives the dropdown.
+        $spacingUtilities = isset($this->grid['vertical-spacing'])
+            ? (new GridStyles(['vertical-spacing' => $this->grid['vertical-spacing']], []))->utilityEntries('vertical-spacing')
+            : [];
+
+        $rendered = $this->twig->render(self::TWIG_TEMPLATE, [
+            'sizes' => $sizes,
+            'spacingUtilities' => $spacingUtilities,
+        ]);
         $current  = $this->filesystem->exists($targetFile) ? file_get_contents($targetFile) : null;
 
         if ($current === $rendered) {

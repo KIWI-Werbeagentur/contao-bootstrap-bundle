@@ -4,19 +4,18 @@ $GLOBALS['TL_LANG']['responsive']['flexContent']['between'] = "Verteilt [space-b
 $GLOBALS['TL_LANG']['responsive']['flexContent']['around'] = "Verteilt mit halben Platz nach außen [space-around]";
 $GLOBALS['TL_LANG']['responsive']['flexContent']['evenly'] = "Verteilt mit Platz nach außen [space-evenly]";
 
-$GLOBALS['TL_LANG']['responsive']['spacings']['0'][0]   = '0rem [spacer-0]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['1'][0]   = '0,5rem [spacer-1]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['2'][0]   = '0,75rem [spacer-2]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['3'][0]   = '1rem [spacer-3]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['4'][0]   = '1,5rem [spacer-4]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['5'][0]   = '2rem [spacer-5]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['6'][0]   = '2,5rem [spacer-6]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['7'][0]   = '3rem [spacer-7]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['8'][0]   = '4rem [spacer-8]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['9'][0]   = '5rem [spacer-9]';
-$GLOBALS['TL_LANG']['responsive']['spacings']['10'][0]  = '6rem [spacer-10]';
+// Vertical-spacing-Optionslabels (die wertbasierte space-N-Skala + die dynamische
+// `default`-Option) werden aus kiwi_bootstrap.grid.vertical-spacing abgeleitet.
+// Die iconedSelect-Referenz ist nach [key][0] verschlüsselt.
+foreach (\Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('vertical-spacing', ',') as $spacingKey => $spacingLabel) {
+    $GLOBALS['TL_LANG']['responsive']['spacings'][$spacingKey][0] = $spacingLabel;
+}
+// Lokalisiertes Label für die dynamische Standard-Option.
+if (isset($GLOBALS['TL_LANG']['responsive']['spacings']['default'])) {
+    $GLOBALS['TL_LANG']['responsive']['spacings']['default'][0] = "Standard [default]";
+}
 
-$GLOBALS['TL_LANG']['responsive']['spacings']['default'][0]  = "Standard [default]";
+// Veraltete benannte Buckets (nur sichtbar, solange KIWI_BOOTSTRAP_DEPRECATED_SPACINGS sie behält).
 $GLOBALS['TL_LANG']['responsive']['spacings']['none'][0]     = "Null Abstand [none]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap'][0]      = "Standard-Rasterabstand [gap]";
 $GLOBALS['TL_LANG']['responsive']['spacings']['gap-half'][0] = "Halber Standard-Rasterabstand [gap-half]";
