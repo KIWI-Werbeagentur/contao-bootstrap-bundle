@@ -70,6 +70,7 @@ $GLOBALS['TL_LANG']['responsive']['flexContainer'] = [
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
+    'default' => "Standard <span class='label-info'>[0]</span>",
     'first' => "Erstes",
     'last' => "Letztes"
 ];
