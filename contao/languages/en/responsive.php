@@ -48,7 +48,7 @@ $GLOBALS['TL_LANG']['responsive']['breakpoint']['xl'][0] = "PC";
 $GLOBALS['TL_LANG']['responsive']['breakpoint']['xxl'][0] = "TV";
 
 $GLOBALS['TL_LANG']['responsive']['responsiveRowCols'] = [
-    0 => "Items per row",
+    0 => 'Items per row <span style="color: #7f7f7f">[row-cols]</span>',
     'auto' => "Automatic [auto]",
     'options' => [
         'auto' => "Automatic [auto]",
@@ -57,24 +57,25 @@ $GLOBALS['TL_LANG']['responsive']['responsiveRowCols'] = [
 
 $GLOBALS['TL_LANG']['responsive']['flexContainer'] = [
     'default' => "Column-Element",
-    'container-fluid' => "Full Width <span class='label-info'>[container-fluid]</span>",
-    'container' => "Limited Width <span class='label-info'>[container]</span>",
-    'container-sm' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['sm'][0]} <span class='label-info'>[container-sm]</span>",
-    'container-md' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['md'][0]} <span class='label-info'>[container-md]</span>",
-    'container-lg' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['lg'][0]} <span class='label-info'>[container-lg]</span>",
-    'container-xl' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['xl'][0]} <span class='label-info'>[container-xl]</span>",
-    'container-xxl' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['xxl'][0]} <span class='label-info'>[container-xxl]</span>",
+    'container-fluid' => "Full Width [container-fluid]",
+    'container' => "Limited Width [container]",
+    'container-sm' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['sm'][0]} [container-sm]",
+    'container-md' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['md'][0]} [container-md]",
+    'container-lg' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['lg'][0]} [container-lg]",
+    'container-xl' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['xl'][0]} [container-xl]",
+    'container-xxl' => "Limited Width at {$GLOBALS['TL_LANG']['responsive']['breakpoint']['xxl'][0]} [container-xxl]",
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveOrder']['options'] = [
+    'default' => 'Default [0]',
     'first' => "First",
     'last' => "Last"
 ];
 
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
-    0 => 'Horizontal grid gutter',
-    1 => 'Bootstrap horizontal gutters (gx-*) per viewport. Vertical gutters are configured separately.',
+    0 => 'Horizontal grid gutter <span style="color: #7f7f7f">[gx]</span>',
+    1 => 'Bootstrap horizontal gutters per viewport. Vertical gutters are configured separately.',
     // Option labels are derived from the kiwi_bootstrap.grid.gutter config (steps,
     // the dynamic `default`, and one per configured variable). The `default` label
     // is scoped to the main partial, since header/footer have their own independent
@@ -83,12 +84,12 @@ $GLOBALS['TL_LANG']['responsive']['responsiveGutter'] = [
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'] = [
-    0 => 'Main horizontal grid gutter',
+    0 => 'Horizontal grid gutter - main <span style="color: #7f7f7f">[gx]</span>',
     1 => 'Bootstrap horizontal gutters for main column and sidebars.',
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'] = [
-    0 => 'Header horizontal grid gutter',
+    0 => 'Horizontal grid gutter - header <span style="color: #7f7f7f">[gx]</span>',
     1 => 'Bootstrap horizontal gutters for the header rows.',
     // Per-partial option labels (scoped to the header partial so editors see only
     // the header's resolved default, not the footer/main values).
@@ -96,7 +97,7 @@ $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'] = [
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'] = [
-    0 => 'Footer horizontal grid gutter',
+    0 => 'Horizontal grid gutter - footer <span style="color: #7f7f7f">[gx]</span>',
     1 => 'Bootstrap horizontal gutters for the footer row.',
     // Per-partial option labels (scoped to the footer partial so editors see only
     // the footer's resolved default, not the header/main values).
@@ -104,15 +105,15 @@ $GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'] = [
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveRowGap'] = [
-    0 => 'Vertical gap between rows',
+    0 => 'Vertical gap between rows <span style="color: #7f7f7f">[gy]</span>',
     1 => 'Bootstrap row-gap per viewport. Applied between wrapped rows inside the container.',
     // Option labels are derived from the kiwi_bootstrap.grid.row-gap config.
     'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('row-gap', '.'),
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
-    0 => 'Container padding',
-    1 => "The container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
+    0 => 'Container padding <span style="color: #7f7f7f">[cx]</span>',
+    1 => "The container's own left/right padding per viewport. Only applies when the container spans the whole viewport.",
     // Option labels are derived from the kiwi_bootstrap.grid.container-padding-x
     // config. The `default` label is scoped to the main partial, since header/footer
     // have their own independent DCA fields.
@@ -120,15 +121,15 @@ $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'] = [
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'] = [
-    0 => 'Header container padding',
-    1 => "The header section container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
+    0 => 'Header container padding <span style="color: #7f7f7f">[cx]</span>',
+    1 => "The header section container's own left/right padding per viewport. Only applies when the container spans the whole viewport.",
     // Per-partial option labels (scoped to the header partial).
     'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', '.', 'header'),
 ];
 
 $GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'] = [
-    0 => 'Footer container padding',
-    1 => "The footer section container's own left/right padding (cx-*) per viewport. Only applies when the container spans the whole viewport.",
+    0 => 'Footer container padding <span style="color: #7f7f7f">[cx]</span>',
+    1 => "The footer section container's own left/right padding per viewport. Only applies when the container spans the whole viewport.",
     // Per-partial option labels (scoped to the footer partial).
     'options' => Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration::subsystemOptionLabels('container-padding-x', '.', 'footer'),
 ];
