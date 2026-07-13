@@ -13,7 +13,7 @@ class ThemeListener
 {
     /**
      * @param DataContainer $objDca
-     * @throws Exception
+     * @throws \Exception
      */
     public function generateAlias(DataContainer $objDca)
     {
