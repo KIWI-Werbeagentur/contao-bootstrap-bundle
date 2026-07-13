@@ -8,9 +8,16 @@ use Contao\Module;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
+use Contao\Template;
 use enshrined\svgSanitize\Sanitizer;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @property string $animation may be '' or '0'
+ * @property Template $Template
+ * @property string $inlineSvg used as bool ('1' / '')
+ * @property int $module
+ */
 class BootstrapNavbar extends Module
 {
     protected $strTemplate = 'mod_bootstrap_navbar';
