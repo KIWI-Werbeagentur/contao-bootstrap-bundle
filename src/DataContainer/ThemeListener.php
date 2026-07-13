@@ -31,7 +31,7 @@ class ThemeListener
         // Check whether the event alias exists
         if ($objAlias->numRows) {
             if (!$autoAlias) {
-                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
+                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
             }
 
             $objDca->activeRecord->alias .= '-' . $objDca->id;
