@@ -38,7 +38,7 @@ Create responsive fields yourself by using the integrated **ResponsiveWidget** o
 ### Installation <a name="installation"></a>
 Install the bundle via composer
  ```sh
-composer require kiwi/contao-bootstrap-bundle
+composer require kiwi/contao-bootstrap
  ```
 
 ### Implementation <a name="implementation"></a>
