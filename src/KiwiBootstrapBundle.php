@@ -73,7 +73,7 @@ class KiwiBootstrapBundle extends AbstractBundle
     /**
      * @param array<string, mixed> $config
      */
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function loadExtension(array $config, ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
         $grid = $config['grid'] ?? [];
 
@@ -87,7 +87,7 @@ class KiwiBootstrapBundle extends AbstractBundle
         }
         unset($subsystem);
 
-        $builder->setParameter('kiwi_bootstrap.grid', $grid);
+        $container->setParameter('kiwi_bootstrap.grid', $grid);
     }
 
     /**
@@ -150,9 +150,9 @@ class KiwiBootstrapBundle extends AbstractBundle
      * loadExtension), `defaults` merge per key. The subsystems themselves are
      * registered in contao/config/config.php.
      */
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
-        $container->extension('kiwi_bootstrap', [
+        $configurator->extension('kiwi_bootstrap', [
             'grid' => [
                 'gutter' => [
                     'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-20'],
