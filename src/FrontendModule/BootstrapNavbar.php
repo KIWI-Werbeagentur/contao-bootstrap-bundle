@@ -22,7 +22,7 @@ class BootstrapNavbar extends Module
 {
     protected $strTemplate = 'mod_bootstrap_navbar';
 
-    public function generate()
+    public function generate(): string
     {
         if (System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest() ?? Request::create(''))) {
             $objTemplate = new BackendTemplate('be_wildcard');
@@ -38,7 +38,7 @@ class BootstrapNavbar extends Module
         return parent::generate();
     }
 
-    protected function compile()
+    protected function compile(): void
     {
         /** @var PageModel $objPage */
         global $objPage;

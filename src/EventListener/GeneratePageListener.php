@@ -14,7 +14,7 @@ class GeneratePageListener
      * Replace Contao's layout.css and responsive.css with bootstrap-compatible versions.
      * Handles other css framework files as well, to preserve the correct order. See: PageRegular::createHeaderScripts
      */
-    public function __invoke(PageModel $objPage, LayoutModel $objLayout)
+    public function __invoke(PageModel $objPage, LayoutModel $objLayout): void
     {
         $arrFramework = StringUtil::deserialize($objLayout->framework, true);
 

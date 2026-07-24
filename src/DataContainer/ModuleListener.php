@@ -8,6 +8,9 @@ use Contao\ModuleModel;
 
 class ModuleListener
 {
+    /**
+     * @return array<int, string>
+     */
     public function getOtherModules(DataContainer $objDca): array
     {
         $arrModules = [];

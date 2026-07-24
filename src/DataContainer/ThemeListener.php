@@ -15,7 +15,7 @@ class ThemeListener
      * @param DataContainer $objDca
      * @throws \Exception
      */
-    public function generateAlias(DataContainer $objDca)
+    public function generateAlias(DataContainer $objDca): void
     {
         $record = $objDca->getCurrentRecord() ?? [];
         $alias = (string) ($record['alias'] ?? '');
@@ -45,7 +45,7 @@ class ThemeListener
         DataContainer::clearCurrentRecordCache((int) $objDca->id, 'tl_theme');
     }
 
-    public function generateThemeCustomizationFile(DataContainer $objDca)
+    public function generateThemeCustomizationFile(DataContainer $objDca): void
     {
         $strToRoot = "../../..";
         $fs = new Filesystem();

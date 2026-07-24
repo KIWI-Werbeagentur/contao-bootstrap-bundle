@@ -12,7 +12,7 @@ use Contao\System;
 class Content
 {
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
-    public function addOverwriteOption(DataContainer $objDca)
+    public function addOverwriteOption(DataContainer $objDca): void
     {
         //Bug: Loads content with article-id when opening content-overview of article --> leads to permission errors
         if(Input::get("do") == 'article' && Input::get("table") == 'tl_content' && !Input::get("act") == 'edit') return;

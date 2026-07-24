@@ -23,6 +23,8 @@ use Kiwi\Contao\BootstrapBundle\Configuration\SpacingScale;
  * Semantic variables are single-valued. The literal option key `default` is not
  * a concrete value and is rejected inside defaults/variables; as a selectable
  * backend option it resolves to {@see self::defaultVar()}.
+ *
+ * @phpstan-type GridConfig array<string, array{options?: list<string>, defaults?: array<string, mixed>, variables?: array<string, scalar|null>}>
  */
 final class GridStyles
 {
@@ -40,16 +42,16 @@ final class GridStyles
     public const NO_OP = 'noop';
 
     /**
-     * @param array<string, array{options?: list<string>, defaults?: array<string, mixed>, variables?: array<string, string>}> $grid
-     * @param array<string, int> $breakpoints breakpoint id => min width in px (xs => 0)
-     */
-    /**
      * Memoized {@see self::build()} result (the object is immutable).
      *
      * @var array{base: list<array{name: string, value: string}>, media: list<array{minWidth: int, variables: list<array{name: string, value: string}>}>}|null
      */
     private ?array $built = null;
 
+    /**
+     * @param GridConfig $grid The processed `kiwi_bootstrap.grid` configuration.
+     * @param array<string, int> $breakpoints breakpoint id => min width in px (xs => 0)
+     */
     public function __construct(
         private readonly array $grid,
         private readonly array $breakpoints,

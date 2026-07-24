@@ -13,7 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class LayoutListener
 {
 
-    public function generateLayoutCustomizationFiles(DataContainer $objDca)
+    public function generateLayoutCustomizationFiles(DataContainer $objDca): void
     {
         $record = $objDca->getCurrentRecord() ?? [];
         $objTheme = ThemeModel::findByPk($record['pid'] ?? null);
@@ -50,7 +50,7 @@ class LayoutListener
      * @param DataContainer $objDca
      * @throws \Exception
      */
-    public function generateAlias(DataContainer $objDca)
+    public function generateAlias(DataContainer $objDca): void
     {
         $record = $objDca->getCurrentRecord() ?? [];
         $alias = (string) ($record['alias'] ?? '');
