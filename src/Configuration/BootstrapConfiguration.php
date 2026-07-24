@@ -115,20 +115,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array $arrElementGroupSpacingTopDefaults = ['xs' => self::SPACING_NO_OP];
     protected array $arrElementGroupSpacingBottomDefaults = ['xs' => self::SPACING_NO_OP];
 
-    protected array|string $varOrderClasses = [];
-
-    protected array|string $varAlignSelfClasses = [];
-
-    protected array|string $varFlexDirectionClasses = [];
-
-    protected array|string $varJustifyContentClasses = [];
-
-    protected array|string $varAlignItemsClasses = [];
-
-    protected array|string $varAlignContentClasses = [];
-
-    protected array|string $varFlexWrapClasses = [];
-
     protected array $arrRowCols = [
         'auto' => 'row-cols{{modifier}}-auto',
         1 => 'row-cols{{modifier}}-1',
@@ -138,14 +124,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         5 => 'row-cols{{modifier}}-5',
         6 => 'row-cols{{modifier}}-6',
     ];
-
-    protected array|string $varRowColsClasses = [];
-
-    /**
-     * Holds the resolved per-breakpoint container-padding-x classes for the current element.
-     * Populated by the responsive engine via the {@see self::__get()} mapping below.
-     */
-    protected array|string $varContainerPaddingXClasses = [];
 
     /**
      * Full enumeration of all gutter tokens to their class templates.
