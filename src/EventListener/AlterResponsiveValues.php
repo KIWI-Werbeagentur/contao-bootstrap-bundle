@@ -11,7 +11,7 @@ class AlterResponsiveValues
     {
         if($strMapping == "varColClasses"){
             $strPrevValue = "";
-            foreach ($objConfig->arrBreakpoints as $strBreakpoint => $strValue){
+            foreach ($objConfig->getBreakpoints() as $strBreakpoint){
                 if($arrValues[$strBreakpoint] ?? false){
                     $strPrevValue = $arrValues[$strBreakpoint];
                 }
