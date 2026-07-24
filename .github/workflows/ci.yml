@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request: ~
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    # Simulate an interactive terminal with color support
+    shell: script -q -e -c "export TERM=xterm; bash {0}"
+
+jobs:
+  phpstan:
+    name: PHPStan (${{ matrix.dependency-versions }})
+    runs-on: ubuntu-latest
+    env:
+      COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+    strategy:
+      fail-fast: false
+      matrix:
+        dependency-versions: [ lowest, highest ]
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: curl, iconv, intl, zip, dom, fileinfo, filter, gd, hash, json, mbstring, mysqli, pcre, pdo_mysql, zlib
+          coverage: none
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          show-progress: false
+          persist-credentials: false
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v4
+        with:
+          dependency-versions: ${{ matrix.dependency-versions }}
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
