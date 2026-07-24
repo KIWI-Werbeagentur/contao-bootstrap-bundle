@@ -207,7 +207,7 @@ final class GridStyles
     {
         $config = $this->grid[$subsystem] ?? [];
 
-        $keys = array_values($config['options'] ?? []);
+        $keys = $config['options'] ?? [];
         $keys[] = self::GENERIC_DEFAULT;
         foreach (array_keys($config['variables'] ?? []) as $name) {
             $keys[] = (string) $name;
