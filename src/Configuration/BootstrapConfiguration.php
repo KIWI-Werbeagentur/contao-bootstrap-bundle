@@ -401,7 +401,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         try {
             $container = System::getContainer();
-            if ($container !== null && $container->hasParameter('kiwi_bootstrap.grid')) {
+            if ($container->hasParameter('kiwi_bootstrap.grid')) {
                 $config = $container->getParameter('kiwi_bootstrap.grid');
 
                 return \is_array($config) ? $config : [];
@@ -608,7 +608,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         try {
             $container = \Contao\System::getContainer();
-            $grid = ($container !== null && $container->hasParameter('kiwi_bootstrap.grid'))
+            $grid = ($container->hasParameter('kiwi_bootstrap.grid'))
                 ? $container->getParameter('kiwi_bootstrap.grid')
                 : [];
         } catch (\Throwable) {
@@ -638,7 +638,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         try {
             $container = \Contao\System::getContainer();
-            $grid = ($container !== null && $container->hasParameter('kiwi_bootstrap.grid'))
+            $grid = ($container->hasParameter('kiwi_bootstrap.grid'))
                 ? $container->getParameter('kiwi_bootstrap.grid')
                 : [];
         } catch (\Throwable) {
