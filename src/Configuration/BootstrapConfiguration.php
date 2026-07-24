@@ -585,7 +585,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         $widths = [];
         foreach ($this->arrBreakpoints as $key => $definition) {
-            $widths[$key] = (int) ($definition['breakpoint'] ?? 0);
+            $widths[$key] = (int) $definition['breakpoint'];
         }
 
         return $widths;
@@ -621,7 +621,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         $breakpoints = [];
         foreach ((new self())->arrBreakpoints as $key => $definition) {
-            $breakpoints[(string) $key] = (int) ($definition['breakpoint'] ?? 0);
+            $breakpoints[(string) $key] = (int) $definition['breakpoint'];
         }
 
         return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], $breakpoints))
