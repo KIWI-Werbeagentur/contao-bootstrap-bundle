@@ -7,12 +7,18 @@ use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
+/**
+ * @phpstan-import-type GridConfig from GridStyles
+ */
 class SpacingsFileRegenerator
 {
     private const TWIG_TEMPLATE       = '@Contao/responsive/spacings.scss.twig';
     private const RELATIVE_TARGET_DIR = '/files/themes/';
     private const TARGET_FILENAME     = '_spacings.scss';
 
+    /**
+     * @param GridConfig $grid The processed `kiwi_bootstrap.grid` configuration.
+     */
     public function __construct(
         private readonly Filesystem $filesystem,
         private readonly Environment $twig,

@@ -10,6 +10,11 @@ use Kiwi\Contao\ResponsiveBaseBundle\Service\ResponsiveFrontendService;
 
 class BootstrapFrontendService extends ResponsiveFrontendService
 {
+    /**
+     * @param string|null $strData
+     * @param mixed $varData
+     * @return list<string>
+     */
     public function getColClasses($strData, $varData = []): array
     {
         if(self::propExists($varData, 'ptable')) {
@@ -25,6 +30,11 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return [];
     }
 
+    /**
+     * @param string|null $strData
+     * @param mixed $varData
+     * @return list<string>
+     */
     public function getOffsetClasses($strData, $varData = []): array
     {
         if(self::propExists($varData, 'ptable')) {
@@ -40,7 +50,10 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return [];
     }
 
-    public function getRowColsClasses($strData): array
+    /**
+     * @return list<string>
+     */
+    public function getRowColsClasses(string|null $strData): array
     {
         return $this->getResponsiveClasses($strData, 'varRowColsClasses');
     }
@@ -49,10 +62,9 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      * Bootstrap responsive horizontal-gutter utilities (gx-* per breakpoint). Vertical gutters are handled separately by the bundle.
      * Map is fully enumerated in {@see \Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration}.
      *
-     * @return list<string>
-     */
-    /**
      * @param string $partial which gutter section the value belongs to (main/header/footer);
+     *
+     * @return list<string>
      *                         fills the {{partial}} placeholder so the `default` option resolves
      *                         to var(--kiwi-gutter-default-<partial>).
      */
@@ -81,7 +93,7 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getContainerPaddingXClasses($varData, $table = 'tl_article', $strField = 'responsiveContainerPaddingX', bool $skipPaletteCheck = false): array
+    public function getContainerPaddingXClasses(mixed $varData, string $table = 'tl_article', string $strField = 'responsiveContainerPaddingX', bool $skipPaletteCheck = false): array
     {
         $type = self::getProp($varData, 'type') ?: null;
         if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
@@ -108,8 +120,10 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      * context: a bare (value, direction) call — the mod_article wrapper and
      * getSpacingTop/BottomClasses — resolves to the article partial. Element groups
      * call {@see self::getGroupSpacingClasses()} for the group partials.
+     *
+     * @return list<string>
      */
-    public function getSpacingClasses($strData, $strDirection = ""): array
+    public function getSpacingClasses(string|null $strData, string $strDirection = ""): array
     {
         return $this->resolveSpacingClasses(
             $strData,
@@ -121,8 +135,10 @@ class BootstrapFrontendService extends ResponsiveFrontendService
     /**
      * Element-group vertical spacing — resolves to the group partials
      * (groupTop / groupBottom) instead of the article default.
+     *
+     * @return list<string>
      */
-    public function getGroupSpacingClasses($strData, $strDirection = ""): array
+    public function getGroupSpacingClasses(string|null $strData, string $strDirection = ""): array
     {
         return $this->resolveSpacingClasses(
             $strData,
@@ -130,8 +146,10 @@ class BootstrapFrontendService extends ResponsiveFrontendService
             $strDirection === 'b' ? 'groupBottom' : 'groupTop',
         );
     }
-
-    private function resolveSpacingClasses($strData, $strDirection, string $partial): array
+    /**
+     * @return list<string>
+     */
+    private function resolveSpacingClasses(string|null $strData, string $strDirection, string $partial): array
     {
         // When this partial's configured default is `noop`, a field resolving to the
         // `default` option must also render nothing — exclude it alongside the noop
@@ -150,20 +168,29 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
     /**
      * Convenience wrapper for the article top spacing DCA field.
+     *
+     * @return list<string>
      */
-    public function getSpacingTopClasses($strData): array
+    public function getSpacingTopClasses(string|null $strData): array
     {
         return $this->getSpacingClasses($strData, 't');
     }
 
     /**
      * Convenience wrapper for the article bottom spacing DCA field.
+     *
+     * @return list<string>
      */
-    public function getSpacingBottomClasses($strData): array
+    public function getSpacingBottomClasses(string|null $strData): array
     {
         return $this->getSpacingClasses($strData, 'b');
     }
 
+    /**
+     * @param mixed $varData
+     * @param array<string, string> $arrFields
+     * @return list<string>
+     */
     public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article', bool $skipPaletteCheck = false): array
     {
         $arrSpecs = [
@@ -184,6 +211,11 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table, $skipPaletteCheck), $arrBootstrapClasses);
     }
 
+    /**
+     * @param mixed $varData
+     * @param array<string, string> $arrFields
+     * @return list<string>
+     */
     public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content', bool $skipPaletteCheck = false): array
     {
         // Checked here as well: the fields below live in the same subpalette as the parent's, so
