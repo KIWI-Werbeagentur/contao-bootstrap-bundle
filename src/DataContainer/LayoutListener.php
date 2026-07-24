@@ -15,10 +15,11 @@ class LayoutListener
 
     public function generateLayoutCustomizationFiles(DataContainer $objDca)
     {
-        $objTheme = ThemeModel::findByPk($objDca->activeRecord->pid);
+        $record = $objDca->getCurrentRecord() ?? [];
+        $objTheme = ThemeModel::findByPk($record['pid'] ?? null);
         $fs = new Filesystem();
 
-        $layoutAlias = $objDca->activeRecord->alias;
+        $layoutAlias = $record['alias'] ?? null;
         $themeAlias = $objTheme->alias;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/' . $layoutAlias . '/';
 
@@ -51,25 +52,31 @@ class LayoutListener
      */
     public function generateAlias(DataContainer $objDca)
     {
+        $record = $objDca->getCurrentRecord() ?? [];
+        $alias = (string) ($record['alias'] ?? '');
         $autoAlias = false;
 
         // Generate alias if there is none
-        if ($objDca->activeRecord->alias == '') {
+        if ($alias === '') {
             $autoAlias = true;
-            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
+            $alias = StringUtil::generateAlias((string) ($record['name'] ?? ''));
         }
 
         $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_layout WHERE alias=? AND id!=?")
-            ->execute($objDca->activeRecord->alias, $objDca->id);
+            ->execute($alias, $objDca->id);
 
         // Check whether the event alias exists
         if ($objAlias->numRows) {
             if (!$autoAlias) {
-                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
+                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $alias));
             }
 
-            $objDca->activeRecord->alias .= '-' . $objDca->id;
+            $alias .= '-' . $objDca->id;
         }
-        Database::getInstance()->prepare("UPDATE tl_layout SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
+        Database::getInstance()->prepare("UPDATE tl_layout SET alias=? WHERE id=?")->execute($alias, $objDca->id);
+
+        // The explicit UPDATE bypasses getCurrentRecord()'s static cache; clear it so the
+        // follow-up onsubmit callback (generateLayoutCustomizationFiles) reads the new alias.
+        DataContainer::clearCurrentRecordCache((int) $objDca->id, 'tl_layout');
     }
 }
