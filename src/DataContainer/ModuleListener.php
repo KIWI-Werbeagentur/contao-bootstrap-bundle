@@ -11,11 +11,12 @@ class ModuleListener
     public function getOtherModules(DataContainer $objDca): array
     {
         $arrModules = [];
-        $objModules = ModuleModel::findBy('pid', $objDca->activeRecord->pid);
+        $record = $objDca->getCurrentRecord() ?? [];
+        $objModules = ModuleModel::findBy('pid', $record['pid'] ?? null);
 
-        while ($objModules !== null && $objModules->next()) {
-            if($objModules->id == $objDca->id || !($GLOBALS['FE_MOD']['navigationMenu'][$objModules->type] ?? false)) continue;
-            $arrModules[$objModules->id] = $objModules->name . ' (ID ' . $objModules->id . ')';
+        foreach ($objModules ?? [] as $objModule) {
+            if ($objModule->id == $objDca->id || !($GLOBALS['FE_MOD']['navigationMenu'][$objModule->type] ?? false)) continue;
+            $arrModules[$objModule->id] = $objModule->name . ' (ID ' . $objModule->id . ')';
         }
 
         return $arrModules;
