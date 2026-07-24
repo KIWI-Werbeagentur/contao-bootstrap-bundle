@@ -1,0 +1,21 @@
+parameters:
+    level: 6
+    phpVersion:
+        min: 80300
+        max: 80500
+    # Contao magic-property classes (DB columns / template vars via __get). Listed individually
+    # so our OWN model classes stay strictly checked for typos/undefined properties.
+    universalObjectCratesClasses:
+        # core models extended via DCA
+        - Contao\ArticleModel
+        - Contao\ContentModel
+        - Contao\FilesModel
+        - Contao\LayoutModel
+        - Contao\ModuleModel
+        - Contao\PageModel
+        - Contao\ThemeModel
+        # template vars (deprecated; usages being removed) - also covers Backend/FrontendTemplate
+        - Contao\Template
+    paths:
+        - contao
+        - src
