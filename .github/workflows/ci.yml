@@ -21,8 +21,6 @@ jobs:
   phpstan:
     name: PHPStan (${{ matrix.dependency-versions }})
     runs-on: ubuntu-latest
-    env:
-      COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
     strategy:
       fail-fast: false
       matrix:
