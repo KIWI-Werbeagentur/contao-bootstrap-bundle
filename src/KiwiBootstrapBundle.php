@@ -152,7 +152,9 @@ class KiwiBootstrapBundle extends AbstractBundle
      */
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
-        $configurator->extension('kiwi_bootstrap', [
+        // prependExtensionConfig() (not $configurator->extension(..., prepend: true)) so this
+        // works on Symfony 6.4, whose ContainerConfigurator::extension() has no $prepend arg.
+        $container->prependExtensionConfig('kiwi_bootstrap', [
             'grid' => [
                 'gutter' => [
                     'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-20'],
@@ -194,6 +196,6 @@ class KiwiBootstrapBundle extends AbstractBundle
                     ],
                 ],
             ],
-        ], true);
+        ]);
     }
 }
