@@ -16,6 +16,17 @@ parameters:
         - Contao\ThemeModel
         # template vars (deprecated; usages being removed) - also covers Backend/FrontendTemplate
         - Contao\Template
+    # Symfony 6.4's config-builder fluent API (rootNode()->children()->…->end()) has loose return
+    # types PHPStan can't follow (rootNode(): NodeDefinition|ArrayNodeDefinition, end():
+    # NodeParentInterface, …); the tree builds correctly at runtime and Symfony 7.x generics make
+    # it analyzable, but contao ^5.3 pins symfony/config ^6.4 so we cannot require 7. Only the
+    # `lowest` CI leg hits this — reportUnmatched keeps the `highest` (7.x) leg clean.
+    ignoreErrors:
+        -
+            identifier: method.notFound
+            message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\[A-Za-z]+::[a-zA-Z]+\(\)\.$#'
+            path: src/KiwiBootstrapBundle.php
+            reportUnmatched: false
     paths:
         - contao
         - src
