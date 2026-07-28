@@ -2,9 +2,7 @@
 
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
-use Contao\Database;
 use Contao\DataContainer;
-use Contao\StringUtil;
 use Contao\System;
 use Contao\ThemeModel;
 use Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator;
@@ -12,13 +10,15 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class LayoutListener
 {
+    use AliasGeneratorTrait;
 
-    public function generateLayoutCustomizationFiles(DataContainer $objDca)
+    public function generateLayoutCustomizationFiles(DataContainer $objDca): void
     {
-        $objTheme = ThemeModel::findByPk($objDca->activeRecord->pid);
+        $record = $objDca->getCurrentRecord() ?? [];
+        $objTheme = ThemeModel::findByPk($record['pid'] ?? null);
         $fs = new Filesystem();
 
-        $layoutAlias = $objDca->activeRecord->alias;
+        $layoutAlias = $record['alias'] ?? null;
         $themeAlias = $objTheme->alias;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/' . $layoutAlias . '/';
 
@@ -47,29 +47,10 @@ class LayoutListener
 
     /**
      * @param DataContainer $objDca
-     * @throws Exception
+     * @throws \Exception
      */
-    public function generateAlias(DataContainer $objDca)
+    public function generateAlias(DataContainer $objDca): void
     {
-        $autoAlias = false;
-
-        // Generate alias if there is none
-        if ($objDca->activeRecord->alias == '') {
-            $autoAlias = true;
-            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
-        }
-
-        $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_layout WHERE alias=? AND id!=?")
-            ->execute($objDca->activeRecord->alias, $objDca->id);
-
-        // Check whether the event alias exists
-        if ($objAlias->numRows) {
-            if (!$autoAlias) {
-                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
-            }
-
-            $objDca->activeRecord->alias .= '-' . $objDca->id;
-        }
-        Database::getInstance()->prepare("UPDATE tl_layout SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
+        $this->generateAliasForTable($objDca, 'tl_layout');
     }
 }

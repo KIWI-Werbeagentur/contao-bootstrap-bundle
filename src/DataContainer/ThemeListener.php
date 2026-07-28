@@ -2,7 +2,6 @@
 
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
-use Contao\Database;
 use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\System;
@@ -11,40 +10,24 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ThemeListener
 {
+    use AliasGeneratorTrait;
+
     /**
      * @param DataContainer $objDca
-     * @throws Exception
+     * @throws \Exception
      */
-    public function generateAlias(DataContainer $objDca)
+    public function generateAlias(DataContainer $objDca): void
     {
-        $autoAlias = false;
-
-        // Generate alias if there is none
-        if ($objDca->activeRecord->alias == '') {
-            $autoAlias = true;
-            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
-        }
-
-        $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_theme WHERE alias=? AND id!=?")
-            ->execute($objDca->activeRecord->alias, $objDca->id);
-
-        // Check whether the event alias exists
-        if ($objAlias->numRows) {
-            if (!$autoAlias) {
-                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
-            }
-
-            $objDca->activeRecord->alias .= '-' . $objDca->id;
-        }
-        Database::getInstance()->prepare("UPDATE tl_theme SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
+        $this->generateAliasForTable($objDca, 'tl_theme');
     }
 
-    public function generateThemeCustomizationFile(DataContainer $objDca)
+    public function generateThemeCustomizationFile(DataContainer $objDca): void
     {
         $strToRoot = "../../..";
         $fs = new Filesystem();
 
-        $themeAlias = $objDca->activeRecord->alias;
+        $record = $objDca->getCurrentRecord() ?? [];
+        $themeAlias = $record['alias'] ?? null;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/';
         $themePath = $targetPath . $themeAlias;
 
@@ -68,14 +51,12 @@ class ThemeListener
         // SpacingsCacheWarmer perform exactly the same render/diff/backup/write.
         System::getContainer()->get(SpacingsFileRegenerator::class)->regenerate();
 
-        $objTheme = $objDca->activeRecord;
-        $themeAlias = $objTheme->alias;
         $themePath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
 
         $arrComponents = [];
         if ($GLOBALS['responsive']['bootstrapComponents']) {
             foreach ($GLOBALS['responsive']['bootstrapComponents'] as $strComponent) {
-                if (!$objTheme->responsiveBootstrapComponents || in_array($strComponent, StringUtil::deserialize($objTheme->responsiveBootstrapComponents, true))) {
+                if (!($record['responsiveBootstrapComponents'] ?? null) || in_array($strComponent, StringUtil::deserialize($record['responsiveBootstrapComponents'], true))) {
                     $strPath = str_replace("__ROOT__", $strToRoot, $GLOBALS['responsive']['bootstrap']);
                     $arrComponents[] = "@import '$strPath/$strComponent';";
                 }

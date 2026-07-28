@@ -1,5 +1,9 @@
 .DS_Store
 
+# Composer (library: dependencies and lock are not committed)
+/vendor/
+/composer.lock
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Windows template
 # Windows image file caches

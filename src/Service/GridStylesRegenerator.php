@@ -14,12 +14,17 @@ use Twig\Environment;
  * The processed config ({@see GridStyles}) is the data source; the SCSS shape
  * (mixin + auto-include) lives in the @Contao/responsive/grid.scss.twig template.
  * With no grid configured the file is an empty, no-op mixin.
+ *
+ * @phpstan-import-type GridConfig from GridStyles
  */
 class GridStylesRegenerator
 {
     private const TWIG_TEMPLATE   = '@Contao/responsive/grid.scss.twig';
     private const RELATIVE_TARGET = '/files/themes/_grid.scss';
 
+    /**
+     * @param GridConfig $grid The processed `kiwi_bootstrap.grid` configuration.
+     */
     public function __construct(
         private readonly Filesystem $filesystem,
         private readonly Environment $twig,

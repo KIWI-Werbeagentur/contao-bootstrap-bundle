@@ -8,14 +8,21 @@ use Contao\Module;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
+use Contao\Template;
 use enshrined\svgSanitize\Sanitizer;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @property string $animation may be '' or '0'
+ * @property Template $Template
+ * @property string $inlineSvg used as bool ('1' / '')
+ * @property int $module
+ */
 class BootstrapNavbar extends Module
 {
     protected $strTemplate = 'mod_bootstrap_navbar';
 
-    public function generate()
+    public function generate(): string
     {
         if (System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest() ?? Request::create(''))) {
             $objTemplate = new BackendTemplate('be_wildcard');
@@ -31,7 +38,7 @@ class BootstrapNavbar extends Module
         return parent::generate();
     }
 
-    protected function compile()
+    protected function compile(): void
     {
         /** @var PageModel $objPage */
         global $objPage;
