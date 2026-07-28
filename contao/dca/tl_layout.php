@@ -1,10 +1,83 @@
 <?php
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
+use Contao\System;
 use Kiwi\Contao\BootstrapBundle\DataContainer\LayoutListener;
+
+System::loadLanguageFile('responsive');
 
 $GLOBALS['TL_DCA']['tl_layout']['config']['onsubmit_callback'][] = [LayoutListener::class, 'generateAlias'];
 $GLOBALS['TL_DCA']['tl_layout']['config']['onsubmit_callback'][] = [LayoutListener::class, 'generateLayoutCustomizationFiles'];
+
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutter'] = [
+    'default' => ['xs' => 'default'],
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayout'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterHeader'] = [
+    'default' => ['xs' => 'default'],
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterFooter'] = [
+    'default' => ['xs' => 'default'],
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+// Main-content gutter is shown for multi-column layouts only. A single-column
+// layout (1cl: main, no asides) has no inter-column spacing to configure, so
+// the gutter field is omitted from cols_1cl.
+foreach (['cols_2cll', 'cols_2clr', 'cols_3cl'] as $palette) {
+    $GLOBALS['TL_DCA']['tl_layout']['subpalettes'][$palette] .= ',responsiveGutter';
+}
+
+// Container's own outer padding (.cx-*) for the header / footer sections.
+// Decoupled from the section gutter (responsiveGutterHeader/Footer), which is
+// kept: padding controls the section container's own breathing room, the
+// gutter controls spacing between columns inside that section's row.
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXHeader'] = [
+    'default' => ['xs' => 'default'],
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXFooter'] = [
+    'default' => ['xs' => 'default'],
+    'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter'],
+    'inputType' => 'optionalResponsive',
+    'responsiveInputType' => 'select',
+    'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'eval' => ['tl_class' => 'clr'],
+    'sql' => 'blob NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_2rwh'] .= ',responsiveGutterHeader,responsiveContainerPaddingXHeader';
+$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_2rwf'] .= ',responsiveGutterFooter,responsiveContainerPaddingXFooter';
+$GLOBALS['TL_DCA']['tl_layout']['subpalettes']['rows_3rw'] .= ',responsiveGutterHeader,responsiveContainerPaddingXHeader,responsiveGutterFooter,responsiveContainerPaddingXFooter';
 
 $GLOBALS['TL_DCA']['tl_layout']['fields']['alias'] = [
     'exclude' => true,

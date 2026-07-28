@@ -1,0 +1,17 @@
+{% set wrapperAttributes = attrs()
+    .addClass([this.prefix, 'form-group', this.class|default])
+    .addClass(this.bootstrapClasses|default, this.addBootstrap|default)
+    .mergeWith(wrapperAttributes|default)
+%}
+
+<div{{ wrapperAttributes }}>
+    <div class="{{ this.prefix }} form-group">
+        {% block label %}{% endblock %}
+        {% block field %}{% endblock %}
+    </div>
+
+    <div class="{{ this.prefix }} confirm form-group">
+        {% block label2 %}{% endblock %}
+        {% block field2 %}{% endblock %}
+    </div>
+</div>

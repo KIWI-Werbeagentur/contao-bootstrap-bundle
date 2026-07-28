@@ -1,0 +1,11 @@
+{% set wrapperAttributes = attrs()
+    .addClass(['form-item', this.prefix, this.class|default, this.rowClasses|default])
+    .mergeWith(wrapperAttributes|default)
+%}
+
+<div{{ wrapperAttributes }}>
+    <div class="widget__inner">
+        {% block label %}{% endblock %}
+        {% block field %}{% endblock %}
+    </div>
+</div>

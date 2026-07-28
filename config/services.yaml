@@ -2,9 +2,13 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+
+  Kiwi\Contao\BootstrapBundle\Service\BootstrapFrontendService: '@kiwi.contao.responsive.frontend'
   Kiwi\Contao\BootstrapBundle\EventListener\LoadDataContainerListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\GeneratePageListener: ~
   Kiwi\Contao\BootstrapBundle\EventListener\AlterResponsiveValues: ~
+  Kiwi\Contao\BootstrapBundle\Twig\BootstrapResponsiveTwigExtension:
+    tags: ['twig.extension']
   Kiwi\Contao\BootstrapBundle\CacheWarmer\TwbsAssetSymlinkWarmer:
     arguments:
       - '@filesystem'
@@ -15,4 +19,25 @@ services:
       - '@filesystem'
       - '@twig'
       - '%kernel.project_dir%'
+      - '%kiwi_bootstrap.grid%'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Service\GridStylesRegenerator:
+    public: true
+    arguments:
+      - '@filesystem'
+      - '@twig'
+      - '%kernel.project_dir%'
+      - '%kiwi_bootstrap.grid%'
+  Kiwi\Contao\BootstrapBundle\CacheWarmer\GridStylesCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator:
+    public: true
+    arguments:
+      - '@filesystem'
+      - '@twig'
+      - '%kernel.project_dir%'
+  Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode:
+    arguments:
+      - '@database_connection'
+      - '@filesystem'
+      - '%kernel.project_dir%'

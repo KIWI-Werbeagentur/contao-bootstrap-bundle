@@ -11,7 +11,7 @@
       2. [Layouts](#layout)
       3. [Wrapping elements: articles, element groups & modules of type list](#article)
       4. [Elements: content elements, form fields & modules](#element)
-   3. [Vertical spacings](#spacing)
+   3. [Gutters, spacings and gaps](#spacing)
    4. [Widgets](#widget)
 
 ## Scope <a name="scope"></a>
@@ -40,6 +40,18 @@ Install the bundle via composer
  ```sh
 composer require kiwi/contao-bootstrap
  ```
+
+#### Configuration
+Some options can be configured via .env variables:
+```dotenv
+# Controls which spacing keys appear in the BE dropdowns and the generated SCSS.
+# unset / 0  → only the new spacer-based keys (implicit default — will be migrated to 1 if deprecated values are still in use)
+#         1  → only the deprecated keys (legacy default)
+#         2  → both sets (for legacy projects mid-migration)
+#         3  → only the new spacer-based keys (explicit opt-in — the migration
+#              will not touch this even when stored deprecated values exist)
+KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
+```
 
 ### Implementation <a name="implementation"></a>
 **Step 1: (Re-)store themes <a name="theme"></a>**
@@ -89,7 +101,14 @@ To remove the settings from a specific **module**, add an entry to `$GLOBALS['re
 To remove the settings from a specific **form field**, add an entry to `$GLOBALS['responsive']['tl_form_field']['excludePalettes']['column']` within your config file. 
 
 
-### Vertical spacings <a name="spacing"></a>
+### Gutters, spacings and gaps <a name="spacing"></a>
+Horizontal and vertical distances between articles and elements are based on Bootstrap's $spacers. You can modify and add values via `$modify-spacers`, or completely customize the available options by overwriting `$spacers`.
+
+
+#### Legacy spacings (deprecated)
+
+The named options `default`, `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the numeric spacer scale (`0`–`10`) and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+
 For simple customization, you can overwrite the following variables in you (s)css file
 ```css
 :root {
@@ -105,36 +124,6 @@ For simple customization, you can overwrite the following variables in you (s)cs
   --spacing-xl: your_size;
   --spacing-xxl: your_size;
 }
-```
-
-To add custom spacing options, add the css variables in your own (s)css file. Additionally, you need to extend the `BootstrapConfiguration` class and modify the `$arrSpacings` property accordingly, and provide labels for the new options.
-```css
-:root {
-    --spacing-foo: your_size;
-    --spacing-bar: your_size;
-}
-```
-```php
-// /src/CustomBootstrapConfiguration.php
-namespace App;
-
-use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
-
-class CustomBootstrapConfiguration extends BootstrapConfiguration
-{
-    public function __construct($objDca = null)
-    {
-        parent::__construct($objDca);
-
-        $this->arrSpacings['foo'] = 'p{{direction}}{{modifier}}-foo';
-        $this->arrSpacings['bar'] = 'p{{direction}}{{modifier}}-bar';
-    }
-}
-```
-```php
-// /contao/languages/en/responsive.php
-$GLOBALS['TL_LANG']['responsive']['spacings']['foo'][0] = "Foo-sized [foo]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['bar'][0] = "Bar-sized [bar]";
 ```
 
 ### Widgets <a name="widget"></a>

@@ -1,0 +1,6 @@
+{% extends '@Contao/form_fieldsetStart.html.twig' %}
+
+{% set fieldsetAttrs = attrs()
+    .addClass(getContainerPaddingXClasses(this, table: 'tl_form_field'), this.responsiveContainer)
+    .mergeWith(fieldsetAttrs|default)
+%}

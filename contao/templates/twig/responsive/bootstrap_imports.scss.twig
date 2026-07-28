@@ -1,47 +1,81 @@
-/*!
- * Bootstrap v5.2.3 (https://getbootstrap.com/)
- * Copyright 2011-2022 The Bootstrap Authors
- * Copyright 2011-2022 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+{% block generated_marker %}
+/*
+ * AUTO-GENERATED — do not edit manually.
+ *
+ * Source template: @Contao/responsive/bootstrap_imports.scss.twig
+ * Regenerated on layout save (LayoutListener) and on cache warmup
+ * (LayoutImportsCacheWarmer).
+ *
+ * To customize, override the twig template under your project's
+ * `templates/responsive/` directory or implement the
+ * `alterBootstrapImports` hook.
  */
+{% endblock %}
 
 // Configuration
 {% block config %}
-    @import "{{ bootstrapStyles }}/functions";
-    @import "../themevars-{{ themeName }}";
-    @import "layoutvars-{{ layoutName }}";
-    @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/row-cols-import.scss";
-    @import "{{ bootstrapStyles }}/variables";
-    @import "{{ bootstrapStyles }}/maps";
-    $theme-colors: map-merge($theme-colors, $colors);
-    @import "{{ bootstrapStyles }}/mixins";
-    @import "{{ bootstrapStyles }}/utilities";
-    @import "../../_spacings.scss";
-    @import "../../../../vendor/kiwi/contao-bootstrap/assets/scss/responsive.scss";
+@import "{{ bootstrapStyles }}/functions";
+@import "../themevars-{{ themeName }}";
+@import "layoutvars-{{ layoutName }}";
+{% block config_pre_variables %}
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/bundle-variables.scss";
+{% endblock %}
+@import "{{ bootstrapStyles }}/variables";
+{% block config_post_variables %}
+// Value-derived spacing scale helpers (kiwi-space/kiwi-space-subset). Keep before
+// maps so wiring can feed a curated subset into $gutters here. Do NOT merge into
+// $spacers: Bootstrap turns $spacers keys into .p*/.m* utilities (with !important)
+// that collide with the bundle's own .p[t|b]-space-N spacing classes.
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/space-scale.scss";
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-spacers.scss";
+{% endblock %}
+@import "{{ bootstrapStyles }}/maps";
+{% block config_post_maps %}
+$theme-colors: map-merge($theme-colors, $colors);
+{% endblock %}
+@import "{{ bootstrapStyles }}/mixins";
+{% block config_post_mixins %}
+/* Marginless grid override — must come AFTER {{ bootstrapStyles }}/mixins
+ * (so the redefined make-row / make-col* / make-container mixins win) and BEFORE
+ * the .row/.col/.container rule emission inside the component imports below. */
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/grid-overrides.scss";
+{% endblock %}
+@import "{{ bootstrapStyles }}/utilities";
+{% block config_post_utilities %}
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/extend-utilities.scss";
+{% endblock %}
+@import "../../_spacings.scss";
+@import "../../../../vendor/kiwi/contao-bootstrap/assets/scss/responsive.scss";
 {% endblock config %}
 
 // Layout & components from theme
 {% block components %}
-    {{ bootstrapComponents|raw }}
+{{ bootstrapComponents|raw }}
 {% endblock components %}
 
 // Helpers
 {% block helpers %}
-    @import "{{ bootstrapStyles }}/helpers";
+@import "{{ bootstrapStyles }}/helpers";
 {% endblock helpers %}
 
 // Utilities
 {% block utils %}
-    @import "{{ bootstrapStyles }}/utilities/api";
+@import "{{ bootstrapStyles }}/utilities/api";
+/* Grid subsystem CSS custom properties + utility classes (e.g. .gx-space-N). Emitted
+ * in the utilities layer, after the components, so the utility classes override the
+ * base .row gutter (--bs-gutter-x) — the same layering Bootstrap uses for its own
+ * gutter utilities. (The :root custom properties resolve at use, so their position
+ * here is irrelevant.) */
+@import "../../_grid.scss";
 {% endblock utils %}
 
 // Custom
 {% block custom %}
-    {{ customStyles|raw }};
+{{ customStyles|raw }};
 {% endblock custom %}
 
 // Custom Styling
 {% block design %}
-    @import "../theme-{{ themeName }}";
-    // @import "layout-{{ layoutName }}";
+@import "../theme-{{ themeName }}";
+// @import "layout-{{ layoutName }}";
 {% endblock design %}

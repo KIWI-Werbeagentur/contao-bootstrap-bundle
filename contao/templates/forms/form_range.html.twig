@@ -1,0 +1,35 @@
+{% extends '@Contao/form_row.html.twig' %}
+
+{% block label %}
+    {% if this.label %}
+        <label for="ctrl_{{ this.id }}"{% if this.class|default %} class="form-label {{ this.class|default }}"{% endif %}>
+            {% if this.mandatory|default %}
+                <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label|insert_tag_raw }}<span class="mandatory">*</span>
+            {% else %}
+                {{ this.label|insert_tag_raw }}
+            {% endif %}
+        </label>
+    {% endif %}
+{% endblock %}
+
+{% block field %}
+    {% set value = this.value|default|insert_tag %}
+
+    <input{{ attrs()
+        .set('type', this.type)
+        .set('name', this.name)
+        .set('id', "ctrl_#{this.id}")
+        .addClass('range form-range')
+        .addClass(this.class|default)
+        .set('value', value, value != '')
+        .mergeWith(getAttributes.invoke())
+    }}>
+
+    {% if this.responsiveHelpBlock|default %}
+        <div class="form-text" id="ctrl_{{ this.id }}_text">{{ this.responsiveHelpBlock|raw }}</div>
+    {% endif %}
+
+    {% if hasErrors.invoke() %}
+        <div class="invalid-feedback">{{ getErrorAsString.invoke() }}</div>
+    {% endif %}
+{% endblock %}
