@@ -2,7 +2,6 @@
 
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
-use Contao\Database;
 use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\System;
@@ -11,38 +10,15 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ThemeListener
 {
+    use AliasGeneratorTrait;
+
     /**
      * @param DataContainer $objDca
      * @throws \Exception
      */
     public function generateAlias(DataContainer $objDca): void
     {
-        $record = $objDca->getCurrentRecord() ?? [];
-        $alias = (string) ($record['alias'] ?? '');
-        $autoAlias = false;
-
-        // Generate alias if there is none
-        if ($alias === '') {
-            $autoAlias = true;
-            $alias = StringUtil::generateAlias((string) ($record['name'] ?? ''));
-        }
-
-        $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_theme WHERE alias=? AND id!=?")
-            ->execute($alias, $objDca->id);
-
-        // Check whether the event alias exists
-        if ($objAlias->numRows) {
-            if (!$autoAlias) {
-                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $alias));
-            }
-
-            $alias .= '-' . $objDca->id;
-        }
-        Database::getInstance()->prepare("UPDATE tl_theme SET alias=? WHERE id=?")->execute($alias, $objDca->id);
-
-        // The explicit UPDATE bypasses getCurrentRecord()'s static cache; clear it so the
-        // follow-up onsubmit callback (generateThemeCustomizationFile) reads the new alias.
-        DataContainer::clearCurrentRecordCache((int) $objDca->id, 'tl_theme');
+        $this->generateAliasForTable($objDca, 'tl_theme');
     }
 
     public function generateThemeCustomizationFile(DataContainer $objDca): void
