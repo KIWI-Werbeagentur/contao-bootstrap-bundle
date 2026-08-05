@@ -42,7 +42,7 @@ class BootstrapFrontendService extends ResponsiveFrontendService
         return $this->getResponsiveClasses($strData, 'varRowColsClasses');
     }
 
-    public function getAllInnerContainerClasses($varData, array $arrFields = []): array
+    public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content', bool $skipPaletteCheck = false): array
     {
         $arrBootstrapClasses = array_merge(
             [
@@ -51,6 +51,6 @@ class BootstrapFrontendService extends ResponsiveFrontendService
             $this->getRowColsClasses(self::getProp($varData, $arrFields['rowCols'] ?? 'responsiveRowCols'))
         );
 
-        return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields));
+        return array_merge($arrBootstrapClasses, parent::getAllInnerContainerClasses($varData, $arrFields, $table, $skipPaletteCheck));
     }
 }
