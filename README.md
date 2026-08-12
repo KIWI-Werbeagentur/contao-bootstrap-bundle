@@ -67,10 +67,21 @@ Articles are used as bootstrap containers.
 - **Spacing** [padding-top, padding-bottom]: Choose how much distance an article should have to its previous and next sibling [(Take a look at the spacing section for further information)](#spacing).
 ![](docs/images/bootstrap--articles.jpg)
 
-To define further **content elements** as wrapper, you can add an entry to `$GLOBALS['responsive']['tl_content']['includePalettes']['container']` within your config file. 
+To define further **content elements** as a wrapper for nested fragments, you can add an entry to `$GLOBALS['responsive']['tl_content']['includePalettes']['container']` within your config file. 
 
-To define further **modules** as wrapper, you can add an entry to `$GLOBALS['responsive']['tl_module']['includePalettes']['container']` within your config file.
+To define further **modules** as a wrapper for nested fragments, you can add an entry to `$GLOBALS['responsive']['tl_module']['includePalettes']['container']` within your config file.
 
+To define further **content elements** or **modules** as having their own custom children, you can add an entry to `$GLOBALS['responsive']['tl_content']['includePalettes']['children']` respectively `$GLOBALS['responsive']['tl_module']['includePalettes']['children']` within your config file.
+
+Since such an element renders its child items itself, it also provides the element the settings apply to: wrap the items in one element and output `items_attributes` on it – those attributes are filled with the resolved classes. Own attributes are merged in, as everywhere else:
+
+```twig
+{% set items_attributes = attrs().mergeWith(items_attributes|default) %}
+
+{% block content %}
+    <div{{ items_attributes }}>{# the items #}</div>
+{% endblock %}
+```
 
 ---
 

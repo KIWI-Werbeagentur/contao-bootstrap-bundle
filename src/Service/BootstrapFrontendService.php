@@ -44,6 +44,13 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
     public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content', bool $skipPaletteCheck = false): array
     {
+        // Checked here as well: the fields below live in the same subpalette as the parent's, so
+        // they must not render either while the selector is off - and the parent call would not
+        // stop the row/gutter classes added afterwards.
+        if ($this->hasChildrenSettingsDisabled($varData, $table, $skipPaletteCheck)) {
+            return [];
+        }
+
         $arrBootstrapClasses = array_merge(
             [
                 "row"
