@@ -1,0 +1,53 @@
+<?php $this->extend('form_row'); ?>
+
+<?php $this->block('label'); ?>
+  <?php if ($this->label): ?>
+    <label for="ctrl_<?= $this->id ?>"<?php if ($this->class): ?> class="<?= $this->class ?>"<?php endif; ?>>
+      <?php if ($this->mandatory): ?>
+        <span class="invisible"><?= $this->mandatoryField ?> </span><?= $this->label ?><span class="mandatory">*</span>
+      <?php else: ?>
+        <?= $this->label ?>
+      <?php endif; ?>
+    </label>
+  <?php endif; ?>
+<?php $this->endblock(); ?>
+
+<?php $this->block('field'); ?>
+  <?php if ($this->multiple): ?>
+    <input type="hidden" name="<?= rtrim($this->name, '[]') ?>" value="">
+  <?php endif; ?>
+
+  <?php if ($this->responsiveInputAttribute): ?>
+    <div class="input-group<?php if ($this->hasErrors()): ?> is-invalid<?php endif; ?>">
+      <?php if ('before' == $this->responsiveInputAttributePosition): ?>
+        <span class="input-group-text input-group-prepend"><?= $this->responsiveInputAttributeContent ?></span>
+      <?php endif; ?>
+  <?php endif; ?>
+  <select name="<?= $this->name ?>" id="ctrl_<?= $this->id ?>" class="<?= $this->class ?> form-select<?php if ($this->hasErrors()): ?> is-invalid<?php endif; ?>"<?= $this->getAttributes() ?><?php if ($this->responsiveHelpBlock): ?> aria-describedby="ctrl_<?= $this->id ?>_text"<?php endif; ?>>
+    <?php foreach ($this->getOptions() as $option): ?>
+      <?php if ('group_start' == $option['type']): ?>
+        <optgroup label="<?= $option['label'] ?>">
+      <?php endif; ?>
+
+      <?php if ('option' == $option['type']): ?>
+        <option value="<?= $option['value'] ?>"<?= $option['selected'] ?>><?= $option['label'] ?></option>
+      <?php endif; ?>
+
+      <?php if ('group_end' == $option['type']): ?>
+        </optgroup>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </select>
+    <?php if ($this->responsiveInputAttribute): ?>
+      <?php if ($this->responsiveInputAttributePosition == 'after'): ?>
+        <span class="input-group-text input-group-append"><?= $this->responsiveInputAttributeContent ?></span>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
+  <?php if ($this->responsiveHelpBlock): ?>
+    <div class="form-text" id="ctrl_<?= $this->id ?>_text"><?= $this->responsiveHelpBlock ?></div>
+  <?php endif; ?>
+  <?php if ($this->hasErrors()): ?>
+    <div class="invalid-feedback"><?= $this->getErrorAsString() ?></div>
+  <?php endif; ?>
+<?php $this->endblock(); ?>

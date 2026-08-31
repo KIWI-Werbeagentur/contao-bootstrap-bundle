@@ -12,7 +12,8 @@
       3. [Wrapping elements: articles, element groups & modules of type list](#article)
       4. [Elements: content elements, form fields & modules](#element)
    3. [Gutters, spacings and gaps](#spacing)
-   4. [Widgets](#widget)
+   4. [Form templates](#formtemplates)
+   5. [Widgets](#widget)
 
 ## Scope <a name="scope"></a>
 
@@ -136,6 +137,26 @@ For simple customization, you can overwrite the following variables in you (s)cs
   --spacing-xxl: your_size;
 }
 ```
+
+### Form templates <a name="formtemplates"></a>
+Every form template ships twice: as `.html.twig` and as `.html5`. Both sets are required — do
+not drop the legacy one while projects may still override form templates as `.html5`.
+
+Contao decides per widget whether to render the Twig or the legacy chain, and a single legacy
+override anywhere in that chain decides for the whole of it. Most form templates extend
+another identifier (`form_row`, `form_row_double`, `form_textfield`); when that identifier
+resolves to an `.html5`, `ContaoFilesystemLoader` substitutes the legacy source and
+`Widget::renderLegacyFromTwig()` restarts legacy inheritance from the widget's own
+`strTemplate`. From there on only `.html5` files are consulted, so a missing one falls through
+to the core-bundle template without any error.
+
+That is rarely harmless. `form_text.html5` exists solely to re-route `text` fields to
+`form_textfield`; core's version extends `form_row` instead and emits a bare `class="text"`,
+silently dropping every class the project's own `form_textfield` adds.
+
+The legacy templates render pre-Twig markup and do not carry features added to the Twig set
+(e.g. `.cx-*` container padding on fieldsets). A project that wants those should migrate its
+own form overrides to Twig, which keeps the chain in Twig end to end.
 
 ### Widgets <a name="widget"></a>
 There a different types of responsive widgets allowing you to adjust a setting for different viewports (Values will be inherited from smaller to bigger device).

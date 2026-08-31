@@ -1,0 +1,18 @@
+
+<div class="<?= $this->prefix ?> form-group<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if ($this->addBootstrap): ?> <?= $this->bootstrapClasses ?><?php endif; ?>">
+  <div class="<?= $this->prefix ?> form-group">
+    <?php $this->block('label'); ?>
+    <?php $this->endblock(); ?>
+
+    <?php $this->block('field'); ?>
+    <?php $this->endblock(); ?>
+  </div>
+
+  <div class="<?= $this->prefix ?> confirm form-group">
+    <?php $this->block('label2'); ?>
+    <?php $this->endblock(); ?>
+
+    <?php $this->block('field2'); ?>
+    <?php $this->endblock(); ?>
+  </div>
+</div>
