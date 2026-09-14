@@ -281,10 +281,24 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         // The responsive-base engine fills {{partial}} from the options array
         // passed to getResponsiveClasses — see BootstrapFrontendService overrides.
         $hasPartials = SubsystemRegistry::partials('vertical-spacing') !== [];
+        $legacyAlias = $this->emitLegacyDefaultAlias();
         $scale = [];
         foreach ($styles->optionKeys('vertical-spacing') as $key) {
             if ($key === GridStyles::GENERIC_DEFAULT && $hasPartials) {
-                $scale[$key] = 'p{{direction}}{{modifier}}-default-{{partial}}';
+                // `default` is the one option key inherited from the pre-subsystem
+                // config, where it rendered as `p[t|b]{infix}-default`. Making it
+                // partial-aware renamed that class, which silently breaks project CSS
+                // written against the old name. On legacy / mid-migration installs the
+                // pre-partial name is therefore emitted alongside the partialed one —
+                // see {@see self::emitLegacyDefaultAlias()} for the removal path.
+                //
+                // A space-separated template is enough: the responsive engine
+                // substitutes every placeholder globally across the string and the
+                // consumers only ever array_merge + join(" ") the result, so the two
+                // tokens are indistinguishable from two separate entries.
+                $scale[$key] = $legacyAlias
+                    ? 'p{{direction}}{{modifier}}-default-{{partial}} p{{direction}}{{modifier}}-default'
+                    : 'p{{direction}}{{modifier}}-default-{{partial}}';
             } else {
                 $scale[$key] = 'p{{direction}}{{modifier}}-' . $key;
             }
@@ -421,6 +435,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      *   3          →  only the space-N scale + `default` (explicit opt-in — same dropdown as the
      *                 implicit default; signals intent to the migration so it won't auto-write a
      *                 fallback even when stored content still uses deprecated values)
+     *
+     * Modes 1 and 2 additionally emit the pre-partial `default` class alias — see
+     * {@see self::emitLegacyDefaultAlias()}, which owns that behaviour and its
+     * removal path.
      */
     private function applyDeprecatedSpacingsMode(): void
     {
@@ -483,6 +501,57 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     private function getDeprecatedSpacingsMode(): int
     {
         return (int) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? 0);
+    }
+
+    /**
+     * Whether the generic `default` vertical-spacing option additionally renders its
+     * pre-partial class name (`p[t|b]{infix}-default`) next to the partialed one.
+     *
+     * `vertical-spacing` is the only subsystem with a backwards-compatibility surface
+     * here: gutter, row-gap and container-padding-x were introduced together with the
+     * subsystem layer, so their `default` class names never had a previous spelling.
+     * `default` on the other hand predates it and used to render as
+     * `p[t|b]{infix}-default`, a name projects style directly.
+     *
+     * Modes 1/2 are legacy / mid-migration installs — exactly the ones whose CSS may
+     * still target the old name, and exactly the ones
+     * {@see \Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode}
+     * switches on automatically. Mode 0 is a fresh install and mode 3 is an explicit
+     * opt-in to the new names, so neither gets the alias.
+     *
+     * The alias is inert unless a project styles it: the generated _spacings.scss
+     * emits no rule for the bare `default` bucket (its deprecated-bucket loop is
+     * guarded by `index($named-sizes, $size) != null`, and `default` is not in
+     * `$named-sizes`), so the extra class cannot win a cascade contest it does not
+     * take part in.
+     *
+     * REMOVAL PATH — this alias is a migration crutch, not a steady state.
+     *
+     * It cannot be correct forever: one legacy class cannot express two partials.
+     * While the alias is emitted *and* a project styles `.pt-default` / `.pb-default`
+     * with `!important` (the common legacy pattern, since that rule wins over the
+     * `--spacing-top` / `[data-spacing-top]` indirection outright), configuring
+     * `--kiwi-vertical-spacing-default-articleTop` differently from
+     * `--kiwi-vertical-spacing-default-articleBottom` has no visible effect.
+     *
+     * Per-project exit, in order:
+     *   1. Extend the project's selectors to match both spellings, e.g.
+     *      `.pt-default, .pt-default-articleTop { ... }` (and the `-articleBottom`
+     *      counterpart for `pb`), so the CSS is correct under either mode.
+     *   2. Drop the old spelling once nothing references it.
+     *   3. Set `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=3` to opt out of the alias and the
+     *      deprecated buckets for good.
+     *
+     * Bundle-side removal: drop this method together with the deprecated named
+     * buckets in the next major, at which point modes 1/2 disappear with it. Until
+     * then every mode-1/2 install keeps rendering both names.
+     *
+     * @deprecated since 1.x, will be removed in 2.0 together with the deprecated
+     *             named spacing buckets. Migrate projects to mode 3.
+     */
+    private function emitLegacyDefaultAlias(): bool
+    {
+        return \in_array($this->getDeprecatedSpacingsMode(), [1, 2], true);
     }
 
 

@@ -51,6 +51,9 @@ Some options can be configured via .env variables:
 #         2  → both sets (for legacy projects mid-migration)
 #         3  → only the new spacer-based keys (explicit opt-in — the migration
 #              will not touch this even when stored deprecated values exist)
+# Modes 1 and 2 additionally emit the pre-partial `pt-default` / `pb-default` class
+# alongside the partialed one, so existing project CSS keeps matching. See
+# "The `default` class alias" below for the removal path.
 KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
 ```
 
@@ -120,6 +123,46 @@ Horizontal and vertical distances between articles and elements are based on Boo
 #### Legacy spacings (deprecated)
 
 The named options `default`, `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the numeric spacer scale (`0`–`10`) and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+
+##### The `default` class alias
+
+`default` is the one spacing option that predates the grid subsystem layer. It used to
+render as `pt-default` / `pb-default`; now that the option is partial-aware it renders as
+`pt-default-articleTop` / `pb-default-articleBottom` (and the `groupTop` / `groupBottom`
+equivalents for element groups). Project CSS written against the old spelling silently
+stops matching.
+
+To keep that working, modes `1` and `2` emit **both** names on the element:
+
+```html
+<div class="mod_article__wrapper wrapper container pt-default-articleTop pt-default …">
+```
+
+The alias is inert unless a project styles it — the bundle emits no rule for the bare
+`default` bucket — so it changes nothing for installations that never targeted those
+class names. Modes `0` and `3` emit the partialed name only.
+
+> **This is a migration crutch and will be removed.** One legacy class cannot express two
+> partials: while the alias is active *and* a project styles `.pt-default` / `.pb-default`
+> with `!important` (the usual legacy pattern, as that beats the `--spacing-top` /
+> `[data-spacing-top]` indirection outright), setting
+> `--kiwi-vertical-spacing-default-articleTop` differently from
+> `--kiwi-vertical-spacing-default-articleBottom` will have no visible effect.
+
+**Migrating off the alias**
+
+1. Extend your selectors to match both spellings, so the CSS is correct under either mode:
+   ```scss
+   > .pt#{$infix}-default,
+   > .pt#{$infix}-default-articleTop { --spacing-top-default: 0; }
+   ```
+   (and the `-articleBottom` counterpart for `pb`).
+2. Drop the old spelling once nothing references it.
+3. Set `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=3` to opt out of the alias and the deprecated
+   buckets for good.
+
+The alias disappears with the deprecated named buckets in the next major release, when
+modes `1` and `2` are removed.
 
 For simple customization, you can overwrite the following variables in you (s)css file
 ```css
