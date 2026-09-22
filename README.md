@@ -132,15 +132,21 @@ render as `pt-default` / `pb-default`; now that the option is partial-aware it r
 equivalents for element groups). Project CSS written against the old spelling silently
 stops matching.
 
-To keep that working, modes `1` and `2` emit **both** names on the element:
+Which spelling an installation gets is decided by the mode:
 
-```html
-<div class="mod_article__wrapper wrapper container pt-default-articleTop pt-default …">
-```
+| mode | rendered class |
+| --- | --- |
+| `0` / `3` | `pt-default-articleTop` (new name only) |
+| `1` | `pt-default` (old name only) |
+| `2` | both, e.g. `pt-default-articleTop pt-default` |
 
-The alias is inert unless a project styles it — the bundle emits no rule for the bare
-`default` bucket — so it changes nothing for installations that never targeted those
-class names. Modes `0` and `3` emit the partialed name only.
+Mode `1` renders the old name **instead of**, not alongside, the new one. That is deliberate:
+the partialed class sets `--spacing-top` / `--spacing-bottom`, and custom properties inherit,
+so any descendant carrying `[data-spacing-top]` without a spacing class of its own picks the
+value up and applies it — which is how background articles are wired, the classes on the
+wrapper and the attributes moved to `mod_article__main`. On a legacy install those variables
+were never set, so that indirection resolved to nothing; emitting both names revives it and
+adds spacing a project's own rules never covered, because those only ever matched the class.
 
 > **This is a migration crutch and will be removed.** One legacy class cannot express two
 > partials: while the alias is active *and* a project styles `.pt-default` / `.pb-default`
