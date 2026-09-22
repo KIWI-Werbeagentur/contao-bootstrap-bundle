@@ -2,6 +2,7 @@
 
 namespace Kiwi\Contao\BootstrapBundle;
 
+use Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler\HtmlSanitizerPolyfillPass;
 use Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler\OverrideServiceCompilerPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -15,6 +16,7 @@ class KiwiBootstrapBundle extends AbstractBundle
         parent::build($container);
 
         $container->addCompilerPass(new OverrideServiceCompilerPass());
+        $container->addCompilerPass(new HtmlSanitizerPolyfillPass());
     }
 
     /**
