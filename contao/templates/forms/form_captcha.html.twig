@@ -40,7 +40,7 @@
             <label for="ctrl_{{ this.id }}_hp">Do not fill in this field</label>
             <input type="text" name="{{ this.name }}_name" id="ctrl_{{ this.id }}_hp" value="">
         </div>
-        {% if not this.asEditorView %}
+        {% if not this.__get('asEditorView') %}
             <script src="{{ getAjaxUrl.invoke() }}" data-id="{{ this.id }}" data-name="{{ this.name }}" async></script>
         {% endif %}
     {% endif %}
