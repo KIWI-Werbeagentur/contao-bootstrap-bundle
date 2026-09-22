@@ -16,7 +16,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutter'] = [
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
-    'eval' => ['tl_class' => 'clr'],
+    'eval' => ['tl_class' => 'clr', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 
@@ -27,7 +27,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterHeader'] = [
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
-    'eval' => ['tl_class' => 'clr'],
+    'eval' => ['tl_class' => 'clr', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 
@@ -38,7 +38,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterFooter'] = [
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
-    'eval' => ['tl_class' => 'clr'],
+    'eval' => ['tl_class' => 'clr', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 

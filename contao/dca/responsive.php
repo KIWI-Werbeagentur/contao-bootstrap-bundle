@@ -27,7 +27,12 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveGutter'] = [
     'responsiveInputType' => 'iconedSelect',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
-    'eval' => ['tl_class' => 'clr w50'],
+    // Leaving the gutter unset is a legitimate state: `.row` already carries
+    // --bs-gutter-x, so no class means the framework default applies. Offer the blank
+    // option so the base breakpoint can express that, instead of being forced onto a
+    // concrete value it never had. NOT offered for container padding, where an unset
+    // value has no fallback left to fall back to.
+    'eval' => ['tl_class' => 'clr w50', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 
@@ -38,7 +43,9 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
     'responsiveInputType' => 'iconedSelect',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getRowGapKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options'],
-    'eval' => ['tl_class' => 'w50'],
+    // Row gap has no predecessor at all - a project upgrading into it spaces its
+    // elements some other way - so "unset" must stay expressible and must survive a save.
+    'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 
