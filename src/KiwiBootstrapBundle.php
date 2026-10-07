@@ -59,6 +59,8 @@ class KiwiBootstrapBundle extends AbstractBundle
                             ->end()
                             ->arrayNode('defaults')
                                 ->info('Per-partial defaults. Key "default" is the generic default; other keys are partials. Value is an option key or a {xs: …, <bp>: …} responsive map.')
+                                // Partial names must match the registry verbatim (see the grid node).
+                                ->normalizeKeys(false)
                                 ->useAttributeAsKey('partial')
                                 ->variablePrototype()
                                     // `noop` suppresses the class at every breakpoint (one `default`
@@ -74,6 +76,8 @@ class KiwiBootstrapBundle extends AbstractBundle
                             ->end()
                             ->arrayNode('variables')
                                 ->info('Semantic name => option key, exposed as --kiwi-<subsystem>-<name>.')
+                                // Keep hyphenated names (e.g. "section-gap") intact for the variable name.
+                                ->normalizeKeys(false)
                                 ->useAttributeAsKey('name')
                                 ->scalarPrototype()->end()
                             ->end()
