@@ -20,10 +20,13 @@
             {% endif %}
     {% endif %}
 
+    {# Read the type before the attributes: for digit fields FormText::__get('type') adds step="any"
+       as a side effect (contao/core #7257), which getAttributes() has to see. #}
+    {% set input_type = this.type %}
     {% set input_attributes = attrs(getAttributes.invoke()) %}
 
     <input{{ attrs()
-        .set('type', this.type)
+        .set('type', input_type)
         .set('name', this.name)
         .set('id', "ctrl_#{this.id}")
         .addClass('text form-control')

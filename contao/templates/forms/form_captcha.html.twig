@@ -29,7 +29,12 @@
         <div class="form-text" id="ctrl_{{ this.id }}_text">{{ this.responsiveHelpBlock|raw }}</div>
     {% endif %}
 
-    <input type="hidden" name="{{ this.name }}_hash{{ hasErrors.invoke() ? 1 + this.sum ** 2 : '' }}" value="{{ hasErrors.invoke() ? getHash.invoke() : '' }}">
+    {#- Contao 5.3 compat: Twig resolves an attribute through isset(), and Widget::__isset()
+        only answers for keys in arrAttributes/arrConfiguration there - `sum` is computed by the
+        magic getter, so it reads as null and the hash lands in the wrong field after an error.
+        From 5.7 __isset() ends in `null !== $this->__get($strKey)`, making the plain attribute
+        work. Calling the getter directly works on both. Replace with `this.sum` at the ^5.7 bump. -#}
+    <input type="hidden" name="{{ this.name }}_hash{{ hasErrors.invoke() ? 1 + this.__get('sum') ** 2 : '' }}" value="{{ hasErrors.invoke() ? getHash.invoke() : '' }}">
 
     {% if hasErrors.invoke() %}
         <div class="invalid-feedback">{{ getErrorAsString.invoke() }}</div>
