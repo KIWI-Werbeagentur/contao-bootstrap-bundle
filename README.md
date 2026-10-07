@@ -46,14 +46,14 @@ composer require kiwi/contao-bootstrap
 Some options can be configured via .env variables:
 ```dotenv
 # Controls which spacing keys appear in the BE dropdowns and the generated SCSS.
-# unset / 0  → only the new spacer-based keys (implicit default — will be migrated to 1 if deprecated values are still in use)
+# unset / 0  → only the new space-N keys (implicit default — will be migrated to 1 if deprecated values are still in use)
 #         1  → only the deprecated keys (legacy default)
 #         2  → both sets (for legacy projects mid-migration)
-#         3  → only the new spacer-based keys (explicit opt-in — the migration
+#         3  → only the new space-N keys (explicit opt-in — the migration
 #              will not touch this even when stored deprecated values exist)
-# Modes 1 and 2 additionally emit the pre-partial `pt-default` / `pb-default` class
-# alongside the partialed one, so existing project CSS keeps matching. See
-# "The `default` class alias" below for the removal path.
+# The `default` option renders its pre-partial `pt-default` / `pb-default` class
+# instead of the partialed one in mode 1, and both in mode 2, so existing project CSS
+# keeps matching. See "The `default` class alias" below for why and the removal path.
 KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
 ```
 
