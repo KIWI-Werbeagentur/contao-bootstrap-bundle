@@ -41,7 +41,7 @@
         .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
         .mergeWith(textarea_attributes)
         .setIfExists('placeholder', textarea_attributes.placeholder|default|insert_tag)
-    }}>{{ this.value|insert_tag }}</textarea>
+    }}>{{ this.value|default|insert_tag }}</textarea>
 
     {% if this.responsiveInputAttribute|default %}
             {% if this.responsiveInputAttributePosition|default == 'after' %}
