@@ -22,6 +22,7 @@
         .addClass('range form-range')
         .addClass(this.class|default)
         .set('value', value, value != '')
+        .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
         .mergeWith(getAttributes.invoke())
     }}>
 
