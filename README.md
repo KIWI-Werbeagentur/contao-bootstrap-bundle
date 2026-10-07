@@ -147,7 +147,9 @@ Bootstrap's `$spacers` map is separate: it drives Bootstrap's own utilities (`.p
 
 #### Legacy spacings (deprecated)
 
-The named options `default`, `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the `space-N` scale and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+The named options `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the `space-N` scale and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+
+`default` is not deprecated: it stays available in every mode as the dynamic default, resolving to the configured `kiwi_bootstrap.grid.vertical-spacing` default of the field's partial. Only its old, unpartialed class name is on the way out - see below.
 
 ##### The `default` class alias
 
@@ -195,10 +197,9 @@ adds spacing a project's own rules never covered, because those only ever matche
 The alias disappears with the deprecated named buckets in the next major release, when
 modes `1` and `2` are removed.
 
-For simple customization, you can overwrite the following variables in you (s)css file
+For simple customization of the legacy options, you can overwrite the following variables in you (s)css file. The value of `default` is not among them: set it via `kiwi_bootstrap.grid.vertical-spacing.defaults`, or override `--kiwi-vertical-spacing-default-<partial>` (`articleTop`, `articleBottom`; `groupTop` / `groupBottom` only exist when their default isn't `noop`, which it is out of the box).
 ```css
 :root {
-  --spacing-default: your_size;
   --spacing-none: your_size; /* "0" recommended */
   --spacing-gap: your_size; /* grid gutter width recommended */
   --spacing-gap-half: your_size; /* half of grid gutter width recommended */
