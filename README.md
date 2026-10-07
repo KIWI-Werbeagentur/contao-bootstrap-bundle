@@ -129,12 +129,25 @@ To remove the settings from a specific **form field**, add an entry to `$GLOBALS
 
 
 ### Gutters, spacings and gaps <a name="spacing"></a>
-Horizontal and vertical distances between articles and elements are based on Bootstrap's $spacers. You can modify and add values via `$modify-spacers`, or completely customize the available options by overwriting `$spacers`.
+Gutters, container padding, row gaps and the vertical spacing of articles and element groups use a value-derived scale: `space-N` is N × 0.25rem (`space-4` = 1rem, `space-12` = 3rem). Which steps each setting offers, and its defaults, are configured per subsystem under `kiwi_bootstrap.grid` (`gutter`, `container-padding-x`, `row-gap`, `vertical-spacing`):
+
+```yaml
+kiwi_bootstrap:
+    grid:
+        gutter:
+            options: ['-space-2', 'space-16']   # additive: "-key" removes a shipped option, a plain key adds one
+            defaults:
+                default: space-6                # generic default
+                header: space-4                 # per section (partial)
+                footer: { xs: space-4, lg: space-6 }   # responsive: xs is required
+```
+
+Bootstrap's `$spacers` map is separate: it drives Bootstrap's own utilities (`.p-*`, `.m-*`, `.gap-*`, `.g*-*`) and the backported `.row-gap-*`. The bundle redefines keys 1, 2 and 5 and adds 6–10 (see `assets/customization/extend-spacers.scss`), so these utilities differ from stock Bootstrap. You can modify and add values via `$modify-spacers`, or completely customize the scale by overwriting `$spacers`.
 
 
 #### Legacy spacings (deprecated)
 
-The named options `default`, `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the numeric spacer scale (`0`–`10`) and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+The named options `default`, `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the `space-N` scale and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
 
 ##### The `default` class alias
 
