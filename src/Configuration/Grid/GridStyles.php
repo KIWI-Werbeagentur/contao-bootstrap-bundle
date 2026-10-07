@@ -126,7 +126,7 @@ final class GridStyles
      */
     public function defaultValues(string $subsystem, string $partial = self::GENERIC_DEFAULT): array
     {
-        $raw = $this->grid[$subsystem]['defaults'][$partial] ?? null;
+        $raw = $this->resolvedDefault($subsystem, $partial);
         if ($raw === null) {
             return [];
         }
@@ -150,13 +150,26 @@ final class GridStyles
      */
     public function defaultIsNoOp(string $subsystem, string $partial = self::GENERIC_DEFAULT): bool
     {
-        $raw = $this->grid[$subsystem]['defaults'][$partial] ?? null;
+        $raw = $this->resolvedDefault($subsystem, $partial);
 
         if (is_scalar($raw)) {
             return (string) $raw === self::NO_OP;
         }
 
         return \is_array($raw) && ($raw['xs'] ?? null) === self::NO_OP;
+    }
+
+    /**
+     * The configured default of a partial, falling back to the subsystem's generic default
+     * when the partial has none of its own - the same fallback {@see self::build()} emits as
+     * `--kiwi-<subsystem>-default-<partial>: var(--kiwi-<subsystem>-default)`. Null when
+     * neither is configured.
+     */
+    private function resolvedDefault(string $subsystem, string $partial): mixed
+    {
+        $defaults = $this->grid[$subsystem]['defaults'] ?? [];
+
+        return $defaults[$partial] ?? $defaults[self::GENERIC_DEFAULT] ?? null;
     }
 
     /**
@@ -405,8 +418,8 @@ final class GridStyles
             ];
         }
 
-        // A `noop` default emits no class (and no var); skip those partials so no
-        // class referencing a non-existent --kiwi-…-default-<partial> is generated.
+        // Emit a default class only where build() generates its variable: skip `noop`
+        // defaults (no var) and partials with neither an own nor a generic default.
         $partials = SubsystemRegistry::partials($subsystem);
         if ($partials === []) {
             // No partials: a single generic default class.
@@ -418,7 +431,7 @@ final class GridStyles
             }
         } else {
             foreach ($partials as $partial) {
-                if ($this->defaultIsNoOp($subsystem, $partial)) {
+                if ($this->resolvedDefault($subsystem, $partial) === null || $this->defaultIsNoOp($subsystem, $partial)) {
                     continue;
                 }
                 $entries[] = [
@@ -495,6 +508,22 @@ final class GridStyles
                         $media[$minWidth][] = ['name' => $varName, 'value' => $value];
                     }
                 }
+            }
+
+            // Registered partials without a default of their own follow the generic one. A
+            // single base-level alias is enough: it resolves against the generic variable,
+            // which already carries the responsive overrides. Skipped when the generic
+            // default is missing or `noop` - then the partial has no class either.
+            $defaults = $config['defaults'] ?? [];
+            foreach (SubsystemRegistry::partials($subsystem) as $partial) {
+                if (isset($defaults[$partial]) || !isset($defaults[self::GENERIC_DEFAULT])
+                    || $this->defaultIsNoOp($subsystem, $partial)) {
+                    continue;
+                }
+                $base[] = [
+                    'name' => self::defaultVarName($subsystem, $partial),
+                    'value' => self::defaultVar($subsystem, null),
+                ];
             }
         }
 
