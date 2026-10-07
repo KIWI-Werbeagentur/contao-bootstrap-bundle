@@ -552,32 +552,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         };
     }
 
-
-
-    /**
-     * Normalize a "default override" config — as accepted by the
-     * $GLOBALS['responsive'] hooks above — into a `['<side>' => ['<breakpoint>' => <value>]]`
-     * map. Three input shapes are accepted:
-     *
-     *   - scalar                          → applied to every side at the xs breakpoint
-     *   - ['<side>' => scalar]            → that side at the xs breakpoint
-     *   - ['<side>' => ['<bp>' => ...]]   → assigned as-is (an empty array clears the side)
-     *
-     * Every side key is checked against $validSides, every breakpoint against
-     * $this->arrBreakpoints and every leaf value against the keys of $validValues.
-     * Any unknown side, unknown breakpoint or invalid leaf value throws.
-     *
-     * @param mixed                    $config      the raw $GLOBALS['responsive'][$globalKey] value
-     * @param list<string>             $validSides  accepted side keys
-     * @param array<int|string, mixed> $validValues map whose keys enumerate the allowed leaf values
-     * @param string                   $globalKey   global array key, used verbatim in error messages
-     *
-     * @return array<string, array<string, int|string>>
-     *
-     * @throws \InvalidArgumentException
-     */
-
-
     /**
      * Named-bucket spacing keys deprecated in favour of the value-derived space-N
      * scale. `default` is intentionally NOT listed: it is the permanent dynamic
