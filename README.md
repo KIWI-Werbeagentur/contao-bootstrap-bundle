@@ -214,24 +214,27 @@ For simple customization of the legacy options, you can overwrite the following 
 ```
 
 ### Form templates <a name="formtemplates"></a>
-Every form template ships twice: as `.html.twig` and as `.html5`. Both sets are required — do
-not drop the legacy one while projects may still override form templates as `.html5`.
+Every form template ships both as `.html.twig` and as `.html5`, except `form_fieldsetStop`: it
+only closes the markup opened by `form_fieldsetStart`, so the bundle ships just the `.html5` and
+the Twig variant comes from contao-responsive-base. Both sets are required — do not drop the
+legacy one while projects may still override form templates as `.html5`.
 
 Contao decides per widget whether to render the Twig or the legacy chain, and a single legacy
 override anywhere in that chain decides for the whole of it. Most form templates extend
 another identifier (`form_row`, `form_row_double`, `form_textfield`); when that identifier
-resolves to an `.html5`, `ContaoFilesystemLoader` substitutes the legacy source and
-`Widget::renderLegacyFromTwig()` restarts legacy inheritance from the widget's own
-`strTemplate`. From there on only `.html5` files are consulted, so a missing one falls through
-to the core-bundle template without any error.
+resolves to an `.html5`, `ContaoFilesystemLoader` substitutes the legacy source and the rest
+of the chain renders as legacy templates (on Contao 5.7, `Widget::renderLegacyFromTwig()`
+restarts legacy inheritance from the widget's own `strTemplate`; on 5.3 the `.html5` is
+rendered through a proxy). From there on only `.html5` files are consulted, so a missing one
+falls through to the core-bundle template without any error.
 
 That is rarely harmless. `form_text.html5` exists solely to re-route `text` fields to
 `form_textfield`; core's version extends `form_row` instead and emits a bare `class="text"`,
 silently dropping every class the project's own `form_textfield` adds.
 
-The legacy templates render pre-Twig markup and do not carry features added to the Twig set
-(e.g. `.cx-*` container padding on fieldsets). A project that wants those should migrate its
-own form overrides to Twig, which keeps the chain in Twig end to end.
+The legacy templates render pre-Twig markup and are not guaranteed to carry every feature
+added to the Twig set. A project that wants those should migrate its own form overrides to
+Twig, which keeps the chain in Twig end to end.
 
 ### Widgets <a name="widget"></a>
 There a different types of responsive widgets allowing you to adjust a setting for different viewports (Values will be inherited from smaller to bigger device).
