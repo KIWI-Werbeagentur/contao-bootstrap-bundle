@@ -142,8 +142,10 @@ class KiwiBootstrapBundle extends AbstractBundle
         $keys = array_keys(array_diff_key($add, $remove));
 
         usort($keys, static function (string $a, string $b): int {
-            $na = preg_match('/(\d+)$/', $a, $m) ? (int) $m[1] : null;
-            $nb = preg_match('/(\d+)$/', $b, $m) ? (int) $m[1] : null;
+            // Only `space-N` is a scale step; a special key that merely ends in digits
+            // (e.g. `fluid-2`) belongs with the other special keys after the scale.
+            $na = preg_match('/^space-(\d+)$/', $a, $m) ? (int) $m[1] : null;
+            $nb = preg_match('/^space-(\d+)$/', $b, $m) ? (int) $m[1] : null;
 
             return match (true) {
                 $na !== null && $nb !== null => $na <=> $nb,
