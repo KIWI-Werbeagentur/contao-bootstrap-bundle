@@ -68,6 +68,18 @@ Go to themes (<em>/contao?do=themes</em>) and create or edit a theme. Choose tho
 
 Afterwards you go to layouts (<em>/contao?do=themes&table=tl_layout&id={{theme_id}}</em>) and create or edit one. Apply container widths to row sections (header, footer), custom sections (by choosing a correspondig template) and sidebars (main area will fill available space). If you don't want to manually load Bootstrap you can activate automatic loading in your CSS-framework selection (recommended).
 
+Templates for custom sections:
+
+| Template | Container | Horizontal padding |
+|---|---|---|
+| `block_section_container` | fixed width | default (`cx-default-main`) |
+| `block_section_container_flush` | fixed width | none |
+| `block_section_container_fluid` | full width | none |
+| `block_section_container_fluid_padded` | full width | default (`cx-default-main`) |
+| `block_section_container_header` / `_footer` | as the layout's header / footer | as the layout's header / footer |
+
+Padding is for modules placed directly in a section; articles placed in a section bring their own. The defaults keep the look of earlier versions: a fixed-width container was inset, a full-width one was flush.
+
 CSS-Classes and their styles will now be applied, when you define bootstrap layout properties in your contents (forms, modules, articles & content elements)
 
 ---
