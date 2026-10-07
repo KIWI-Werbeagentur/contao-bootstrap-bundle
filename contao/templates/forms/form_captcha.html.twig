@@ -19,7 +19,7 @@
         .addClass(this.class|default)
         .addClass('is-invalid', hasErrors.invoke())
         .set('value', '')
-        .set('aria-describedby', "captcha_text_#{this.id}")
+        .set('aria-describedby', "captcha_text_#{this.id}" ~ (this.responsiveHelpBlock|default ? " ctrl_#{this.id}_text" : ''))
         .mergeWith(input_attributes)
         .setIfExists('placeholder', input_attributes.placeholder|default|insert_tag)
     }}>
