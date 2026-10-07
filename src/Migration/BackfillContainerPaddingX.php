@@ -32,11 +32,11 @@ use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
  *     was 12px but its *effective* padding was zero, so `default` would newly indent it - a hero
  *     image would gain a 12px gutter it never had. Those get `space-0`.
  *
- * Fluidity is only decided where the record actually carries a container size of its own, i.e.
- * the article-level `responsiveContainerSize`. Everything else keeps `default`:
+ * Fluidity is only decided where the record actually carries a container size of its own: the
+ * article's `responsiveContainerSize`, and `responsiveContainer` on content elements and form
+ * fields, which carry the padding field only in container mode and then are a container with
+ * an inner row just like an article. Everything else keeps `default`:
  *
- *   - content elements and form fields have no size field - they sit inside an article's
- *     container and are unaffected by its fluidity;
  *   - the layout's header/footer sections are fluid but nest an inner wrapper between the
  *     container and the row, so their content was inset by 12px like a bounded container.
  *
@@ -62,10 +62,11 @@ class BackfillContainerPaddingX extends AbstractMigration
     ];
 
     /**
-     * The one column whose fluidity is known from the record itself. Header/footer sizes are
-     * deliberately absent - see the class docblock.
+     * Columns a record's own container size lives in, first match per table wins: articles use
+     * `responsiveContainerSize`, content elements and form fields `responsiveContainer`.
+     * Header/footer sizes are deliberately absent - see the class docblock.
      */
-    private const SIZE_COLUMN = 'responsiveContainerSize';
+    private const SIZE_COLUMNS = ['responsiveContainerSize', 'responsiveContainer'];
 
     private const FLUID_SIZE = 'container-fluid';
 
@@ -95,13 +96,13 @@ class BackfillContainerPaddingX extends AbstractMigration
         $intTotal = 0;
 
         foreach ($this->findTargets() as $strTable => $arrColumns) {
-            $blnHasSize = $this->hasColumn($strTable, self::SIZE_COLUMN);
+            $strSizeColumn = $this->findSizeColumn($strTable);
 
             foreach ($arrColumns as $strColumn) {
                 // Fluid containers first: their content used to sit flush, so they must not gain
                 // the padding the bounded ones get. Only the record's own size column decides it.
-                if ($blnHasSize && 'responsiveContainerPaddingX' === $strColumn) {
-                    $intFluid = $this->write($strTable, $strColumn, $strNone, self::FLUID_SIZE);
+                if (null !== $strSizeColumn && 'responsiveContainerPaddingX' === $strColumn) {
+                    $intFluid = $this->write($strTable, $strColumn, $strNone, $strSizeColumn, self::FLUID_SIZE);
 
                     if ($intFluid > 0) {
                         $arrTouched[] = sprintf('%s.%s fluid→space-0 (%d)', $strTable, $strColumn, $intFluid);
@@ -109,7 +110,7 @@ class BackfillContainerPaddingX extends AbstractMigration
                     }
                 }
 
-                $intRest = $this->write($strTable, $strColumn, $strDefault, null);
+                $intRest = $this->write($strTable, $strColumn, $strDefault);
 
                 if ($intRest > 0) {
                     $arrTouched[] = sprintf('%s.%s →default (%d)', $strTable, $strColumn, $intRest);
@@ -136,7 +137,7 @@ class BackfillContainerPaddingX extends AbstractMigration
         );
     }
 
-    private function write(string $strTable, string $strColumn, string $strValue, ?string $strSize): int
+    private function write(string $strTable, string $strColumn, string $strValue, ?string $strSizeColumn = null, ?string $strSize = null): int
     {
         $strSql = sprintf(
             'UPDATE %s SET %s = ? WHERE %s IS NULL',
@@ -147,8 +148,8 @@ class BackfillContainerPaddingX extends AbstractMigration
 
         $arrParams = [$strValue];
 
-        if (null !== $strSize) {
-            $strSql .= sprintf(' AND %s = ?', $this->connection->quoteIdentifier(self::SIZE_COLUMN));
+        if (null !== $strSizeColumn && null !== $strSize) {
+            $strSql .= sprintf(' AND %s = ?', $this->connection->quoteIdentifier($strSizeColumn));
             $arrParams[] = $strSize;
         }
 
@@ -193,13 +194,19 @@ class BackfillContainerPaddingX extends AbstractMigration
         return $this->cachedTargets = $arrTargets;
     }
 
-    private function hasColumn(string $strTable, string $strColumn): bool
+    private function findSizeColumn(string $strTable): ?string
     {
         $arrColumnNames = array_map(
             static fn ($col) => $col->getName(),
             $this->connection->createSchemaManager()->listTableColumns($strTable),
         );
 
-        return \in_array($strColumn, $arrColumnNames, true);
+        foreach (self::SIZE_COLUMNS as $strColumn) {
+            if (\in_array($strColumn, $arrColumnNames, true)) {
+                return $strColumn;
+            }
+        }
+
+        return null;
     }
 }
