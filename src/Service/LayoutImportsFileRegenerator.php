@@ -31,6 +31,8 @@ class LayoutImportsFileRegenerator
 
     /**
      * @return bool true if the file was (re)written, false on no-op.
+     *
+     * @throws \Symfony\Component\Filesystem\Exception\IOException if the file cannot be written
      */
     public function regenerate(string $themeAlias, string $layoutAlias): bool
     {
@@ -76,7 +78,9 @@ class LayoutImportsFileRegenerator
             return false;
         }
 
-        file_put_contents($targetFile, $rendered);
+        // dumpFile() writes atomically (temp file + rename) and throws on failure, so a failed
+        // write neither reports success nor leaves a truncated file behind.
+        $this->filesystem->dumpFile($targetFile, $rendered);
 
         return true;
     }
