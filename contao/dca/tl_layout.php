@@ -26,7 +26,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterHeader'] = [
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
-    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutHeader']['options'],
     'eval' => ['tl_class' => 'clr', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveGutterFooter'] = [
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
-    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutterLayoutFooter']['options'],
     'eval' => ['tl_class' => 'clr', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
@@ -59,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXHeader'] =
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
-    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutHeader']['options'],
     'eval' => ['tl_class' => 'clr'],
     'sql' => 'blob NULL',
 ];
@@ -70,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_layout']['fields']['responsiveContainerPaddingXFooter'] =
     'inputType' => 'optionalResponsive',
     'responsiveInputType' => 'select',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getContainerPaddingXKeys'],
-    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX']['options'],
+    'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingXLayoutFooter']['options'],
     'eval' => ['tl_class' => 'clr'],
     'sql' => 'blob NULL',
 ];
