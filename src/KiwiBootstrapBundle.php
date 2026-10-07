@@ -2,6 +2,7 @@
 
 namespace Kiwi\Contao\BootstrapBundle;
 
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler\HtmlSanitizerPolyfillPass;
 use Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler\OverrideServiceCompilerPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -59,7 +60,17 @@ class KiwiBootstrapBundle extends AbstractBundle
                             ->arrayNode('defaults')
                                 ->info('Per-partial defaults. Key "default" is the generic default; other keys are partials. Value is an option key or a {xs: …, <bp>: …} responsive map.')
                                 ->useAttributeAsKey('partial')
-                                ->variablePrototype()->end()
+                                ->variablePrototype()
+                                    // `noop` suppresses the class at every breakpoint (one `default`
+                                    // class serves all of them), so it cannot be responsive. Checked
+                                    // here so a misconfiguration fails the container build instead of
+                                    // the requests that build the option labels.
+                                    ->validate()
+                                        ->ifTrue(static fn (mixed $v): bool => \is_array($v) && \count($v) > 1
+                                            && \in_array(GridStyles::NO_OP, $v, true))
+                                        ->thenInvalid('"'.GridStyles::NO_OP.'" cannot be mixed with other breakpoints in a responsive default, got %s. Use it as a scalar, or use value options only.')
+                                    ->end()
+                                ->end()
                             ->end()
                             ->arrayNode('variables')
                                 ->info('Semantic name => option key, exposed as --kiwi-<subsystem>-<name>.')
