@@ -486,7 +486,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function getDeprecatedSpacingsMode(): int
     {
-        return (int) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? 0);
+        $value = (string) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? '');
+
+        // Validate the whole value: an (int) cast alone would accept numeric prefixes such
+        // as "1foo" or "2.5". Same exact match as PreserveLegacySpacingsMode::hasExplicitMode().
+        return \in_array($value, ['1', '2', '3'], true) ? (int) $value : 0;
     }
 
     /**
