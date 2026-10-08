@@ -186,8 +186,16 @@ adds spacing a project's own rules never covered, because those only ever matche
 
 1. Extend your selectors to match both spellings, so the CSS is correct under either mode:
    ```scss
-   > .pt#{$infix}-default,
-   > .pt#{$infix}-default-articleTop { --spacing-top: 0; }
+   .your-selector {
+     @each $breakpoint in map-keys($grid-breakpoints) {
+       @include media-breakpoint-up($breakpoint) {
+         $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+         > .pt#{$infix}-default,
+         > .pt#{$infix}-default-articleTop { --spacing-top: 0; }
+       }
+     }
+   }
    ```
    (and the `-articleBottom` counterpart for `pb`, setting `--spacing-bottom`). Override
    `--spacing-top` / `--spacing-bottom`, the variables the spacing classes set and
