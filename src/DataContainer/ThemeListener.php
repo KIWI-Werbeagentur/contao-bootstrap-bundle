@@ -25,7 +25,6 @@ class ThemeListener
 
     public function generateThemeCustomizationFile(DataContainer $objDca): void
     {
-        $strToRoot = "../../..";
         $fs = new Filesystem();
 
         $record = $objDca->getCurrentRecord() ?? [];
@@ -60,7 +59,12 @@ class ThemeListener
             Message::addError($e->getMessage());
         }
 
-        $themePath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
+        $projectDir = System::getContainer()->getParameter('kernel.project_dir');
+        $themePath = $projectDir . '/files/themes/' . $themeAlias . '/';
+
+        // Relative path from the imports file's directory back to the project root, derived
+        // like in LayoutImportsFileRegenerator instead of hardcoding the depth.
+        $strToRoot = rtrim($fs->makePathRelative($projectDir, $themePath), '/');
 
         $arrComponents = [];
         foreach ($GLOBALS['responsive']['bootstrapComponents'] ?? [] as $strComponent) {
