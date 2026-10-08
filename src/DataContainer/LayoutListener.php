@@ -2,23 +2,25 @@
 
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
-use Contao\Database;
 use Contao\DataContainer;
-use Contao\StringUtil;
+use Contao\Message;
 use Contao\System;
 use Contao\ThemeModel;
+use Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class LayoutListener
 {
+    use AliasGeneratorTrait;
 
-    public function generateLayoutCustomizationFiles(DataContainer $objDca)
+    public function generateLayoutCustomizationFiles(DataContainer $objDca): void
     {
-        $strToRoot = "../../../..";
-        $objTheme = ThemeModel::findByPk($objDca->activeRecord->pid);
+        $record = $objDca->getCurrentRecord() ?? [];
+        $objTheme = ThemeModel::findByPk($record['pid'] ?? null);
         $fs = new Filesystem();
 
-        $layoutAlias = $objDca->activeRecord->alias;
+        $layoutAlias = $record['alias'] ?? null;
         $themeAlias = $objTheme->alias;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/' . $layoutAlias . '/';
 
@@ -30,27 +32,17 @@ class LayoutListener
             $fs->mkdir($targetPath);
         }
 
-        if (!$fs->exists($targetPath . '_imports-' . $layoutAlias . '.scss')) {
-            $arrData = [
-                'themeName' => $themeAlias,
-                'layoutName' => $layoutAlias,
-                'bootstrapComponents' => "@import '../_imports-{$themeAlias}.scss';",
-                'bootstrapStyles' => str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['bootstrap']),
-                'customStyles' => str_replace('__ROOT__',$strToRoot, $GLOBALS['responsive']['custom'])
-            ];
-            $strBuffer = System::getContainer()->get('twig')->render('@Contao/responsive/bootstrap_imports.scss.twig', $arrData);
-
-            if (isset($GLOBALS['TL_HOOKS']['alterBootstrapImports']) && \is_array($GLOBALS['TL_HOOKS']['alterBootstrapImports']))
-            {
-                foreach ($GLOBALS['TL_HOOKS']['alterBootstrapImports'] as $callback)
-                {
-                    $strBuffer = System::importStatic($callback[0])->{$callback[1]}($arrData, $strBuffer, $this);
-                }
-            }
-
-            file_put_contents($targetPath . '_imports-' . $layoutAlias . '.scss', $strBuffer);
+        // The record is already saved at this point: report a failed write instead of
+        // aborting the request, so the editor sees it and can fix the permissions.
+        try {
+            System::getContainer()->get(LayoutImportsFileRegenerator::class)->regenerate($themeAlias, $layoutAlias);
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not regenerate the layout imports file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
         }
 
+        // layoutvars and layout are user-owned scaffold files: created once,
+        // never overwritten, so editor customizations survive any rebuild.
         if (!$fs->exists($targetPath . 'layoutvars-' . $layoutAlias . '.scss')) {
             file_put_contents($targetPath . 'layoutvars-' . $layoutAlias . '.scss', '// Hier können Bootstrap-Variablen für das Layout überschrieben werden.' . "\n" . '// Eine Datei mit allen möglichen Variablen findet sich unter "vendor/twbs/scss/_variables.scss".' . "\n\n");
         }
@@ -64,29 +56,10 @@ class LayoutListener
 
     /**
      * @param DataContainer $objDca
-     * @throws Exception
+     * @throws \Exception
      */
-    public function generateAlias(DataContainer $objDca)
+    public function generateAlias(DataContainer $objDca): void
     {
-        $autoAlias = false;
-
-        // Generate alias if there is none
-        if ($objDca->activeRecord->alias == '') {
-            $autoAlias = true;
-            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
-        }
-
-        $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_layout WHERE alias=? AND id!=?")
-            ->execute($objDca->activeRecord->alias, $objDca->id);
-
-        // Check whether the event alias exists
-        if ($objAlias->numRows) {
-            if (!$autoAlias) {
-                throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
-            }
-
-            $objDca->activeRecord->alias .= '-' . $objDca->id;
-        }
-        Database::getInstance()->prepare("UPDATE tl_layout SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
+        $this->generateAliasForTable($objDca, 'tl_layout');
     }
 }

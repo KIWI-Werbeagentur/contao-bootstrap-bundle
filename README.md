@@ -11,8 +11,9 @@
       2. [Layouts](#layout)
       3. [Wrapping elements: articles, element groups & modules of type list](#article)
       4. [Elements: content elements, form fields & modules](#element)
-   3. [Vertical spacings](#spacing)
-   4. [Widgets](#widget)
+   3. [Gutters, spacings and gaps](#spacing)
+   4. [Form templates](#formtemplates)
+   5. [Widgets](#widget)
 
 ## Scope <a name="scope"></a>
 
@@ -41,6 +42,21 @@ Install the bundle via composer
 composer require kiwi/contao-bootstrap
  ```
 
+#### Configuration
+Some options can be configured via .env variables:
+```dotenv
+# Controls which spacing keys appear in the BE dropdowns and the generated SCSS.
+# unset / 0  → only the new space-N keys (implicit default — will be migrated to 1 if deprecated values are still in use)
+#         1  → only the deprecated keys (legacy default)
+#         2  → both sets (for legacy projects mid-migration)
+#         3  → only the new space-N keys (explicit opt-in — the migration
+#              will not touch this even when stored deprecated values exist)
+# The `default` option renders its pre-partial `pt-default` / `pb-default` class
+# instead of the partialed one in mode 1, and both in mode 2, so existing project CSS
+# keeps matching. See "The `default` class alias" below for why and the removal path.
+KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
+```
+
 ### Implementation <a name="implementation"></a>
 **Step 1: (Re-)store themes <a name="theme"></a>**
 
@@ -51,6 +67,18 @@ Go to themes (<em>/contao?do=themes</em>) and create or edit a theme. Choose tho
 **Step 2: (Re-)store layouts  <a name="layout"></a>**
 
 Afterwards you go to layouts (<em>/contao?do=themes&table=tl_layout&id={{theme_id}}</em>) and create or edit one. Apply container widths to row sections (header, footer), custom sections (by choosing a correspondig template) and sidebars (main area will fill available space). If you don't want to manually load Bootstrap you can activate automatic loading in your CSS-framework selection (recommended).
+
+Templates for custom sections:
+
+| Template | Container | Horizontal padding |
+|---|---|---|
+| `block_section_container` | fixed width | default (`cx-default-main`) |
+| `block_section_container_flush` | fixed width | none |
+| `block_section_container_fluid` | full width | none |
+| `block_section_container_fluid_padded` | full width | default (`cx-default-main`) |
+| `block_section_container_header` / `_footer` | as the layout's header / footer | as the layout's header / footer |
+
+Padding is for modules placed directly in a section; articles placed in a section bring their own. The defaults keep the look of earlier versions: a fixed-width container was inset, a full-width one was flush.
 
 CSS-Classes and their styles will now be applied, when you define bootstrap layout properties in your contents (forms, modules, articles & content elements)
 
@@ -100,11 +128,88 @@ To remove the settings from a specific **module**, add an entry to `$GLOBALS['re
 To remove the settings from a specific **form field**, add an entry to `$GLOBALS['responsive']['tl_form_field']['excludePalettes']['column']` within your config file. 
 
 
-### Vertical spacings <a name="spacing"></a>
-For simple customization, you can overwrite the following variables in you (s)css file
+### Gutters, spacings and gaps <a name="spacing"></a>
+Gutters, container padding, row gaps and the vertical spacing of articles and element groups use a value-derived scale: `space-N` is N × 0.25rem (`space-4` = 1rem, `space-12` = 3rem). Which steps each setting offers, and its defaults, are configured per subsystem under `kiwi_bootstrap.grid` (`gutter`, `container-padding-x`, `row-gap`, `vertical-spacing`):
+
+```yaml
+kiwi_bootstrap:
+    grid:
+        gutter:
+            options: ['-space-2', 'space-16']   # additive: "-key" removes a shipped option, a plain key adds one
+            defaults:
+                default: space-6                # generic default
+                header: space-4                 # per section (partial)
+                footer: { xs: space-4, lg: space-6 }   # responsive: xs is required
+```
+
+Bootstrap's `$spacers` map is separate: it drives Bootstrap's own utilities (`.p-*`, `.m-*`, `.gap-*`, `.g*-*`) and the backported `.row-gap-*`. The bundle redefines keys 1, 2 and 5 and adds 6–10 (see `assets/customization/extend-spacers.scss`), so these utilities differ from stock Bootstrap. You can modify and add values via `$modify-spacers`, or completely customize the scale by overwriting `$spacers`.
+
+
+#### Legacy spacings (deprecated)
+
+The named options `none`, `gap`, `gap-half`, `xxs`, `xs`, `sm`, `md`, `lg`, `xl` and `xxl` are deprecated in favour of the `space-N` scale and will be removed in a future major release. Existing installations that still rely on them can re-enable the legacy set via `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS`.
+
+`default` is not deprecated: it stays available in every mode as the dynamic default, resolving to the configured `kiwi_bootstrap.grid.vertical-spacing` default of the field's partial. Only its old, unpartialed class name is on the way out - see below.
+
+##### The `default` class alias
+
+`default` is the one spacing option that predates the grid subsystem layer. It used to
+render as `pt-default` / `pb-default`; now that the option is partial-aware it renders as
+`pt-default-articleTop` / `pb-default-articleBottom` (and the `groupTop` / `groupBottom`
+equivalents for element groups). Project CSS written against the old spelling silently
+stops matching.
+
+Which spelling an installation gets is decided by the mode:
+
+| mode | rendered class |
+| --- | --- |
+| `0` / `3` | `pt-default-articleTop` (new name only) |
+| `1` | `pt-default` (old name only) |
+| `2` | both, e.g. `pt-default-articleTop pt-default` |
+
+Mode `1` renders the old name **instead of**, not alongside, the new one. That is deliberate:
+the partialed class sets `--spacing-top` / `--spacing-bottom`, and custom properties inherit,
+so any descendant carrying `[data-spacing-top]` without a spacing class of its own picks the
+value up and applies it — which is how background articles are wired, the classes on the
+wrapper and the attributes moved to `mod_article__main`. On a legacy install those variables
+were never set, so that indirection resolved to nothing; emitting both names revives it and
+adds spacing a project's own rules never covered, because those only ever matched the class.
+
+> **This is a migration crutch and will be removed.** One legacy class cannot express two
+> partials: while the alias is active *and* a project styles `.pt-default` / `.pb-default`
+> with `!important` (the usual legacy pattern, as that beats the `--spacing-top` /
+> `[data-spacing-top]` indirection outright), setting
+> `--kiwi-vertical-spacing-default-articleTop` differently from
+> `--kiwi-vertical-spacing-default-articleBottom` will have no visible effect.
+
+**Migrating off the alias**
+
+1. Extend your selectors to match both spellings, so the CSS is correct under either mode:
+   ```scss
+   .your-selector {
+     @each $breakpoint in map-keys($grid-breakpoints) {
+       @include media-breakpoint-up($breakpoint) {
+         $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+         > .pt#{$infix}-default,
+         > .pt#{$infix}-default-articleTop { --spacing-top: 0; }
+       }
+     }
+   }
+   ```
+   (and the `-articleBottom` counterpart for `pb`, setting `--spacing-bottom`). Override
+   `--spacing-top` / `--spacing-bottom`, the variables the spacing classes set and
+   `[data-spacing-*]` applies as padding.
+2. Drop the old spelling once nothing references it.
+3. Set `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=3` to opt out of the alias and the deprecated
+   buckets for good.
+
+The alias disappears with the deprecated named buckets in the next major release, when
+modes `1` and `2` are removed.
+
+For simple customization of the legacy options, you can overwrite the following variables in you (s)css file. The value of `default` is not among them: set it via `kiwi_bootstrap.grid.vertical-spacing.defaults`, or override `--kiwi-vertical-spacing-default-<partial>` (`articleTop`, `articleBottom`; `groupTop` / `groupBottom` only exist when their default isn't `noop`, which it is out of the box).
 ```css
 :root {
-  --spacing-default: your_size;
   --spacing-none: your_size; /* "0" recommended */
   --spacing-gap: your_size; /* grid gutter width recommended */
   --spacing-gap-half: your_size; /* half of grid gutter width recommended */
@@ -118,35 +223,28 @@ For simple customization, you can overwrite the following variables in you (s)cs
 }
 ```
 
-To add custom spacing options, add the css variables in your own (s)css file. Additionally, you need to extend the `BootstrapConfiguration` class and modify the `$arrSpacings` property accordingly, and provide labels for the new options.
-```css
-:root {
-    --spacing-foo: your_size;
-    --spacing-bar: your_size;
-}
-```
-```php
-// /src/CustomBootstrapConfiguration.php
-namespace App;
+### Form templates <a name="formtemplates"></a>
+Every form template ships both as `.html.twig` and as `.html5`, except `form_fieldsetStop`: it
+only closes the markup opened by `form_fieldsetStart`, so the bundle ships just the `.html5` and
+the Twig variant comes from contao-responsive-base. Both sets are required — do not drop the
+legacy one while projects may still override form templates as `.html5`.
 
-use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
+Contao decides per widget whether to render the Twig or the legacy chain, and a single legacy
+override anywhere in that chain decides for the whole of it. Most form templates extend
+another identifier (`form_row`, `form_row_double`, `form_textfield`); when that identifier
+resolves to an `.html5`, `ContaoFilesystemLoader` substitutes the legacy source and the rest
+of the chain renders as legacy templates (on Contao 5.7, `Widget::renderLegacyFromTwig()`
+restarts legacy inheritance from the widget's own `strTemplate`; on 5.3 the `.html5` is
+rendered through a proxy). From there on only `.html5` files are consulted, so a missing one
+falls through to the core-bundle template without any error.
 
-class CustomBootstrapConfiguration extends BootstrapConfiguration
-{
-    public function __construct($objDca = null)
-    {
-        parent::__construct($objDca);
+That is rarely harmless. `form_text.html5` exists solely to re-route `text` fields to
+`form_textfield`; core's version extends `form_row` instead and emits a bare `class="text"`,
+silently dropping every class the project's own `form_textfield` adds.
 
-        $this->arrSpacings['foo'] = 'p{{direction}}{{modifier}}-foo';
-        $this->arrSpacings['bar'] = 'p{{direction}}{{modifier}}-bar';
-    }
-}
-```
-```php
-// /contao/languages/en/responsive.php
-$GLOBALS['TL_LANG']['responsive']['spacings']['foo'][0] = "Foo-sized [foo]";
-$GLOBALS['TL_LANG']['responsive']['spacings']['bar'][0] = "Bar-sized [bar]";
-```
+The legacy templates render pre-Twig markup and are not guaranteed to carry every feature
+added to the Twig set. A project that wants those should migrate its own form overrides to
+Twig, which keeps the chain in Twig end to end.
 
 ### Widgets <a name="widget"></a>
 There a different types of responsive widgets allowing you to adjust a setting for different viewports (Values will be inherited from smaller to bigger device).

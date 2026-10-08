@@ -3,19 +3,27 @@
 namespace Kiwi\Contao\BootstrapBundle\Service;
 
 use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
+/**
+ * @phpstan-import-type GridConfig from GridStyles
+ */
 class SpacingsFileRegenerator
 {
     private const TWIG_TEMPLATE       = '@Contao/responsive/spacings.scss.twig';
     private const RELATIVE_TARGET_DIR = '/files/themes/';
     private const TARGET_FILENAME     = '_spacings.scss';
 
+    /**
+     * @param GridConfig $grid The processed `kiwi_bootstrap.grid` configuration.
+     */
     public function __construct(
         private readonly Filesystem $filesystem,
         private readonly Environment $twig,
         private readonly string $projectDir,
+        private readonly array $grid = [],
     ) {}
 
     /**
@@ -23,6 +31,8 @@ class SpacingsFileRegenerator
      * only when the rendered output differs from the current file.
      *
      * @return bool true if the file was (re)written, false on no-op.
+     *
+     * @throws \Symfony\Component\Filesystem\Exception\IOException if the file cannot be written
      */
     public function regenerate(): bool
     {
@@ -37,16 +47,30 @@ class SpacingsFileRegenerator
         // this bundle's BootstrapConfiguration when Contao globals are not yet
         // initialized.
         $configClass = $GLOBALS['responsive']['config'] ?? BootstrapConfiguration::class;
-        $sizes       = implode(', ', (new $configClass())->getSpacings());
+        $sizes       = implode(', ', (new $configClass())->getSpacingsExcludingNoOp());
 
-        $rendered = $this->twig->render(self::TWIG_TEMPLATE, ['sizes' => $sizes]);
+        // The value-derived scale + dynamic `default-<partial>` (suffix => CSS value),
+        // from the same kiwi_bootstrap.grid.vertical-spacing config that drives the
+        // dropdown. Each entry is one CSS class (pt-*/pb-* in both directions) — the
+        // suffix is appended to `pt`/`pb` and the value is the class's CSS variable.
+        $vsGrid = $this->grid['vertical-spacing'] ?? null;
+        $spacingUtilities = $vsGrid
+            ? (new GridStyles(['vertical-spacing' => $vsGrid], []))->utilityEntries('vertical-spacing')
+            : [];
+
+        $rendered = $this->twig->render(self::TWIG_TEMPLATE, [
+            'sizes' => $sizes,
+            'spacingUtilities' => $spacingUtilities,
+        ]);
         $current  = $this->filesystem->exists($targetFile) ? file_get_contents($targetFile) : null;
 
         if ($current === $rendered) {
             return false;
         }
 
-        file_put_contents($targetFile, $rendered);
+        // dumpFile() writes atomically (temp file + rename) and throws on failure, so a failed
+        // write neither reports success nor leaves a truncated file behind.
+        $this->filesystem->dumpFile($targetFile, $rendered);
 
         return true;
     }

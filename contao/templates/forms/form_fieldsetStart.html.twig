@@ -1,0 +1,13 @@
+{#
+    Extends responsive-base's template explicitly instead of '@Contao/form_fieldsetStart.html.twig':
+    the dynamic parent would be this bundle's own form_fieldsetStart.html5, next in the chain. A
+    legacy parent is rendered through a proxy that only sees the widget's class members, not its
+    configuration, so the fieldset would lose every class and its legend. The .html5 stays in
+    place for custom legacy fieldset templates (customTpl) that extend 'form_fieldsetStart'.
+#}
+{% extends '@Contao_KiwiResponsiveBaseBundle/form_fieldsetStart.html.twig' %}
+
+{% set fieldsetAttrs = attrs()
+    .addClass(getContainerPaddingXClasses(this, table: 'tl_form_field'), this.responsiveContainer|default)
+    .mergeWith(fieldsetAttrs|default)
+%}

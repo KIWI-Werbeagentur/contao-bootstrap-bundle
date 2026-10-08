@@ -1,0 +1,54 @@
+{% extends '@Contao/form_row.html.twig' %}
+
+{% block field %}
+    <fieldset id="ctrl_{{ this.id }}" class="checkbox_container{% if hasErrors.invoke() %} is-invalid{% endif %}{% if this.class|default %} {{ this.class|default }}{% endif %}"{% if this.responsiveHelpBlock|default %} aria-describedby="ctrl_{{ this.id }}_text"{% endif %}>
+
+        {% if this.label %}
+            <legend class="float-none">
+                {% if this.mandatory|default %}
+                    <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label|insert_tag_raw }}<span class="mandatory">*</span>
+                {% else %}
+                    {{ this.label|insert_tag_raw }}
+                {% endif %}
+            </legend>
+        {% endif %}
+
+        <input type="hidden" name="{{ this.name }}" value="">
+
+        {% for option in getOptions.invoke() %}
+            {% if option.type == 'group_start' %}
+                <fieldset{% if hasErrors.invoke() %} class="is-invalid"{% endif %}>
+                <legend class="float-none">{{ option.label }}</legend>
+            {% endif %}
+
+            {% if option.type == 'option' %}
+                <div class="form-check{% if this.responsiveInlineOptions|default %} form-check-inline{% endif %}{% if hasErrors.invoke() %} is-invalid{% endif %}">
+                    <input{{ attrs()
+                        .set('type', 'checkbox')
+                        .set('name', option.name)
+                        .set('id', "opt_#{option.id}")
+                        .addClass('checkbox form-check-input')
+                        .addClass('is-invalid', hasErrors.invoke())
+                        .set('value', option.value)
+                        .set('checked', option.checked, option.checked)
+                        .mergeWith(option.attributes)
+                    }}>
+                    <label id="lbl_{{ option.id }}" for="opt_{{ option.id }}" class="form-check-label">{{ option.label|sanitize_html('contao')|insert_tag_raw }}</label>
+                </div>
+            {% endif %}
+
+            {% if option.type == 'group_end' %}
+                </fieldset>
+            {% endif %}
+        {% endfor %}
+
+        {% if this.responsiveHelpBlock|default %}
+            <div class="form-text" id="ctrl_{{ this.id }}_text">{{ this.responsiveHelpBlock|raw }}</div>
+        {% endif %}
+
+        {% if hasErrors.invoke() %}
+            <div class="invalid-feedback">{{ getErrorAsString.invoke() }}</div>
+        {% endif %}
+
+    </fieldset>
+{% endblock %}

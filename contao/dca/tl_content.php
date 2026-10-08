@@ -24,6 +24,7 @@ $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveOverwriteRowCols'] = 
 
 //CONTAINER
 $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveRowCols'] = [
+    'default' => ['xs' => 1],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols'],
     'inputType' => 'responsive',
     'responsiveInputType' => 'select',
@@ -32,10 +33,11 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['responsiveRowCols'] = [
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowCols'],
     'sql' => "blob NULL"
 ];
-$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_'] = 'responsiveOverwriteRowCols';
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_'] = 'responsiveOverwriteRowCols'; // kept for BC
 $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_0'] = 'responsiveOverwriteRowCols';
 
-$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveContainerSizes'] = "responsiveRowCols," . implode(',', array_keys($GLOBALS['TL_DCA']['container']['fields'] ?? []));
+$GLOBALS['TL_DCA']['tl_content']['fields']['responsiveContainerPaddingX'] = $GLOBALS['TL_DCA']['containerPadding']['fields']['responsiveContainerPaddingX'];
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveContainerSizes'] .= ',responsiveContainerPaddingX';
 
 
 /*
@@ -45,4 +47,5 @@ $GLOBALS['TL_DCA']['tl_content']['subpalettes']['responsiveContainer_responsiveC
 PaletteManipulator::create()
     ->removeField('perRow','image_legend')
     ->addField('responsiveRowCols','perRow', PaletteManipulator::POSITION_BEFORE)
+    ->addField(['responsiveGutter', 'responsiveRowGap'], 'responsiveRowCols', PaletteManipulator::POSITION_AFTER)
     ->applyToPalette('gallery', 'tl_content');

@@ -1,0 +1,3 @@
+{% extends "@Contao/content_element/_base.html.twig" %}
+
+{% set attributes = data|default ? attributes|default(attrs()).addClass(getContainerPaddingXClasses(data|default, table: 'tl_content'), data.responsiveContainer).mergeWith(attributes|default) : attributes %}

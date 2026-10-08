@@ -1,0 +1,11 @@
+/* Overwrite Bootstrap Grid Row Columns */
+$grid-row-columns:  12 !default;
+
+// adjust for missing padding, to have the actually usable area be the same width as before
+$container-max-widths: (
+  sm: 516px,
+  md: 696px,
+  lg: 936px,
+  xl: 1116px,
+  xxl: 1296px
+) !default;

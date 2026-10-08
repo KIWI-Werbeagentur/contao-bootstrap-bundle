@@ -2,49 +2,33 @@
 
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
-use Contao\Database;
 use Contao\DataContainer;
+use Contao\Message;
 use Contao\StringUtil;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Service\SpacingsFileRegenerator;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ThemeListener
 {
+    use AliasGeneratorTrait;
+
     /**
      * @param DataContainer $objDca
-     * @throws Exception
+     * @throws \Exception
      */
-    public function generateAlias(DataContainer $objDca)
+    public function generateAlias(DataContainer $objDca): void
     {
-        $autoAlias = false;
-
-        // Generate alias if there is none
-        if ($objDca->activeRecord->alias == '') {
-            $autoAlias = true;
-            $objDca->activeRecord->alias = StringUtil::generateAlias($objDca->activeRecord->name);
-        }
-
-        $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_theme WHERE alias=? AND id!=?")
-            ->execute($objDca->activeRecord->alias, $objDca->id);
-
-        // Check whether the event alias exists
-        if ($objAlias->numRows) {
-            if (!$autoAlias) {
-                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $objDca->activeRecord->alias));
-            }
-
-            $objDca->activeRecord->alias .= '-' . $objDca->id;
-        }
-        Database::getInstance()->prepare("UPDATE tl_theme SET alias=? WHERE id=?")->execute($objDca->activeRecord->alias, $objDca->activeRecord->id);
+        $this->generateAliasForTable($objDca, 'tl_theme');
     }
 
-    public function generateThemeCustomizationFile(DataContainer $objDca)
+    public function generateThemeCustomizationFile(DataContainer $objDca): void
     {
-        $strToRoot = "../../..";
         $fs = new Filesystem();
 
-        $themeAlias = $objDca->activeRecord->alias;
+        $record = $objDca->getCurrentRecord() ?? [];
+        $themeAlias = $record['alias'] ?? null;
         $targetPath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/';
         $themePath = $targetPath . $themeAlias;
 
@@ -66,22 +50,42 @@ class ThemeListener
 
         // Delegate to the shared regenerator service so this code path and the
         // SpacingsCacheWarmer perform exactly the same render/diff/backup/write.
-        System::getContainer()->get(SpacingsFileRegenerator::class)->regenerate();
+        // The record is already saved at this point: report a failed write instead of
+        // aborting the request, so the editor sees it and can fix the permissions.
+        try {
+            System::getContainer()->get(SpacingsFileRegenerator::class)->regenerate();
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not regenerate the spacings file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
+        }
 
-        $objTheme = $objDca->activeRecord;
-        $themeAlias = $objTheme->alias;
-        $themePath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
+        $projectDir = System::getContainer()->getParameter('kernel.project_dir');
+        $themePath = $projectDir . '/files/themes/' . $themeAlias . '/';
+
+        // Relative path from the imports file's directory back to the project root, derived
+        // like in LayoutImportsFileRegenerator instead of hardcoding the depth.
+        $strToRoot = rtrim($fs->makePathRelative($projectDir, $themePath), '/');
 
         $arrComponents = [];
-        if ($GLOBALS['responsive']['bootstrapComponents']) {
-            foreach ($GLOBALS['responsive']['bootstrapComponents'] as $strComponent) {
-                if (!$objTheme->responsiveBootstrapComponents || in_array($strComponent, StringUtil::deserialize($objTheme->responsiveBootstrapComponents, true))) {
-                    $strPath = str_replace("__ROOT__", $strToRoot, $GLOBALS['responsive']['bootstrap']);
-                    $arrComponents[] = "@import '$strPath/$strComponent';";
-                }
+        foreach ($GLOBALS['responsive']['bootstrapComponents'] ?? [] as $strComponent) {
+            if (!($record['responsiveBootstrapComponents'] ?? null) || in_array($strComponent, StringUtil::deserialize($record['responsiveBootstrapComponents'], true))) {
+                $strPath = str_replace("__ROOT__", $strToRoot, (string) ($GLOBALS['responsive']['bootstrap'] ?? ''));
+                $arrComponents[] = "@import '$strPath/$strComponent';";
             }
         }
 
-        file_put_contents($themePath . '_imports-' . $themeAlias . '.scss', implode("\n", $arrComponents));
+        $strImportsFile = $themePath . '_imports-' . $themeAlias . '.scss';
+        $strImports = implode("\n", $arrComponents);
+
+        // Same write contract as the regenerators: only on change, atomically, and a failure
+        // is reported instead of aborting the already saved record.
+        try {
+            if (!$fs->exists($strImportsFile) || file_get_contents($strImportsFile) !== $strImports) {
+                $fs->dumpFile($strImportsFile, $strImports);
+            }
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not write the theme imports file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
+        }
     }
 }
