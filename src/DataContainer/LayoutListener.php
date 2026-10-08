@@ -3,9 +3,11 @@
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
 use Contao\DataContainer;
+use Contao\Message;
 use Contao\System;
 use Contao\ThemeModel;
 use Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class LayoutListener
@@ -30,7 +32,14 @@ class LayoutListener
             $fs->mkdir($targetPath);
         }
 
-        System::getContainer()->get(LayoutImportsFileRegenerator::class)->regenerate($themeAlias, $layoutAlias);
+        // The record is already saved at this point: report a failed write instead of
+        // aborting the request, so the editor sees it and can fix the permissions.
+        try {
+            System::getContainer()->get(LayoutImportsFileRegenerator::class)->regenerate($themeAlias, $layoutAlias);
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not regenerate the layout imports file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
+        }
 
         // layoutvars and layout are user-owned scaffold files: created once,
         // never overwritten, so editor customizations survive any rebuild.

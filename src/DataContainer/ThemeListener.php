@@ -3,9 +3,11 @@
 namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
 use Contao\DataContainer;
+use Contao\Message;
 use Contao\StringUtil;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Service\SpacingsFileRegenerator;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ThemeListener
@@ -49,7 +51,14 @@ class ThemeListener
 
         // Delegate to the shared regenerator service so this code path and the
         // SpacingsCacheWarmer perform exactly the same render/diff/backup/write.
-        System::getContainer()->get(SpacingsFileRegenerator::class)->regenerate();
+        // The record is already saved at this point: report a failed write instead of
+        // aborting the request, so the editor sees it and can fix the permissions.
+        try {
+            System::getContainer()->get(SpacingsFileRegenerator::class)->regenerate();
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not regenerate the spacings file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
+        }
 
         $themePath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
 
