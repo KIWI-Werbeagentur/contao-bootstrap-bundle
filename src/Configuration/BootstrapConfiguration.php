@@ -9,7 +9,7 @@ use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
-    // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
+    // TODO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
     protected array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => '', 'container' => '100%'],
         'sm' => ['breakpoint' => 576, 'modifier' => '-sm', 'container' => '540px'],
@@ -115,20 +115,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     protected array $arrElementGroupSpacingTopDefaults = ['xs' => self::SPACING_NO_OP];
     protected array $arrElementGroupSpacingBottomDefaults = ['xs' => self::SPACING_NO_OP];
 
-    protected array|string $varOrderClasses = [];
-
-    protected array|string $varAlignSelfClasses = [];
-
-    protected array|string $varFlexDirectionClasses = [];
-
-    protected array|string $varJustifyContentClasses = [];
-
-    protected array|string $varAlignItemsClasses = [];
-
-    protected array|string $varAlignContentClasses = [];
-
-    protected array|string $varFlexWrapClasses = [];
-
     protected array $arrRowCols = [
         'auto' => 'row-cols{{modifier}}-auto',
         1 => 'row-cols{{modifier}}-1',
@@ -214,23 +200,71 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         parent::__construct($objDca);
 
-        $this->arrAlignmentContent = [
-            'normal' => 'normal',
-            'start' => 'start',
-            'center' => 'center',
-            'end' => 'end',
-            'between' => 'between',
-            'around' => 'around',
-            'evenly' => 'evenly'
+        $this->arrOrder = [
+            'default' => '',
+            '0' => 'order{{modifier}}-0',
+            '1' => 'order{{modifier}}-1',
+            '2' => 'order{{modifier}}-2',
+            '3' => 'order{{modifier}}-3',
+            '4' => 'order{{modifier}}-4',
+            '5' => 'order{{modifier}}-5',
+            'first' => 'order{{modifier}}-first',
+            'last' => 'order{{modifier}}-last',
         ];
 
-        $this->arrIcons['alignContent']['around'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-around.svg";
-        $this->arrIcons['alignContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-evenly.svg";
-        $this->arrIcons['alignContent']['between'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-between.svg";
+        $this->arrAlignmentContent = [
+            'default' => '',
+            'start' => 'align-content{{modifier}}-start',
+            'center' => 'align-content{{modifier}}-center',
+            'end' => 'align-content{{modifier}}-end',
+            'between' => 'align-content{{modifier}}-between',
+            'around' => 'align-content{{modifier}}-around',
+        ];
 
-        $this->arrIcons['justifyContent']['around'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-around.svg";
-        $this->arrIcons['justifyContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-evenly.svg";
-        $this->arrIcons['justifyContent']['between'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-between.svg";
+        $this->arrJustifyContent = [
+            'default' => '',
+            'start' => 'justify-content{{modifier}}-start',
+            'center' => 'justify-content{{modifier}}-center',
+            'end' => 'justify-content{{modifier}}-end',
+            'between' => 'justify-content{{modifier}}-between',
+            'around' => 'justify-content{{modifier}}-around',
+            'evenly' => 'justify-content{{modifier}}-evenly',
+        ];
+
+        $this->arrAlignmentItems = [
+            'default' => '',
+            'stretch' => 'align-items{{modifier}}-stretch',
+            'baseline' => 'align-items{{modifier}}-baseline',
+            'start' => 'align-items{{modifier}}-start',
+            'center' => 'align-items{{modifier}}-center',
+            'end' => 'align-items{{modifier}}-end',
+        ];
+
+        $this->arrAlignmentSelf = [
+            'default' => '',
+            'stretch' => 'align-self{{modifier}}-stretch',
+            'baseline' => 'align-self{{modifier}}-baseline',
+            'start' => 'align-self{{modifier}}-start',
+            'center' => 'align-self{{modifier}}-center',
+            'end' => 'align-self{{modifier}}-end',
+        ];
+
+        $this->arrFlexDirection = [
+            'default' => '',
+            'row' => 'flex{{modifier}}-row',
+            'column' => 'flex{{modifier}}-column',
+            'row-reverse' => 'flex{{modifier}}-row-reverse',
+            'column-reverse' => 'flex{{modifier}}-column-reverse',
+        ];
+
+        $this->arrFlexWrap = [
+            'default' => '',
+            'wrap' => 'flex{{modifier}}-wrap',
+            'nowrap' => 'flex{{modifier}}-nowrap',
+            'wrap-reverse' => 'flex{{modifier}}-wrap-reverse',
+        ];
+
+        $this->replaceFlexIcons();
 
         // Re-key the vertical-spacing scale to config-driven space-N (+ dynamic
         // `default`) before the deprecation mode runs, so the mode still gates only
@@ -246,6 +280,34 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $this->applyGutterScale();
 
         $this->applyRowGapScale();
+    }
+
+    /**
+     * Remove the `space-` prefix for Bootstrap flexbox utility icons.
+     *
+     * The backend icon map was originally keyed with the full CSS value names
+     * (`space-around`, `space-evenly`, `space-between`). The class arrays above use
+     * the shorter Bootstrap modifier names (`around`, `evenly`, `between`), so the
+     * old `space-*` keys are dropped to avoid stale/unused icon entries.
+     */
+    protected function replaceFlexIcons(): void
+    {
+        unset(
+            $this->arrIcons['alignContent']['space-around'],
+            $this->arrIcons['alignContent']['space-evenly'],
+            $this->arrIcons['alignContent']['space-between'],
+            $this->arrIcons['justifyContent']['space-around'],
+            $this->arrIcons['justifyContent']['space-evenly'],
+            $this->arrIcons['justifyContent']['space-between'],
+        );
+
+        $this->arrIcons['alignContent']['around'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-around.svg";
+        $this->arrIcons['alignContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-evenly.svg";
+        $this->arrIcons['alignContent']['between'] = "/bundles/kiwiresponsivebase/icons/align-content/flex-content-space-between.svg";
+
+        $this->arrIcons['justifyContent']['around'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-around.svg";
+        $this->arrIcons['justifyContent']['evenly'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-evenly.svg";
+        $this->arrIcons['justifyContent']['between'] = "/bundles/kiwiresponsivebase/icons/justify-content/flex-content-space-between.svg";
     }
 
     /**
@@ -540,19 +602,24 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     public function __get(string $name)
     {
         return match ($name) {
-            'varOrderClasses' => "order{{modifier}}-{{value}}",
-            'varAlignSelfClasses' => "align-self{{modifier}}-{{value}}",
-            'varFlexDirectionClasses' => "flex{{modifier}}-{{value}}",
-            'varJustifyContentClasses' => "justify-content{{modifier}}-{{value}}",
-            'varAlignItemsClasses' => "align-items{{modifier}}-{{value}}",
-            'varAlignContentClasses' => "align-content{{modifier}}-{{value}}",
-            'varFlexWrapClasses' => "flex{{modifier}}-{{value}}",
+            'varOrderClasses' => $this->arrOrder,
+            'varAlignSelfClasses' => $this->arrAlignmentSelf,
+            'varFlexDirectionClasses' => $this->arrFlexDirection,
+            'varJustifyContentClasses' => $this->arrJustifyContent,
+            'varAlignItemsClasses' => $this->arrAlignmentItems,
+            'varAlignContentClasses' => $this->arrAlignmentContent,
+            'varFlexWrapClasses' => $this->arrFlexWrap,
             'varRowColsClasses' => $this->arrRowCols,
             'varGutterClasses' => $this->arrGutterClasses,
             'varRowGapClasses' => $this->arrRowGapClasses,
             'varContainerPaddingXClasses' => $this->arrContainerPaddingXClasses,
             default => parent::__get($name),
         };
+    }
+
+    public function getOrder(): array
+    {
+        return array_keys($this->arrOrder);
     }
 
     public function getRowCols(): array

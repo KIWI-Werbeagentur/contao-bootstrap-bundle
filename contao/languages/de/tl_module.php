@@ -34,8 +34,8 @@ $GLOBALS['TL_LANG']['tl_module']['position'] = [
     1 => "An welcher Position, soll der Inhalt eingefügt werden?",
     'options' => [
         'out::before' => 'Vor dem Navigations-Container',
-        'out::after' => 'Im Navigations-Container, vor der Navigation',
-        'in::before' => 'Im Navigations-Container, nach der Navigation',
-        'in::after' => 'Nach dem Navigations-Container',
+        'in::before' => 'Im Navigations-Container, vor der Navigation',
+        'in::after' => 'Im Navigations-Container, nach der Navigation',
+        'out::after' => 'Nach dem Navigations-Container',
     ]
 ];

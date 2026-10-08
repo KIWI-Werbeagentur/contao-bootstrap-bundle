@@ -1,6 +1,6 @@
 <?php
 
-$GLOBALS['TL_LANG']['tl_form_field']['responsiveHelpBlock'] = ['Hilfetext', 'Hier können Sie einen HIlfstext angeben, der unter dem Formularfeld angezeigt wird.'];
+$GLOBALS['TL_LANG']['tl_form_field']['responsiveHelpBlock'] = ['Hilfetext', 'Hier können Sie einen Hilfstext angeben, der unter dem Formularfeld angezeigt wird.'];
 $GLOBALS['TL_LANG']['tl_form_field']['responsiveInlineOptions'] = ['Optionen nebeneinander', 'Optionen nebeneinander statt untereinander anzeigen.'];
 $GLOBALS['TL_LANG']['tl_form_field']['responsiveInputAttribute'] = ['Text hinzufügen', 'Text hinzufügen, der direkt neben dem Eingabefeld angezeigt wird.'];
 $GLOBALS['TL_LANG']['tl_form_field']['responsiveInputAttributeContent'] = ['Text', 'Bitte geben Sie hier den Text ein.'];
