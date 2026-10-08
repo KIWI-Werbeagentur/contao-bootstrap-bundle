@@ -255,7 +255,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyVerticalSpacingScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['vertical-spacing'])) {
             return;
         }
@@ -316,7 +316,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyRowGapScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['row-gap'])) {
             return;
         }
@@ -337,7 +337,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyContainerPaddingXScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['container-padding-x'])) {
             return;
         }
@@ -358,7 +358,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyGutterScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['gutter'])) {
             return;
         }
@@ -390,7 +390,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      *
      * @return GridConfig
      */
-    private function gridConfig(): array
+    private static function gridConfig(): array
     {
         try {
             $container = System::getContainer();
@@ -659,26 +659,34 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     public static function subsystemOptionLabels(string $subsystem, string $decimalSeparator = '.', ?string $partial = null): array
     {
-        try {
-            $container = \Contao\System::getContainer();
-            $grid = ($container->hasParameter('kiwi_bootstrap.grid'))
-                ? $container->getParameter('kiwi_bootstrap.grid')
-                : [];
-        } catch (\Throwable) {
-            $grid = [];
-        }
+        $grid = self::gridConfig();
 
-        if (!\is_array($grid) || empty($grid[$subsystem])) {
+        if (empty($grid[$subsystem])) {
             return [];
         }
 
-        $breakpoints = [];
-        foreach ((new self())->arrBreakpoints as $key => $definition) {
-            $breakpoints[(string) $key] = (int) $definition['breakpoint'];
+        return (new GridStyles([$subsystem => $grid[$subsystem]], self::configuredBreakpointMinWidths()))
+            ->optionLabels($subsystem, $decimalSeparator, $partial);
+    }
+
+    /**
+     * Breakpoint min widths of the configuration class actually in use - a project may register
+     * a subclass with its own $arrBreakpoints in $GLOBALS['responsive']['config'], which
+     * `new self()` would miss. Cached per class: the language files ask for several subsystem
+     * labels per load, and each construction runs every apply*Scale() pass.
+     *
+     * @return array<string, int>
+     */
+    private static function configuredBreakpointMinWidths(): array
+    {
+        static $cache = [];
+
+        $class = $GLOBALS['responsive']['config'] ?? self::class;
+        if (!\is_string($class) || !is_a($class, self::class, true)) {
+            $class = self::class;
         }
 
-        return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], $breakpoints))
-            ->optionLabels($subsystem, $decimalSeparator, $partial);
+        return $cache[$class] ??= (new $class())->getBreakpointMinWidths();
     }
 
     /**
@@ -689,16 +697,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     public static function defaultIsNoOp(string $subsystem, string $partial = GridStyles::GENERIC_DEFAULT): bool
     {
-        try {
-            $container = \Contao\System::getContainer();
-            $grid = ($container->hasParameter('kiwi_bootstrap.grid'))
-                ? $container->getParameter('kiwi_bootstrap.grid')
-                : [];
-        } catch (\Throwable) {
-            $grid = [];
-        }
+        $grid = self::gridConfig();
 
-        if (!\is_array($grid) || empty($grid[$subsystem])) {
+        if (empty($grid[$subsystem])) {
             return false;
         }
 
