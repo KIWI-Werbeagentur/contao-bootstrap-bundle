@@ -63,12 +63,10 @@ class ThemeListener
         $themePath = System::getContainer()->getParameter('kernel.project_dir') . '/files/themes/' . $themeAlias . '/';
 
         $arrComponents = [];
-        if ($GLOBALS['responsive']['bootstrapComponents']) {
-            foreach ($GLOBALS['responsive']['bootstrapComponents'] as $strComponent) {
-                if (!($record['responsiveBootstrapComponents'] ?? null) || in_array($strComponent, StringUtil::deserialize($record['responsiveBootstrapComponents'], true))) {
-                    $strPath = str_replace("__ROOT__", $strToRoot, $GLOBALS['responsive']['bootstrap']);
-                    $arrComponents[] = "@import '$strPath/$strComponent';";
-                }
+        foreach ($GLOBALS['responsive']['bootstrapComponents'] ?? [] as $strComponent) {
+            if (!($record['responsiveBootstrapComponents'] ?? null) || in_array($strComponent, StringUtil::deserialize($record['responsiveBootstrapComponents'], true))) {
+                $strPath = str_replace("__ROOT__", $strToRoot, (string) ($GLOBALS['responsive']['bootstrap'] ?? ''));
+                $arrComponents[] = "@import '$strPath/$strComponent';";
             }
         }
 
