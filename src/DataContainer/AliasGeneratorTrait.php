@@ -40,7 +40,7 @@ trait AliasGeneratorTrait
                 $alias = $base . '-' . $i;
             }
         }
-        Database::getInstance()->prepare("UPDATE {$table} SET alias=? WHERE id=?")->execute($alias, $objDca->id);
+        Database::getInstance()->prepare("UPDATE `{$table}` SET alias=? WHERE id=?")->execute($alias, $objDca->id);
 
         // The explicit UPDATE bypasses getCurrentRecord()'s static cache; clear it so the
         // follow-up onsubmit callback reads the new alias.
@@ -49,7 +49,7 @@ trait AliasGeneratorTrait
 
     private function aliasExists(string $table, string $alias, int|string|null $id): bool
     {
-        return Database::getInstance()->prepare("SELECT id FROM {$table} WHERE alias=? AND id!=?")
+        return Database::getInstance()->prepare("SELECT id FROM `{$table}` WHERE alias=? AND id!=?")
             ->execute($alias, $id)
             ->numRows > 0;
     }
