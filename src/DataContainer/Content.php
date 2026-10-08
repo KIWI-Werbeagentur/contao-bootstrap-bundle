@@ -15,7 +15,7 @@ class Content
     public function addOverwriteOption(DataContainer $objDca): void
     {
         //Bug: Loads content with article-id when opening content-overview of article --> leads to permission errors
-        if(Input::get("do") == 'article' && Input::get("table") == 'tl_content' && !Input::get("act") == 'edit') return;
+        if(Input::get("do") == 'article' && Input::get("table") == 'tl_content' && Input::get("act") !== 'edit') return;
 
         if (!$objDca->getCurrentRecord()) return;
 
