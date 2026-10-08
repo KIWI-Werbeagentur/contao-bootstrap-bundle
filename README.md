@@ -187,9 +187,11 @@ adds spacing a project's own rules never covered, because those only ever matche
 1. Extend your selectors to match both spellings, so the CSS is correct under either mode:
    ```scss
    > .pt#{$infix}-default,
-   > .pt#{$infix}-default-articleTop { --spacing-top-default: 0; }
+   > .pt#{$infix}-default-articleTop { --spacing-top: 0; }
    ```
-   (and the `-articleBottom` counterpart for `pb`).
+   (and the `-articleBottom` counterpart for `pb`, setting `--spacing-bottom`). Override
+   `--spacing-top` / `--spacing-bottom`, the variables the spacing classes set and
+   `[data-spacing-*]` applies as padding.
 2. Drop the old spelling once nothing references it.
 3. Set `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=3` to opt out of the alias and the deprecated
    buckets for good.
