@@ -456,9 +456,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * For installations that still use the deprecated spacing options (env mode 1 or
      * 2) the bundle's field defaults are reverted to `['xs' => 'default']`.
      *
-     * If a subclass has redeclared any of the three defaults properties (detected
-     * via reflection by comparing the effective declared defaults to this bundle's
-     * declared defaults), the user-chosen value is left alone.
+     * If a subclass has redeclared `arrSpacingTopDefaults` or `arrSpacingBottomDefaults`
+     * (detected via reflection by comparing the effective declared defaults to this
+     * bundle's declared defaults), the user-chosen value is left alone. The deprecated
+     * `arrSpacingsDefaults` is not reverted: nothing reads it anymore - the field
+     * defaults come from the top/bottom properties only.
      */
     private function retainLegacyDefaultsForBcMode(): void
     {
