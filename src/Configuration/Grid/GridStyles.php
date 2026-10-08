@@ -23,6 +23,8 @@ use Kiwi\Contao\BootstrapBundle\Configuration\SpacingScale;
  * Semantic variables are single-valued. The literal option key `default` is not
  * a concrete value and is rejected inside defaults/variables; as a selectable
  * backend option it resolves to {@see self::defaultVar()}.
+ *
+ * @phpstan-type GridConfig array<string, array{options?: list<string>, defaults?: array<string, mixed>, variables?: array<string, scalar|null>}>
  */
 final class GridStyles
 {
@@ -36,13 +38,16 @@ final class GridStyles
      * --kiwi-<subsystem>-default-<partial> variable and no utility class; the wiring
      * suppresses the class at render. Only meaningful for subsystems whose rendering
      * can omit the class (the vertical content spacing's [data-spacing-*] mechanism).
+     *
+     * It is all-or-nothing: a single `default` class serves every breakpoint and only
+     * its CSS variable varies, so "no output at some breakpoints" has no CSS form.
+     * Hence `noop` is only accepted as a scalar (or an xs-only map), never mixed with
+     * values in a responsive map - rejected by the bundle config tree (so the container
+     * build fails), and again by {@see self::normalizeResponsive()} for configs that
+     * reach this class by other means.
      */
     public const NO_OP = 'noop';
 
-    /**
-     * @param array<string, array{options?: list<string>, defaults?: array<string, mixed>, variables?: array<string, string>}> $grid
-     * @param array<string, int> $breakpoints breakpoint id => min width in px (xs => 0)
-     */
     /**
      * Memoized {@see self::build()} result (the object is immutable).
      *
@@ -50,6 +55,10 @@ final class GridStyles
      */
     private ?array $built = null;
 
+    /**
+     * @param GridConfig $grid The processed `kiwi_bootstrap.grid` configuration.
+     * @param array<string, int> $breakpoints breakpoint id => min width in px (xs => 0)
+     */
     public function __construct(
         private readonly array $grid,
         private readonly array $breakpoints,
@@ -117,7 +126,7 @@ final class GridStyles
      */
     public function defaultValues(string $subsystem, string $partial = self::GENERIC_DEFAULT): array
     {
-        $raw = $this->grid[$subsystem]['defaults'][$partial] ?? null;
+        $raw = $this->resolvedDefault($subsystem, $partial);
         if ($raw === null) {
             return [];
         }
@@ -135,18 +144,32 @@ final class GridStyles
 
     /**
      * Whether a subsystem's configured default for the given partial is `noop`
-     * (i.e. the `default` option should emit no class for that partial). Reads only
-     * the xs/scalar value — a responsive default is value-based, not noop.
+     * (i.e. the `default` option should emit no class for that partial). Reading the
+     * xs/scalar value is sufficient: `noop` cannot be mixed into a responsive map
+     * (rejected by the bundle config tree, see KiwiBootstrapBundle::configure()).
      */
     public function defaultIsNoOp(string $subsystem, string $partial = self::GENERIC_DEFAULT): bool
     {
-        $raw = $this->grid[$subsystem]['defaults'][$partial] ?? null;
+        $raw = $this->resolvedDefault($subsystem, $partial);
 
         if (is_scalar($raw)) {
             return (string) $raw === self::NO_OP;
         }
 
         return \is_array($raw) && ($raw['xs'] ?? null) === self::NO_OP;
+    }
+
+    /**
+     * The configured default of a partial, falling back to the subsystem's generic default
+     * when the partial has none of its own - the same fallback {@see self::build()} emits as
+     * `--kiwi-<subsystem>-default-<partial>: var(--kiwi-<subsystem>-default)`. Null when
+     * neither is configured.
+     */
+    private function resolvedDefault(string $subsystem, string $partial): mixed
+    {
+        $defaults = $this->grid[$subsystem]['defaults'] ?? [];
+
+        return $defaults[$partial] ?? $defaults[self::GENERIC_DEFAULT] ?? null;
     }
 
     /**
@@ -207,7 +230,7 @@ final class GridStyles
     {
         $config = $this->grid[$subsystem] ?? [];
 
-        $keys = array_values($config['options'] ?? []);
+        $keys = $config['options'] ?? [];
         $keys[] = self::GENERIC_DEFAULT;
         foreach (array_keys($config['variables'] ?? []) as $name) {
             $keys[] = (string) $name;
@@ -395,8 +418,8 @@ final class GridStyles
             ];
         }
 
-        // A `noop` default emits no class (and no var); skip those partials so no
-        // class referencing a non-existent --kiwi-…-default-<partial> is generated.
+        // Emit a default class only where build() generates its variable: skip `noop`
+        // defaults (no var) and partials with neither an own nor a generic default.
         $partials = SubsystemRegistry::partials($subsystem);
         if ($partials === []) {
             // No partials: a single generic default class.
@@ -408,7 +431,7 @@ final class GridStyles
             }
         } else {
             foreach ($partials as $partial) {
-                if ($this->defaultIsNoOp($subsystem, $partial)) {
+                if ($this->resolvedDefault($subsystem, $partial) === null || $this->defaultIsNoOp($subsystem, $partial)) {
                     continue;
                 }
                 $entries[] = [
@@ -485,6 +508,22 @@ final class GridStyles
                         $media[$minWidth][] = ['name' => $varName, 'value' => $value];
                     }
                 }
+            }
+
+            // Registered partials without a default of their own follow the generic one. A
+            // single base-level alias is enough: it resolves against the generic variable,
+            // which already carries the responsive overrides. Skipped when the generic
+            // default is missing or `noop` - then the partial has no class either.
+            $defaults = $config['defaults'] ?? [];
+            foreach (SubsystemRegistry::partials($subsystem) as $partial) {
+                if (isset($defaults[$partial]) || !isset($defaults[self::GENERIC_DEFAULT])
+                    || $this->defaultIsNoOp($subsystem, $partial)) {
+                    continue;
+                }
+                $base[] = [
+                    'name' => self::defaultVarName($subsystem, $partial),
+                    'value' => self::defaultVar($subsystem, null),
+                ];
             }
         }
 
@@ -621,6 +660,21 @@ final class GridStyles
                 ));
             }
             $normalized[(string) $breakpoint] = (string) $option;
+        }
+
+        // `noop` means "emit no class", which cannot vary by breakpoint (one `default` class
+        // serves all of them; only its CSS variable is responsive) - so it must stand alone.
+        // The bundle config tree already rejects this at container build; this guards
+        // configs passed in directly.
+        if (\count($normalized) > 1 && \in_array(self::NO_OP, $normalized, true)) {
+            throw new \InvalidArgumentException(sprintf(
+                'grid.%s.%s mixes "%s" with other breakpoints. "%s" suppresses the class at every '
+                .'breakpoint and cannot be responsive - use it as a scalar, or use value options only.',
+                $subsystem,
+                $context,
+                self::NO_OP,
+                self::NO_OP,
+            ));
         }
 
         return $normalized;

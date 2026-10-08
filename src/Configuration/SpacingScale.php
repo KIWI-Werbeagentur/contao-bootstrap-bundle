@@ -94,7 +94,7 @@ final class SpacingScale
         $value = $step * (float) $match[1];
         $formatted = rtrim(rtrim(number_format($value, 4, '.', ''), '0'), '.');
 
-        return $formatted . ($match[2] ?? '');
+        return $formatted . $match[2];
     }
 
     /**

@@ -1,0 +1,44 @@
+<?php
+
+/*
+ * Legacy counterpart of form_fieldsetStart.html.twig.
+ *
+ * It has to reproduce the whole Twig chain on its own: contao-responsive-base ships no .html5
+ * for this identifier, so in a template hierarchy that resolves to legacy this file is the
+ * terminal template and nothing downstream would add the fieldset or inner container classes.
+ *
+ * The service behind `kiwi.contao.responsive.frontend` is swapped to BootstrapFrontendService by
+ * this bundle's OverrideServiceCompilerPass, so the calls below pick up the Bootstrap additions
+ * (responsiveContainerPaddingX, rowCols/gutter/rowGap and the structural `row`) automatically.
+ */
+
+$objResponsive = \Contao\System::getContainer()->get('kiwi.contao.responsive.frontend');
+
+// The CSS class field may carry a data-cff-condition="..." attribute (conditional form fields).
+// Split it back out so it renders as an attribute instead of ending up in the class list.
+$arrParts = explode('data-cff-condition="', (string) $this->class, 2);
+$strCffCondition = isset($arrParts[1]) ? explode('"', $arrParts[1], 2)[0] : '';
+$strCleanClasses = trim(str_replace('"', '', $arrParts[0]));
+
+$arrClasses = array_merge(
+        array('fieldset', 'formbody__area'),
+        '' !== $strCleanClasses ? preg_split('/\s+/', $strCleanClasses) : array(),
+        $objResponsive->getContainerClasses($this->responsiveContainer, $this->type, 'tl_form_field'),
+        $objResponsive->getAllResponsiveClasses($this, array(), 'tl_form_field'),
+        $this->responsiveContainer ? $objResponsive->getContainerPaddingXClasses($this, 'tl_form_field') : array()
+);
+
+$arrInnerClasses = array_merge(
+        array('fieldset__inside'),
+        $objResponsive->getAllInnerContainerClasses($this, array(), 'tl_form_field')
+);
+
+?>
+
+<fieldset class="<?= implode(' ', array_unique(array_filter($arrClasses))) ?>"<?php if ($strCffCondition): ?> data-cff-condition="<?= $strCffCondition ?>"<?php endif; ?><?php if ($this->label): ?> aria-labelledby="ctrl_<?= $this->id ?>_legend"<?php endif; ?>>
+
+    <div class="<?= implode(' ', array_unique(array_filter($arrInnerClasses))) ?>">
+        <?php if ($this->label): ?>
+            <?php // Not the fieldset's rendered legend (it sits inside the wrapper); aria-labelledby restores the group name ?>
+            <legend id="ctrl_<?= $this->id ?>_legend"><?= $this->label ?></legend>
+        <?php endif; ?>

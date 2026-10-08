@@ -113,7 +113,7 @@ class PreserveLegacySpacingsMode extends AbstractMigration
         return $this->createResult(
             true,
             sprintf(
-                'Detected stored deprecated spacing values%s. Wrote "%s" to %s so the legacy backend dropdowns stay available. Remove the variable (or set it to 0) once the data has been migrated.',
+                'Detected stored deprecated spacing values%s. Wrote "%s" to %s so the legacy backend dropdowns stay available. Migrate the stored values, then remove the variable. If you need to enforce the new spacings, despite still having deprecated stored values, set it to 3 instead (not recommended).',
                 $foundIn !== null ? sprintf(' (e.g. in table "%s")', $foundIn) : '',
                 $newLine,
                 $envFile,

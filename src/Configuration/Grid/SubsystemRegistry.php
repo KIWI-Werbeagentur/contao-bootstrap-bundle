@@ -28,7 +28,7 @@ final class SubsystemRegistry
     /** @var array<string, list<string>> */
     private static array $partials = [];
 
-    /** @var array<string, array{prefix: string, property: string}> */
+    /** @var array<string, array{prefix: string, property?: string}> */
     private static array $apply = [];
 
     private function __construct()

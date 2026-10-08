@@ -20,7 +20,6 @@
 }
 
 $sizes: {{ sizes }};
-$named-sizes: none, gap, gap-half, xxs, xs, sm, md, lg, xl, xxl;
 
 /* Value-derived vertical-spacing scale + dynamic `default-<partial>` per declared
    partial. Single source of truth: kiwi_bootstrap.grid.vertical-spacing. A
@@ -34,8 +33,11 @@ $kiwi-spacing-utilities: (
    keeping the --spacing-* / [data-spacing-*] indirection: the class sets the
    --spacing-{top,bottom} CSS variable to the entry's value, and [data-spacing-*]
    selectors then apply the actual padding. Both directions (pt/pb) are emitted.
-   Deprecated named buckets (still enabled in modes 1/2) read their --spacing-<bucket>
-   variable and are not part of the utility map. */
+   Every other offered key - the deprecated named buckets (modes 1/2) and any custom key a
+   project adds to $arrSpacings - reads its --spacing-<key> variable, as it always did, so a
+   key offered in the backend always has a class. `default` is the exception: its classes
+   are the partialed ones from the utility map, and the legacy `pt-default` alias of modes
+   1/2 is deliberately left to project CSS (see BootstrapConfiguration). */
 @each $breakpoint in map-keys($grid-breakpoints) {
   @include media-breakpoint-up($breakpoint) {
     $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
@@ -50,7 +52,7 @@ $kiwi-spacing-utilities: (
     }
 
     @each $size in $sizes {
-      @if index($named-sizes, $size) != null and not map-has-key($kiwi-spacing-utilities, $size) {
+      @if $size != default and not map-has-key($kiwi-spacing-utilities, $size) {
         .pt#{$infix}-#{$size} {
           --spacing-top: var(--spacing-#{$size});
         }

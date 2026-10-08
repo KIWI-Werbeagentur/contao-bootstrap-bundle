@@ -19,7 +19,7 @@
         .addClass(this.class|default)
         .addClass('is-invalid', hasErrors.invoke())
         .set('value', '')
-        .set('aria-describedby', "captcha_text_#{this.id}")
+        .set('aria-describedby', "captcha_text_#{this.id}" ~ (this.responsiveHelpBlock|default ? " ctrl_#{this.id}_text" : ''))
         .mergeWith(input_attributes)
         .setIfExists('placeholder', input_attributes.placeholder|default|insert_tag)
     }}>
@@ -29,7 +29,12 @@
         <div class="form-text" id="ctrl_{{ this.id }}_text">{{ this.responsiveHelpBlock|raw }}</div>
     {% endif %}
 
-    <input type="hidden" name="{{ this.name }}_hash{{ hasErrors.invoke() ? 1 + this.sum ** 2 : '' }}" value="{{ hasErrors.invoke() ? getHash.invoke() : '' }}">
+    {#- Contao 5.3 compat: Twig resolves an attribute through isset(), and Widget::__isset()
+        only answers for keys in arrAttributes/arrConfiguration there - `sum` is computed by the
+        magic getter, so it reads as null and the hash lands in the wrong field after an error.
+        From 5.7 __isset() ends in `null !== $this->__get($strKey)`, making the plain attribute
+        work. Calling the getter directly works on both. Replace with `this.sum` at the ^5.7 bump. -#}
+    <input type="hidden" name="{{ this.name }}_hash{{ hasErrors.invoke() ? 1 + this.__get('sum') ** 2 : '' }}" value="{{ hasErrors.invoke() ? getHash.invoke() : '' }}">
 
     {% if hasErrors.invoke() %}
         <div class="invalid-feedback">{{ getErrorAsString.invoke() }}</div>
@@ -40,7 +45,7 @@
             <label for="ctrl_{{ this.id }}_hp">Do not fill in this field</label>
             <input type="text" name="{{ this.name }}_name" id="ctrl_{{ this.id }}_hp" value="">
         </div>
-        {% if not this.asEditorView %}
+        {% if not this.__get('asEditorView') %}
             <script src="{{ getAjaxUrl.invoke() }}" data-id="{{ this.id }}" data-name="{{ this.name }}" async></script>
         {% endif %}
     {% endif %}

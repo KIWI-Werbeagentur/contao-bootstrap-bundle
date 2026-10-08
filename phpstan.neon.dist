@@ -1,0 +1,32 @@
+parameters:
+    level: 6
+    phpVersion:
+        min: 80300
+        max: 80500
+    # Contao magic-property classes (DB columns / template vars via __get). Listed individually
+    # so our OWN model classes stay strictly checked for typos/undefined properties.
+    universalObjectCratesClasses:
+        # core models extended via DCA
+        - Contao\ArticleModel
+        - Contao\ContentModel
+        - Contao\FilesModel
+        - Contao\LayoutModel
+        - Contao\ModuleModel
+        - Contao\PageModel
+        - Contao\ThemeModel
+        # template vars (deprecated; usages being removed) - also covers Backend/FrontendTemplate
+        - Contao\Template
+    # Symfony 6.4's DefinitionConfigurator::rootNode() returns NodeDefinition|ArrayNodeDefinition
+    # (an ArrayNodeDefinition at runtime), so the ->children() call that starts the tree is
+    # reported as undefined on NodeDefinition; Symfony 7.x generics make it analyzable. contao ^5.3 pins symfony/config
+    # ^6.4 so we cannot require 7. Only the `lowest` CI leg hits this — reportUnmatched keeps the
+    # `highest` (7.x) leg clean. Matched exactly so other builder calls stay checked.
+    ignoreErrors:
+        -
+            identifier: method.notFound
+            message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)\.$#'
+            path: src/KiwiBootstrapBundle.php
+            reportUnmatched: false
+    paths:
+        - contao
+        - src

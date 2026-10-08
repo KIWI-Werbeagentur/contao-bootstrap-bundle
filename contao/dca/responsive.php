@@ -27,7 +27,12 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveGutter'] = [
     'responsiveInputType' => 'iconedSelect',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getGutterSizeKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveGutter']['options'],
-    'eval' => ['tl_class' => 'clr w50'],
+    // Leaving the gutter unset is a legitimate state: `.row` already carries
+    // --bs-gutter-x, so no class means the framework default applies. Offer the blank
+    // option so the base breakpoint can express that, instead of being forced onto a
+    // concrete value it never had. NOT offered for container padding, where an unset
+    // value has no fallback left to fall back to.
+    'eval' => ['tl_class' => 'clr w50', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 
@@ -38,7 +43,9 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
     'responsiveInputType' => 'iconedSelect',
     'options_callback' => [$GLOBALS['responsive']['config'], 'getRowGapKeys'],
     'reference' => &$GLOBALS['TL_LANG']['responsive']['responsiveRowGap']['options'],
-    'eval' => ['tl_class' => 'w50'],
+    // Row gap has no predecessor at all - a project upgrading into it spaces its
+    // elements some other way - so "unset" must stay expressible and must survive a save.
+    'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true],
     'sql' => 'blob NULL',
 ];
 
@@ -47,12 +54,16 @@ $GLOBALS['TL_DCA']['container']['fields']['responsiveRowGap'] = [
  * grid-overrides.scss.
  *
  * IMPORTANT: this field is intentionally NOT part of the generic `container`
- * field group. The `container` group auto-merges into content elements and
- * form fields (see contao-responsive-base tl_content.php / tl_form_field.php),
- * which must NOT carry a container-padding option. It lives under its own
- * `containerPadding` bucket and is added explicitly only where wanted:
- *   - tl_article  (this bundle's tl_article.php)
- *   - tl_layout   header/footer (this bundle's tl_layout.php) */
+ * field group. The `container` group auto-merges into every content element and
+ * form field (see contao-responsive-base tl_content.php / tl_form_field.php), but
+ * padding only makes sense on an element that is itself a container: the .cx-*
+ * selectors are compound with the container-size class on the same element. It
+ * lives under its own `containerPadding` bucket and is added explicitly only where
+ * wanted:
+ *   - tl_article     (this bundle's tl_article.php)
+ *   - tl_layout      header/footer (this bundle's tl_layout.php)
+ *   - tl_content     only in container mode, via the responsiveContainer_responsiveContainerSizes
+ *   - tl_form_field  subpalette (this bundle's tl_content.php / tl_form_field.php) */
 $GLOBALS['TL_DCA']['containerPadding']['fields']['responsiveContainerPaddingX'] = [
     'default' => ['xs' => 'default'],
     'label' => &$GLOBALS['TL_LANG']['responsive']['responsiveContainerPaddingX'],

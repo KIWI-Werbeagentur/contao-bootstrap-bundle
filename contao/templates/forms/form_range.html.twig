@@ -20,8 +20,10 @@
         .set('name', this.name)
         .set('id', "ctrl_#{this.id}")
         .addClass('range form-range')
+        .addClass('is-invalid', hasErrors.invoke())
         .addClass(this.class|default)
         .set('value', value, value != '')
+        .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
         .mergeWith(getAttributes.invoke())
     }}>
 

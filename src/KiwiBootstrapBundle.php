@@ -2,6 +2,8 @@
 
 namespace Kiwi\Contao\BootstrapBundle;
 
+use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
+use Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler\HtmlSanitizerPolyfillPass;
 use Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler\OverrideServiceCompilerPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -15,6 +17,7 @@ class KiwiBootstrapBundle extends AbstractBundle
         parent::build($container);
 
         $container->addCompilerPass(new OverrideServiceCompilerPass());
+        $container->addCompilerPass(new HtmlSanitizerPolyfillPass());
     }
 
     /**
@@ -56,11 +59,25 @@ class KiwiBootstrapBundle extends AbstractBundle
                             ->end()
                             ->arrayNode('defaults')
                                 ->info('Per-partial defaults. Key "default" is the generic default; other keys are partials. Value is an option key or a {xs: …, <bp>: …} responsive map.')
+                                // Partial names must match the registry verbatim (see the grid node).
+                                ->normalizeKeys(false)
                                 ->useAttributeAsKey('partial')
-                                ->variablePrototype()->end()
+                                ->variablePrototype()
+                                    // `noop` suppresses the class at every breakpoint (one `default`
+                                    // class serves all of them), so it cannot be responsive. Checked
+                                    // here so a misconfiguration fails the container build instead of
+                                    // the requests that build the option labels.
+                                    ->validate()
+                                        ->ifTrue(static fn (mixed $v): bool => \is_array($v) && \count($v) > 1
+                                            && \in_array(GridStyles::NO_OP, $v, true))
+                                        ->thenInvalid('"'.GridStyles::NO_OP.'" cannot be mixed with other breakpoints in a responsive default, got %s. Use it as a scalar, or use value options only.')
+                                    ->end()
+                                ->end()
                             ->end()
                             ->arrayNode('variables')
                                 ->info('Semantic name => option key, exposed as --kiwi-<subsystem>-<name>.')
+                                // Keep hyphenated names (e.g. "section-gap") intact for the variable name.
+                                ->normalizeKeys(false)
                                 ->useAttributeAsKey('name')
                                 ->scalarPrototype()->end()
                             ->end()
@@ -70,7 +87,10 @@ class KiwiBootstrapBundle extends AbstractBundle
             ->end();
     }
 
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    /**
+     * @param array<string, mixed> $config
+     */
+    public function loadExtension(array $config, ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
         $grid = $config['grid'] ?? [];
 
@@ -84,7 +104,7 @@ class KiwiBootstrapBundle extends AbstractBundle
         }
         unset($subsystem);
 
-        $builder->setParameter('kiwi_bootstrap.grid', $grid);
+        $container->setParameter('kiwi_bootstrap.grid', $grid);
     }
 
     /**
@@ -126,8 +146,10 @@ class KiwiBootstrapBundle extends AbstractBundle
         $keys = array_keys(array_diff_key($add, $remove));
 
         usort($keys, static function (string $a, string $b): int {
-            $na = preg_match('/(\d+)$/', $a, $m) ? (int) $m[1] : null;
-            $nb = preg_match('/(\d+)$/', $b, $m) ? (int) $m[1] : null;
+            // Only `space-N` is a scale step; a special key that merely ends in digits
+            // (e.g. `fluid-2`) belongs with the other special keys after the scale.
+            $na = preg_match('/^space-(\d+)$/', $a, $m) ? (int) $m[1] : null;
+            $nb = preg_match('/^space-(\d+)$/', $b, $m) ? (int) $m[1] : null;
 
             return match (true) {
                 $na !== null && $nb !== null => $na <=> $nb,
@@ -147,9 +169,11 @@ class KiwiBootstrapBundle extends AbstractBundle
      * loadExtension), `defaults` merge per key. The subsystems themselves are
      * registered in contao/config/config.php.
      */
-    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
-        $container->extension('kiwi_bootstrap', [
+        // prependExtensionConfig() (not $configurator->extension(..., prepend: true)) so this
+        // works on Symfony 6.4, whose ContainerConfigurator::extension() has no $prepend arg.
+        $container->prependExtensionConfig('kiwi_bootstrap', [
             'grid' => [
                 'gutter' => [
                     'options' => ['space-0', 'space-2', 'space-4', 'space-6', 'space-8', 'space-12', 'space-20'],
@@ -191,6 +215,6 @@ class KiwiBootstrapBundle extends AbstractBundle
                     ],
                 ],
             ],
-        ], true);
+        ]);
     }
 }

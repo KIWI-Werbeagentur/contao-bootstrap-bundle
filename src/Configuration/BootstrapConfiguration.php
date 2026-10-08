@@ -2,14 +2,19 @@
 
 namespace Kiwi\Contao\BootstrapBundle\Configuration;
 
+use Contao\DataContainer;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 use Kiwi\Contao\BootstrapBundle\Configuration\Grid\SubsystemRegistry;
 use Kiwi\Contao\ResponsiveBaseBundle\Configuration\ResponsiveConfiguration;
 
+/**
+ * @phpstan-import-type GridConfig from GridStyles
+ */
 class BootstrapConfiguration extends ResponsiveConfiguration
 {
     // TO DO: SHELL COMMAND TO CREATE/UPDATE SCSS FILE
+    /** @var array<string, array{breakpoint: int, modifier: string, container: string}>  */
     protected array $arrBreakpoints = [
         'xs' => ['breakpoint' => 0, 'modifier' => '', 'container' => '100%'],
         'sm' => ['breakpoint' => 576, 'modifier' => '-sm', 'container' => '540px'],
@@ -19,6 +24,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xxl' => ['breakpoint' => 1400, 'modifier' => '-xxl', 'container' => '1320px'],
     ];
 
+    /** @var array<string, string>  */
     protected array $arrContainerSizes = [
         'container-fluid' => 'container-fluid',
         'container' => 'container',
@@ -34,6 +40,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
     protected string $strRow = 'row';
 
+    /** @var array<int|string, string>  */
     protected array $arrCols = [
         12 => 'col{{modifier}}-12',
         11 => 'col{{modifier}}-11',
@@ -52,8 +59,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'hidden' => 'd{{modifier}}-none-only',
     ];
 
+    /** @var array<string, int|string>  */
     protected array $arrColsDefaults = ['xs' => 12];
 
+    /** @var array<int|string, string>  */
     protected array $arrOffsets = [
         'none' => 'offset{{modifier}}-0',
         'auto' => 'ms{{modifier}}-auto',
@@ -71,8 +80,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         12 => 'offset{{modifier}}-12',
     ];
 
+    /** @var array<string, int|string>  */
     protected array $arrOffsetsDefaults = ['xs' => 'none'];
 
+    /** @var array<int|string, string>  */
     protected array $arrSpacings = [
         // Bootstrap-aligned spacer sizes; emit dedicated ".p[t|b]-spacer-N" classes
         // (see contao/templates/twig/responsive/spacings.scss.twig) to avoid collisions
@@ -107,28 +118,18 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     /**
      * @deprecated since 1.x, will be removed in 2.0.
      *             Use {@see self::$arrSpacingTopDefaults} / {@see self::$arrSpacingBottomDefaults}.
+     * @var array<string, int|string>
      */
     protected array $arrSpacingsDefaults = ['xs' => 7];
+    /** @var array<string, int|string> */
     protected array $arrSpacingTopDefaults = ['xs' => 7];
+    /** @var array<string, int|string> */
     protected array $arrSpacingBottomDefaults = ['xs' => 7];
 
     protected array $arrElementGroupSpacingTopDefaults = ['xs' => self::SPACING_NO_OP];
     protected array $arrElementGroupSpacingBottomDefaults = ['xs' => self::SPACING_NO_OP];
 
-    protected array|string $varOrderClasses = [];
-
-    protected array|string $varAlignSelfClasses = [];
-
-    protected array|string $varFlexDirectionClasses = [];
-
-    protected array|string $varJustifyContentClasses = [];
-
-    protected array|string $varAlignItemsClasses = [];
-
-    protected array|string $varAlignContentClasses = [];
-
-    protected array|string $varFlexWrapClasses = [];
-
+    /** @var array<int|string, string> */
     protected array $arrRowCols = [
         'auto' => 'row-cols{{modifier}}-auto',
         1 => 'row-cols{{modifier}}-1',
@@ -139,20 +140,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         6 => 'row-cols{{modifier}}-6',
     ];
 
-    protected array|string $varRowColsClasses = [];
-
-    /**
-     * Holds the resolved per-breakpoint container-padding-x classes for the current element.
-     * Populated by the responsive engine via the {@see self::__get()} mapping below.
-     */
-    protected array|string $varContainerPaddingXClasses = [];
-
     /**
      * Full enumeration of all gutter tokens to their class templates.
      * Order is preserved in the BE menu via {@see self::getGutterSizeKeys()}.
      * Projects extending the available spacers override this property (and the SCSS `$gutters` map).
      *
-     * @var array<string, string>
+     * @var array<int|string, string>
      */
     protected array $arrGutterClasses = [
         '0'   => 'gx{{modifier}}-0',
@@ -174,7 +167,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * the container's own outer L/R padding (opt-in, fluid-gated, non-inheriting)
      * independently from the inter-column gutter.
      *
-     * @var array<string, string>
+     * @var array<int|string, string>
      */
     protected array $arrContainerPaddingXClasses = [
         '0'   => 'cx{{modifier}}-0',
@@ -194,7 +187,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * Full enumeration of row-gap tokens to their class templates.
      * Maps to the row-gap-{N} utilities backported from Bootstrap 5.3 via extend-utilities.scss.
      *
-     * @var array<string, string>
+     * @var array<int|string, string>
      */
     protected array $arrRowGapClasses = [
         '0'   => 'row-gap{{modifier}}-0',
@@ -210,7 +203,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         '10'  => 'row-gap{{modifier}}-10',
     ];
 
-    public function __construct($objDca = null)
+    public function __construct(DataContainer|null $objDca = null)
     {
         parent::__construct($objDca);
 
@@ -262,7 +255,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyVerticalSpacingScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['vertical-spacing'])) {
             return;
         }
@@ -291,7 +284,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         $scale = [];
         foreach ($styles->optionKeys('vertical-spacing') as $key) {
             if ($key === GridStyles::GENERIC_DEFAULT && $hasPartials) {
-                $scale[$key] = 'p{{direction}}{{modifier}}-default-{{partial}}';
+                $scale[$key] = $this->genericDefaultClassTemplate();
             } else {
                 $scale[$key] = 'p{{direction}}{{modifier}}-' . $key;
             }
@@ -323,7 +316,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyRowGapScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['row-gap'])) {
             return;
         }
@@ -344,7 +337,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyContainerPaddingXScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['container-padding-x'])) {
             return;
         }
@@ -365,7 +358,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function applyGutterScale(): void
     {
-        $grid = $this->gridConfig();
+        $grid = self::gridConfig();
         if (empty($grid['gutter'])) {
             return;
         }
@@ -395,16 +388,19 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * The processed `kiwi_bootstrap.grid` configuration, or [] when unavailable
      * (e.g. CLI without a booted container).
      *
-     * @return array<string, mixed>
+     * @return GridConfig
      */
-    private function gridConfig(): array
+    private static function gridConfig(): array
     {
         try {
             $container = System::getContainer();
-            if ($container !== null && $container->hasParameter('kiwi_bootstrap.grid')) {
+            if ($container->hasParameter('kiwi_bootstrap.grid')) {
                 $config = $container->getParameter('kiwi_bootstrap.grid');
 
-                return \is_array($config) ? $config : [];
+                if (\is_array($config)) {
+                    /** @var GridConfig $config Trusted shape from the DI config tree. */
+                    return $config;
+                }
             }
         } catch (\Throwable) {
             // Fall through.
@@ -425,6 +421,10 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      *   3          →  only the space-N scale + `default` (explicit opt-in — same dropdown as the
      *                 implicit default; signals intent to the migration so it won't auto-write a
      *                 fallback even when stored content still uses deprecated values)
+     *
+     * Modes 1 and 2 additionally emit the pre-partial `default` class alias — see
+     * {@see self::genericDefaultClassTemplate()}, which owns that behaviour and its
+     * removal path.
      */
     private function applyDeprecatedSpacingsMode(): void
     {
@@ -456,9 +456,11 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      * For installations that still use the deprecated spacing options (env mode 1 or
      * 2) the bundle's field defaults are reverted to `['xs' => 'default']`.
      *
-     * If a subclass has redeclared any of the three defaults properties (detected
-     * via reflection by comparing the effective declared defaults to this bundle's
-     * declared defaults), the user-chosen value is left alone.
+     * If a subclass has redeclared `arrSpacingTopDefaults` or `arrSpacingBottomDefaults`
+     * (detected via reflection by comparing the effective declared defaults to this
+     * bundle's declared defaults), the user-chosen value is left alone. The deprecated
+     * `arrSpacingsDefaults` is not reverted: nothing reads it anymore - the field
+     * defaults come from the top/bottom properties only.
      */
     private function retainLegacyDefaultsForBcMode(): void
     {
@@ -486,34 +488,75 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     private function getDeprecatedSpacingsMode(): int
     {
-        return (int) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? 0);
+        $value = (string) ($_ENV['KIWI_BOOTSTRAP_DEPRECATED_SPACINGS'] ?? '');
+
+        // Validate the whole value: an (int) cast alone would accept numeric prefixes such
+        // as "1foo" or "2.5". Same exact match as PreserveLegacySpacingsMode::hasExplicitMode().
+        return \in_array($value, ['1', '2', '3'], true) ? (int) $value : 0;
     }
 
-
-
     /**
-     * Normalize a "default override" config — as accepted by the
-     * $GLOBALS['responsive'] hooks above — into a `['<side>' => ['<breakpoint>' => <value>]]`
-     * map. Three input shapes are accepted:
+     * The class template the generic `default` vertical-spacing option renders as.
      *
-     *   - scalar                          → applied to every side at the xs breakpoint
-     *   - ['<side>' => scalar]            → that side at the xs breakpoint
-     *   - ['<side>' => ['<bp>' => ...]]   → assigned as-is (an empty array clears the side)
+     * `default` is the one option key inherited from the pre-subsystem config, where it
+     * rendered as `p[t|b]{infix}-default`. Making it partial-aware renamed that class, which
+     * silently breaks project CSS written against the old name, so the deprecation mode decides
+     * which spelling(s) an install gets:
      *
-     * Every side key is checked against $validSides, every breakpoint against
-     * $this->arrBreakpoints and every leaf value against the keys of $validValues.
-     * Any unknown side, unknown breakpoint or invalid leaf value throws.
+     *   0 / 3  →  `p[t|b]{infix}-default-<partial>`  (the new name only)
+     *   1      →  `p[t|b]{infix}-default`            (the old name only — legacy installs)
+     *   2      →  both, space separated              (mid-migration, knowingly on both)
      *
-     * @param mixed                    $config      the raw $GLOBALS['responsive'][$globalKey] value
-     * @param list<string>             $validSides  accepted side keys
-     * @param array<int|string, mixed> $validValues map whose keys enumerate the allowed leaf values
-     * @param string                   $globalKey   global array key, used verbatim in error messages
+     * Mode 1 renders the old name *instead of*, not alongside, the partialed one. Emitting both
+     * is not equivalent to the legacy behaviour: the partialed class sets `--spacing-top` /
+     * `--spacing-bottom`, and those are custom properties, so they inherit. Any descendant
+     * carrying `[data-spacing-top]` without a spacing class of its own then picks the value up
+     * and applies it - which is exactly how the article templates wire background articles, the
+     * classes sitting on the wrapper and the attributes moved to `mod_article__main`. On a legacy
+     * install those variables were never set (the named buckets drove padding directly), so that
+     * indirection resolved to nothing; re-introducing the variables alongside the old class
+     * revives it and adds spacing where a project's own rules only ever covered the class path.
+     * Mode 1 therefore has to keep the variables out entirely.
      *
-     * @return array<string, array<string, int|string>>
+     * Modes 1/2 are exactly the installs
+     * {@see \Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode} switches on
+     * automatically, i.e. those still storing deprecated values - which are the ones carrying
+     * legacy CSS for the old class name. Mode 0 is a fresh install and mode 3 an explicit opt-in
+     * to the new names, so neither gets the old spelling.
      *
-     * @throws \InvalidArgumentException
+     * REMOVAL PATH - the old spelling is a migration crutch, not a steady state.
+     *
+     * It cannot be correct forever: one legacy class cannot express two partials. While it is
+     * rendered, configuring `--kiwi-vertical-spacing-default-articleTop` differently from
+     * `--kiwi-vertical-spacing-default-articleBottom` has no effect - under mode 1 the partialed
+     * classes are not rendered at all, and under mode 2 a project styling `.pt-default` with
+     * `!important` (the common legacy pattern) overrides them.
+     *
+     * Per-project exit, in order:
+     *   1. Extend the project's selectors to match both spellings, e.g.
+     *      `.pt-default, .pt-default-articleTop { ... }` (and the `-articleBottom` counterpart
+     *      for `pb`), so the CSS is correct under either mode.
+     *   2. Move to mode 2 and check the rendering, the variables now being live.
+     *   3. Drop the old spelling once nothing references it, and set
+     *      `KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=3` to opt out for good.
+     *
+     * Bundle-side removal: drop this method together with the deprecated named buckets in the
+     * next major, at which point modes 1/2 disappear with it.
+     *
+     * @deprecated since 1.x, will be removed in 2.0 together with the deprecated named spacing
+     *             buckets. Migrate projects to mode 3.
      */
+    private function genericDefaultClassTemplate(): string
+    {
+        $strPartialed = 'p{{direction}}{{modifier}}-default-{{partial}}';
+        $strLegacy = 'p{{direction}}{{modifier}}-default';
 
+        return match ($this->getDeprecatedSpacingsMode()) {
+            1 => $strLegacy,
+            2 => $strPartialed . ' ' . $strLegacy,
+            default => $strPartialed,
+        };
+    }
 
     /**
      * Named-bucket spacing keys deprecated in favour of the value-derived space-N
@@ -537,7 +580,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         'xxl',
     ];
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         return match ($name) {
             'varOrderClasses' => "order{{modifier}}-{{value}}",
@@ -555,21 +598,33 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         };
     }
 
+    /**
+     * @return list<int|string>
+     */
     public function getRowCols(): array
     {
         return array_keys($this->arrRowCols);
     }
 
+    /**
+     * @return list<int|string>
+     */
     public function getGutterSizeKeys(): array
     {
         return array_keys($this->arrGutterClasses);
     }
 
+    /**
+     * @return list<int|string>
+     */
     public function getRowGapKeys(): array
     {
         return array_keys($this->arrRowGapClasses);
     }
 
+    /**
+     * @return list<int|string>
+     */
     public function getContainerPaddingXKeys(): array
     {
         return array_keys($this->arrContainerPaddingXClasses);
@@ -585,7 +640,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         $widths = [];
         foreach ($this->arrBreakpoints as $key => $definition) {
-            $widths[$key] = (int) ($definition['breakpoint'] ?? 0);
+            $widths[$key] = (int) $definition['breakpoint'];
         }
 
         return $widths;
@@ -606,26 +661,34 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     public static function subsystemOptionLabels(string $subsystem, string $decimalSeparator = '.', ?string $partial = null): array
     {
-        try {
-            $container = \Contao\System::getContainer();
-            $grid = ($container !== null && $container->hasParameter('kiwi_bootstrap.grid'))
-                ? $container->getParameter('kiwi_bootstrap.grid')
-                : [];
-        } catch (\Throwable) {
-            $grid = [];
-        }
+        $grid = self::gridConfig();
 
-        if (!\is_array($grid) || empty($grid[$subsystem])) {
+        if (empty($grid[$subsystem])) {
             return [];
         }
 
-        $breakpoints = [];
-        foreach ((new self())->arrBreakpoints as $key => $definition) {
-            $breakpoints[(string) $key] = (int) ($definition['breakpoint'] ?? 0);
+        return (new GridStyles([$subsystem => $grid[$subsystem]], self::configuredBreakpointMinWidths()))
+            ->optionLabels($subsystem, $decimalSeparator, $partial);
+    }
+
+    /**
+     * Breakpoint min widths of the configuration class actually in use - a project may register
+     * a subclass with its own $arrBreakpoints in $GLOBALS['responsive']['config'], which
+     * `new self()` would miss. Cached per class: the language files ask for several subsystem
+     * labels per load, and each construction runs every apply*Scale() pass.
+     *
+     * @return array<string, int>
+     */
+    private static function configuredBreakpointMinWidths(): array
+    {
+        static $cache = [];
+
+        $class = $GLOBALS['responsive']['config'] ?? self::class;
+        if (!\is_string($class) || !is_a($class, self::class, true)) {
+            $class = self::class;
         }
 
-        return (new \Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles([$subsystem => $grid[$subsystem]], $breakpoints))
-            ->optionLabels($subsystem, $decimalSeparator, $partial);
+        return $cache[$class] ??= (new $class())->getBreakpointMinWidths();
     }
 
     /**
@@ -636,16 +699,9 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      */
     public static function defaultIsNoOp(string $subsystem, string $partial = GridStyles::GENERIC_DEFAULT): bool
     {
-        try {
-            $container = \Contao\System::getContainer();
-            $grid = ($container !== null && $container->hasParameter('kiwi_bootstrap.grid'))
-                ? $container->getParameter('kiwi_bootstrap.grid')
-                : [];
-        } catch (\Throwable) {
-            $grid = [];
-        }
+        $grid = self::gridConfig();
 
-        if (!\is_array($grid) || empty($grid[$subsystem])) {
+        if (empty($grid[$subsystem])) {
             return false;
         }
 

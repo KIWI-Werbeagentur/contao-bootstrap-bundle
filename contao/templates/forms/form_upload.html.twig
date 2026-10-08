@@ -21,6 +21,7 @@
         .addClass('is-invalid', hasErrors.invoke())
         .addClass(this.class|default)
         .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
+        .set('multiple', true, this.multipleFiles|default)
         .mergeWith(getAttributes.invoke())
     }}>
 

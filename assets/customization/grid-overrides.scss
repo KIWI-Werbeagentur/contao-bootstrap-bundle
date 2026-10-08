@@ -83,6 +83,16 @@
   }
 }
 
+// Bootstrap's offset is a plain percentage of the row, which matched while the row was
+// widened by its negative margins. Without them, skipping N columns means skipping N
+// column widths plus N gaps: N/12 * (100% + gap) - the same algebra as make-col(), so
+// `offset-N col-(12-N)` ends flush with the row and an offset column lines up with a
+// regular one starting at the same grid line.
+@mixin make-col-offset($size, $columns: $grid-columns) {
+  $num: divide($size, $columns);
+  margin-left: if($num == 0, 0, calc(#{$num} * (100% + var(--#{$prefix}gutter-x))));
+}
+
 @mixin row-cols($count) {
   > * {
     flex: 0 0 auto;

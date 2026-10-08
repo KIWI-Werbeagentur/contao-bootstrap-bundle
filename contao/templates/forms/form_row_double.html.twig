@@ -1,16 +1,23 @@
+{#- Contao 5.3 compat: Twig resolves an attribute through isset(), and Widget::__isset()
+    only answers for keys in arrAttributes/arrConfiguration there - so keys the magic getter
+    handles explicitly (`prefix`, `asEditorView`) read as null and the value is silently lost.
+    From 5.7 __isset() ends in `null !== $this->__get($strKey)`, making the plain attribute work.
+    Calling the getter directly works on both. Replace with `this.prefix` at the ^5.7 bump. -#}
+{% set widgetPrefix = this.__get('prefix') %}
+
 {% set wrapperAttributes = attrs()
-    .addClass([this.prefix, 'form-group', this.class|default])
+    .addClass([widgetPrefix, 'form-group', this.class|default])
     .addClass(this.bootstrapClasses|default, this.addBootstrap|default)
     .mergeWith(wrapperAttributes|default)
 %}
 
 <div{{ wrapperAttributes }}>
-    <div class="{{ this.prefix }} form-group">
+    <div class="{{ widgetPrefix }} form-group">
         {% block label %}{% endblock %}
         {% block field %}{% endblock %}
     </div>
 
-    <div class="{{ this.prefix }} confirm form-group">
+    <div class="{{ widgetPrefix }} confirm form-group">
         {% block label2 %}{% endblock %}
         {% block field2 %}{% endblock %}
     </div>

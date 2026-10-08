@@ -14,12 +14,17 @@ use Twig\Environment;
  * The processed config ({@see GridStyles}) is the data source; the SCSS shape
  * (mixin + auto-include) lives in the @Contao/responsive/grid.scss.twig template.
  * With no grid configured the file is an empty, no-op mixin.
+ *
+ * @phpstan-import-type GridConfig from GridStyles
  */
 class GridStylesRegenerator
 {
     private const TWIG_TEMPLATE   = '@Contao/responsive/grid.scss.twig';
     private const RELATIVE_TARGET = '/files/themes/_grid.scss';
 
+    /**
+     * @param GridConfig $grid The processed `kiwi_bootstrap.grid` configuration.
+     */
     public function __construct(
         private readonly Filesystem $filesystem,
         private readonly Environment $twig,
@@ -29,6 +34,8 @@ class GridStylesRegenerator
 
     /**
      * @return bool true if the file was (re)written, false on no-op.
+     *
+     * @throws \Symfony\Component\Filesystem\Exception\IOException if the file cannot be written
      */
     public function regenerate(): bool
     {
@@ -63,7 +70,9 @@ class GridStylesRegenerator
             return false;
         }
 
-        file_put_contents($targetFile, $rendered);
+        // dumpFile() writes atomically (temp file + rename) and throws on failure, so a failed
+        // write neither reports success nor leaves a truncated file behind.
+        $this->filesystem->dumpFile($targetFile, $rendered);
 
         return true;
     }

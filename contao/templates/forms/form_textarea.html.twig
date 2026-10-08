@@ -20,6 +20,14 @@
             {% endif %}
     {% endif %}
 
+    {#- Contao 5.3 compat: Twig resolves an attribute through isset(), and Widget::__isset()
+        only answers for keys in arrAttributes/arrConfiguration there - FormTextarea keeps `rows`
+        and `cols` in its own properties behind the magic getter, so they read as null and the
+        textarea loses its size. From 5.7 __isset() ends in `null !== $this->__get($strKey)`,
+        making the plain attribute work. Calling the getter directly works on both. Replace with
+        `this.rows` / `this.cols` at the ^5.7 bump. -#}
+    {% set textarea_rows = this.__get('rows') %}
+    {% set textarea_cols = this.__get('cols') %}
     {% set textarea_attributes = attrs(getAttributes.invoke()) %}
 
     <textarea{{ attrs()
@@ -28,12 +36,12 @@
         .addClass('textarea form-control')
         .addClass('is-invalid', hasErrors.invoke())
         .addClass(this.class|default)
-        .set('rows', this.rows)
-        .set('cols', this.cols)
+        .set('rows', textarea_rows)
+        .set('cols', textarea_cols)
         .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
         .mergeWith(textarea_attributes)
         .setIfExists('placeholder', textarea_attributes.placeholder|default|insert_tag)
-    }}>{{ this.value|insert_tag }}</textarea>
+    }}>{{ this.value|default|insert_tag }}</textarea>
 
     {% if this.responsiveInputAttribute|default %}
             {% if this.responsiveInputAttributePosition|default == 'after' %}
