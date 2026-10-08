@@ -423,7 +423,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
      *                 fallback even when stored content still uses deprecated values)
      *
      * Modes 1 and 2 additionally emit the pre-partial `default` class alias — see
-     * {@see self::emitLegacyDefaultAlias()}, which owns that behaviour and its
+     * {@see self::genericDefaultClassTemplate()}, which owns that behaviour and its
      * removal path.
      */
     private function applyDeprecatedSpacingsMode(): void
