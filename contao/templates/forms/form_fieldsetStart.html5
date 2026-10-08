@@ -35,9 +35,10 @@ $arrInnerClasses = array_merge(
 
 ?>
 
-<fieldset class="<?= implode(' ', array_unique(array_filter($arrClasses))) ?>"<?php if ($strCffCondition): ?> data-cff-condition="<?= $strCffCondition ?>"<?php endif; ?>>
+<fieldset class="<?= implode(' ', array_unique(array_filter($arrClasses))) ?>"<?php if ($strCffCondition): ?> data-cff-condition="<?= $strCffCondition ?>"<?php endif; ?><?php if ($this->label): ?> aria-labelledby="ctrl_<?= $this->id ?>_legend"<?php endif; ?>>
 
     <div class="<?= implode(' ', array_unique(array_filter($arrInnerClasses))) ?>">
         <?php if ($this->label): ?>
-            <legend><?= $this->label ?></legend>
+            <?php // Not the fieldset's rendered legend (it sits inside the wrapper); aria-labelledby restores the group name ?>
+            <legend id="ctrl_<?= $this->id ?>_legend"><?= $this->label ?></legend>
         <?php endif; ?>
