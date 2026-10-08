@@ -25,21 +25,32 @@ trait AliasGeneratorTrait
             $alias = StringUtil::generateAlias((string) ($record['name'] ?? ''));
         }
 
-        $objAlias = Database::getInstance()->prepare("SELECT id FROM {$table} WHERE alias=? AND id!=?")
-            ->execute($alias, $objDca->id);
-
         // Check whether the alias exists
-        if ($objAlias->numRows) {
+        if ($this->aliasExists($table, $alias, $objDca->id)) {
             if (!$autoAlias) {
                 throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $alias));
             }
 
-            $alias .= '-' . $objDca->id;
+            // The ID suffix can itself be taken (e.g. by a record named "Foo 7"),
+            // so keep counting until the candidate is unused.
+            $base = $alias . '-' . $objDca->id;
+            $alias = $base;
+
+            for ($i = 2; $this->aliasExists($table, $alias, $objDca->id); ++$i) {
+                $alias = $base . '-' . $i;
+            }
         }
         Database::getInstance()->prepare("UPDATE {$table} SET alias=? WHERE id=?")->execute($alias, $objDca->id);
 
         // The explicit UPDATE bypasses getCurrentRecord()'s static cache; clear it so the
         // follow-up onsubmit callback reads the new alias.
         DataContainer::clearCurrentRecordCache((int) $objDca->id, $table);
+    }
+
+    private function aliasExists(string $table, string $alias, int|string|null $id): bool
+    {
+        return Database::getInstance()->prepare("SELECT id FROM {$table} WHERE alias=? AND id!=?")
+            ->execute($alias, $id)
+            ->numRows > 0;
     }
 }
