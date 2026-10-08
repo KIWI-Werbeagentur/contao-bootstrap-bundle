@@ -74,6 +74,18 @@ class ThemeListener
             }
         }
 
-        file_put_contents($themePath . '_imports-' . $themeAlias . '.scss', implode("\n", $arrComponents));
+        $strImportsFile = $themePath . '_imports-' . $themeAlias . '.scss';
+        $strImports = implode("\n", $arrComponents);
+
+        // Same write contract as the regenerators: only on change, atomically, and a failure
+        // is reported instead of aborting the already saved record.
+        try {
+            if (!$fs->exists($strImportsFile) || file_get_contents($strImportsFile) !== $strImports) {
+                $fs->dumpFile($strImportsFile, $strImports);
+            }
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not write the theme imports file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
+        }
     }
 }
