@@ -23,8 +23,14 @@ use Kiwi\Contao\ResponsiveBaseBundle\Migration\DelegatedModuleColumnsMigration a
  * together, which is why this is a subclass replacing the parent's service rather than a
  * second migration running beside it.
  *
- * The flag could not previously have any effect on these records, so an empty value there
- * cannot express a deliberate editor choice - it is a default nobody was ever shown.
+ * Overwriting an empty flag is safe because it never decided what these elements rendered.
+ * The checkbox was visible and editable in the backend, but before responsive-base 1.1 a
+ * delegated module took its column classes from its own tl_module row: the include
+ * element's flag, cols and offsets never reached the output. Since 1.1 the include element
+ * is the source, and an empty flag now suppresses its columns in favour of the parent's
+ * "elements per row" - the regression this migration repairs. Writing the flag together
+ * with the module's values reproduces what was rendered before, which is the only intent
+ * that existing content ever expressed.
  */
 class DelegatedModuleColumnsMigration extends BaseMigration
 {
