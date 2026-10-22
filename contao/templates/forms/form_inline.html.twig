@@ -1,0 +1,9 @@
+{#
+    Since Contao 5.3.52 the first template in the chain decides whether the Twig surrogate is
+    rendered at all, and this bundle's form_inline.html5 would be first - skipping responsive-base's
+    Twig template. This one sorts ahead of the .html5 and hands over to responsive-base explicitly
+    ('@Contao/form_inline.html.twig' would resolve to our own .html5, next in the chain), which in
+    turn extends '@Contao/form_inline.html5' - so the .html5 below stays the base, as before, and
+    remains in place for custom legacy templates that extend 'form_inline'.
+#}
+{% extends '@Contao_KiwiResponsiveBaseBundle/form_inline.html.twig' %}
