@@ -70,9 +70,6 @@ class BackfillContainerPaddingX extends AbstractMigration
 
     private const FLUID_SIZE = 'container-fluid';
 
-    /** @var array<string, list<string>>|null table => columns with NULL cells */
-    private ?array $cachedTargets = null;
-
     public function __construct(private readonly Connection $connection)
     {
     }
@@ -119,10 +116,6 @@ class BackfillContainerPaddingX extends AbstractMigration
             }
         }
 
-        // The scan described the pre-update state; drop it so a second shouldRun() in the same
-        // contao:migrate pass re-reads the new one.
-        $this->cachedTargets = null;
-
         return $this->createResult(
             true,
             sprintf(
@@ -163,10 +156,6 @@ class BackfillContainerPaddingX extends AbstractMigration
      */
     private function findTargets(): array
     {
-        if ($this->cachedTargets !== null) {
-            return $this->cachedTargets;
-        }
-
         $schemaManager = $this->connection->createSchemaManager();
         $arrTargets = [];
 
@@ -191,7 +180,7 @@ class BackfillContainerPaddingX extends AbstractMigration
             }
         }
 
-        return $this->cachedTargets = $arrTargets;
+        return $arrTargets;
     }
 
     private function findSizeColumn(string $strTable): ?string
