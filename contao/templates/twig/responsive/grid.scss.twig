@@ -52,7 +52,12 @@ $kiwi-cx-utilities: (
 
       @if not $skip {
         @each $key, $value in $kiwi-cx-utilities {
-          $sel: ".container#{$csuffix}.cx#{$infix}-#{$key}";
+          // Bootstrap's `.container-<bp> { @extend .container-fluid; }` would graft
+          // every bounded container onto the unbounded fluid rules; an attribute
+          // selector (same specificity) is invisible to @extend.
+          $sel: if($csuffix == "-fluid",
+            '[class~="container-fluid"].cx#{$infix}-#{$key}',
+            ".container#{$csuffix}.cx#{$infix}-#{$key}");
 
           @if $ceilMax == null and $min == null {
             // container-fluid, xs cx: applies everywhere, no media query.
