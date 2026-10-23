@@ -233,12 +233,14 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
         $type = self::getProp($varData, 'type') ?: null;
 
+        $blnHasGridFields = false;
         $arrBootstrapClasses = [];
         foreach ($arrSpecs as [$strKey, $strDefaultField, $strMethod]) {
             $strField = $arrFields[$strKey] ?? $strDefaultField;
             if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
                 continue;
             }
+            $blnHasGridFields = true;
             $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod(self::getProp($varData, $strField)));
         }
 
@@ -246,10 +248,11 @@ class BootstrapFrontendService extends ResponsiveFrontendService
 
         // The structural `row` class enables the Bootstrap flex layout that makes the col-*,
         // flex-direction, justify-content, etc. utilities produced above and by the parent
-        // take effect. Emit it only when at least one of those is actually being applied -
-        // otherwise we would slap `.row` onto wrappers of element types that have no
-        // responsive container settings at all.
-        if ($arrBootstrapClasses || $arrParentClasses) {
+        // take effect. Emit it for every element type whose palette carries the grid fields,
+        // even when they are all left empty (an unset gutter still falls back through `.row`),
+        // but not onto wrappers of element types that have no responsive container settings
+        // at all.
+        if ($blnHasGridFields || $arrBootstrapClasses || $arrParentClasses) {
             return array_merge(['row'], $arrBootstrapClasses, $arrParentClasses);
         }
 
