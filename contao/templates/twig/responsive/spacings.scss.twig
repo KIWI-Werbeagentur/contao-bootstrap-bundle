@@ -17,6 +17,10 @@
   --spacing-lg: 4rem;
   --spacing-xl: 6rem;
   --spacing-xxl: 8rem;
+{% if legacyDefaultAlias %}
+  /* Legacy `default` bucket, still rendered as `pt-default` / `pb-default` in mode 1. */
+  --spacing-default: 2.5rem;
+{% endif %}
 }
 
 $sizes: {{ sizes }};
@@ -36,8 +40,9 @@ $kiwi-spacing-utilities: (
    Every other offered key - the deprecated named buckets (modes 1/2) and any custom key a
    project adds to $arrSpacings - reads its --spacing-<key> variable, as it always did, so a
    key offered in the backend always has a class. `default` is the exception: its classes
-   are the partialed ones from the utility map, and the legacy `pt-default` alias of modes
-   1/2 is deliberately left to project CSS (see BootstrapConfiguration). */
+   are the partialed ones from the utility map. Mode 1 renders the legacy `pt-default` alias
+   instead, which gets the pre-partial bucket value here so legacy installs keep their spacing
+   (see BootstrapConfiguration::rendersLegacyDefaultAlias()). */
 @each $breakpoint in map-keys($grid-breakpoints) {
   @include media-breakpoint-up($breakpoint) {
     $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
@@ -50,6 +55,15 @@ $kiwi-spacing-utilities: (
         --spacing-bottom: #{$value};
       }
     }
+
+{% if legacyDefaultAlias %}
+    .pt#{$infix}-default {
+      --spacing-top: var(--spacing-default);
+    }
+    .pb#{$infix}-default {
+      --spacing-bottom: var(--spacing-default);
+    }
+{% endif %}
 
     @each $size in $sizes {
       @if $size != default and not map-has-key($kiwi-spacing-utilities, $size) {

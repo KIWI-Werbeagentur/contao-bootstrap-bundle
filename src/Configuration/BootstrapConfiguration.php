@@ -559,6 +559,19 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     }
 
     /**
+     * Whether the generated spacings SCSS must define the legacy `pt-default` / `pb-default`
+     * classes and their `--spacing-default` value, as releases before the partialed defaults did.
+     * Only mode 1 renders the legacy spelling alone; mode 2 also renders the partialed class,
+     * which already carries the value.
+     *
+     * @deprecated since 1.x, will be removed in 2.0 together with the deprecated named spacing buckets
+     */
+    public function rendersLegacyDefaultAlias(): bool
+    {
+        return 1 === $this->getDeprecatedSpacingsMode();
+    }
+
+    /**
      * Named-bucket spacing keys deprecated in favour of the value-derived space-N
      * scale. `default` is intentionally NOT listed: it is the permanent dynamic
      * default option (→ var(--kiwi-vertical-spacing-default)), kept in every mode.

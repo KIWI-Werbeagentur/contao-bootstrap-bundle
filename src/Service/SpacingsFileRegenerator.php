@@ -47,7 +47,8 @@ class SpacingsFileRegenerator
         // this bundle's BootstrapConfiguration when Contao globals are not yet
         // initialized.
         $configClass = $GLOBALS['responsive']['config'] ?? BootstrapConfiguration::class;
-        $sizes       = implode(', ', (new $configClass())->getSpacingsExcludingNoOp());
+        $config      = new $configClass();
+        $sizes       = implode(', ', $config->getSpacingsExcludingNoOp());
 
         // The value-derived scale + dynamic `default-<partial>` (suffix => CSS value),
         // from the same kiwi_bootstrap.grid.vertical-spacing config that drives the
@@ -61,6 +62,7 @@ class SpacingsFileRegenerator
         $rendered = $this->twig->render(self::TWIG_TEMPLATE, [
             'sizes' => $sizes,
             'spacingUtilities' => $spacingUtilities,
+            'legacyDefaultAlias' => $config instanceof BootstrapConfiguration && $config->rendersLegacyDefaultAlias(),
         ]);
         $current  = $this->filesystem->exists($targetFile) ? file_get_contents($targetFile) : null;
 
