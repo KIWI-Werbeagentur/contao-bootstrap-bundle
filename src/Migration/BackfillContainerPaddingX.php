@@ -6,7 +6,9 @@ namespace Kiwi\Contao\BootstrapBundle\Migration;
 
 use Contao\CoreBundle\Migration\AbstractMigration;
 use Contao\CoreBundle\Migration\MigrationResult;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
 
 /**
@@ -26,11 +28,17 @@ use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
  *   - A **bounded** container inset its content by 12px: the container padded, the row pulled
  *     back by the same amount, and the columns inside re-added it. `default` (space-3, 0.75rem)
  *     reproduces that.
- *   - A **fluid** container rendered its content flush to the viewport: the row's negative
- *     margin cancelled the container padding and nothing re-added it, because full-bleed
- *     content sits directly in the row rather than in a padded column. Its *declared* padding
- *     was 12px but its *effective* padding was zero, so `default` would newly indent it - a hero
- *     image would gain a 12px gutter it never had. Those get `space-0`.
+ *   - A **fluid** container is meant to render its content flush to the viewport, and in most
+ *     projects it did: full-bleed content (images, cards, sliders, custom elements) either sat
+ *     directly in the row or cancelled the column padding itself. `default` would newly indent
+ *     it - a hero image would gain a 12px gutter it never had. Those get `space-0`; an element
+ *     mixing flush and inset parts is expected to pad its inset parts itself.
+ *   - The exception is a fluid container holding nothing but plain text elements or forms
+ *     (see TEXT_TYPES). Those cannot pad themselves: their 12px inset came solely from the
+ *     column padding Bootstrap gave every direct child of a `.row`, which no longer exists.
+ *     Without `default` their text and input fields would touch the viewport edge. Only
+ *     visible children count; element groups and wrappers are not looked into, so a fluid
+ *     container holding one counts as mixed and stays flush.
  *
  * Fluidity is only decided where the record actually carries a container size of its own: the
  * article's `responsiveContainerSize`, and `responsiveContainer` on content elements and form
@@ -70,6 +78,21 @@ class BackfillContainerPaddingX extends AbstractMigration
 
     private const FLUID_SIZE = 'container-fluid';
 
+    /**
+     * Content element types that cannot inset themselves. A fluid container whose visible children
+     * are all of these types keeps the 12px inset its content used to get from the column padding.
+     */
+    private const TEXT_TYPES = [
+        'text', 'headline', 'list', 'table', 'hyperlink', 'toplink', 'markdown', 'code',
+        'description_list', 'accordionSingle', 'accordionStart', 'accordionStop', 'form',
+    ];
+
+    /**
+     * Tables whose fluid containers hold content elements: articles, and content elements acting
+     * as a container for nested ones (Contao 5). Maps the table to the `ptable` of its children.
+     */
+    private const PARENT_TABLES = ['tl_article' => 'tl_article', 'tl_content' => 'tl_content'];
+
     public function __construct(private readonly Connection $connection)
     {
     }
@@ -96,9 +119,28 @@ class BackfillContainerPaddingX extends AbstractMigration
             $strSizeColumn = $this->findSizeColumn($strTable);
 
             foreach ($arrColumns as $strColumn) {
-                // Fluid containers first: their content used to sit flush, so they must not gain
+                // Fluid containers first: their content is meant to sit flush, so they must not gain
                 // the padding the bounded ones get. Only the record's own size column decides it.
                 if (null !== $strSizeColumn && 'responsiveContainerPaddingX' === $strColumn) {
+                    // ...except those holding nothing but text elements or forms, which keep their inset
+                    $arrTextOnly = $this->findTextOnlyFluidIds($strTable, $strColumn, $strSizeColumn);
+
+                    if ($arrTextOnly !== []) {
+                        $this->connection->executeStatement(
+                            sprintf(
+                                'UPDATE %s SET %s = ? WHERE %s IS NULL AND id IN (?)',
+                                $this->connection->quoteIdentifier($strTable),
+                                $this->connection->quoteIdentifier($strColumn),
+                                $this->connection->quoteIdentifier($strColumn),
+                            ),
+                            [$strDefault, $arrTextOnly],
+                            [ParameterType::STRING, ArrayParameterType::INTEGER],
+                        );
+
+                        $arrTouched[] = sprintf('%s.%s fluid text-only→default (%d: ids %s)', $strTable, $strColumn, \count($arrTextOnly), implode(', ', $arrTextOnly));
+                        $intTotal += \count($arrTextOnly);
+                    }
+
                     $intFluid = $this->write($strTable, $strColumn, $strNone, $strSizeColumn, self::FLUID_SIZE);
 
                     if ($intFluid > 0) {
@@ -121,9 +163,10 @@ class BackfillContainerPaddingX extends AbstractMigration
             sprintf(
                 'Back-filled the container padding into %d row(s): %s. These rows predate the '
                 . 'container-padding-x subsystem and would otherwise render without any horizontal '
-                . 'container padding; fluid containers get "space-0" because the row\'s negative '
-                . 'margin used to cancel their padding, so their content rendered flush. Row gap and '
-                . 'gutter are intentionally left untouched.',
+                . 'container padding; fluid containers get "space-0" because their content is meant '
+                . 'to sit flush, except those holding only text elements or forms, which keep their '
+                . 'inset ("default") - check the listed ids. Row gap and gutter are intentionally '
+                . 'left untouched.',
                 $intTotal,
                 $arrTouched === [] ? 'none' : implode(', ', $arrTouched),
             ),
@@ -147,6 +190,36 @@ class BackfillContainerPaddingX extends AbstractMigration
         }
 
         return (int) $this->connection->executeStatement($strSql, $arrParams);
+    }
+
+    /**
+     * Ids of fluid containers in $strTable with a NULL padding value whose visible child content
+     * elements exist and are all TEXT_TYPES. Empty containers do not qualify.
+     *
+     * @return list<int>
+     */
+    private function findTextOnlyFluidIds(string $strTable, string $strColumn, string $strSizeColumn): array
+    {
+        if (!isset(self::PARENT_TABLES[$strTable])) {
+            return [];
+        }
+
+        $strVisible = "c.ptable = ? AND c.pid = p.id AND c.invisible != 1 AND (c.start = '' OR c.start <= ?) AND (c.stop = '' OR c.stop > ?)";
+        $strNow = (string) time();
+
+        return array_map('intval', $this->connection->fetchFirstColumn(
+            sprintf(
+                'SELECT p.id FROM %1$s p WHERE p.%2$s IS NULL AND p.%3$s = ?'
+                . ' AND EXISTS (SELECT 1 FROM tl_content c WHERE %4$s)'
+                . ' AND NOT EXISTS (SELECT 1 FROM tl_content c WHERE %4$s AND c.type NOT IN (?))',
+                $this->connection->quoteIdentifier($strTable),
+                $this->connection->quoteIdentifier($strColumn),
+                $this->connection->quoteIdentifier($strSizeColumn),
+                $strVisible,
+            ),
+            [self::FLUID_SIZE, self::PARENT_TABLES[$strTable], $strNow, $strNow, self::PARENT_TABLES[$strTable], $strNow, $strNow, self::TEXT_TYPES],
+            [ParameterType::STRING, ParameterType::STRING, ParameterType::STRING, ParameterType::STRING, ParameterType::STRING, ParameterType::STRING, ParameterType::STRING, ArrayParameterType::STRING],
+        ));
     }
 
     /**
