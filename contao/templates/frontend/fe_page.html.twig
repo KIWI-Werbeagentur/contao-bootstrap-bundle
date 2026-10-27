@@ -10,6 +10,9 @@
         .mergeWith(headerWrapperAttributes|default(null))
     -%}
 
+    {# The main gutter is only configurable for multi-column layouts (see tl_layout.php), so a value
+       left over from before a switch to 1cl must not render. #}
+    {%- if layout.cols != '1cl' -%}
     {% set contentsWrapperAttributes = attrs()
         .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
         .mergeWith(contentsWrapperAttributes|default(null))
@@ -26,6 +29,7 @@
         .addClass(getGutterClasses(layout.responsiveGutter ?? ''))
         .mergeWith(rightWrapperAttributes|default(null))
     -%}
+    {%- endif -%}
 
     {% set footerContainerAttributes = attrs()
         .addClass(getContainerPaddingXClasses(layout, 'tl_layout', 'responsiveContainerPaddingXFooter'))
