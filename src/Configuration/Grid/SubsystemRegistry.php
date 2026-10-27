@@ -50,9 +50,17 @@ final class SubsystemRegistry
      * @param array<string, string|callable>     $specialOptions key => CSS value or fn(string $key): string
      * @param list<string>                        $partials       partial names beyond the generic `default`
      * @param array{prefix: string, property?: string}|null $apply  class prefix + (optional) target CSS property
+     *
+     * @throws \InvalidArgumentException if a special option uses a reserved key (`default`, `space-N`)
      */
     public static function register(string $id, array $specialOptions = [], array $partials = [], ?array $apply = null): void
     {
+        foreach (array_keys($specialOptions) as $key) {
+            if ($key === GridStyles::GENERIC_DEFAULT || preg_match('/^space-\d+$/', (string) $key)) {
+                throw new \InvalidArgumentException(sprintf('Subsystem "%s": special option "%s" is reserved (built-in `default` or a `space-N` step).', $id, $key));
+            }
+        }
+
         self::$subsystems[$id] = array_merge(self::$subsystems[$id] ?? [], $specialOptions);
         self::$partials[$id] = array_values(array_unique(array_merge(self::$partials[$id] ?? [], $partials)));
 
