@@ -25,9 +25,16 @@ trait WritesEnvLocalTrait
         $envFile = $this->projectDir . '/.env.local';
         $newLine = $strVar . '=' . $strValue;
 
-        $content = $this->filesystem->exists($envFile)
-            ? (string) file_get_contents($envFile)
-            : '';
+        $content = '';
+
+        if ($this->filesystem->exists($envFile)) {
+            $content = @file_get_contents($envFile);
+
+            // Writing back an unread file would erase every other setting in it.
+            if (false === $content) {
+                throw new \RuntimeException(sprintf('Could not read "%s", so "%s" was not written. Set it manually.', $envFile, $newLine));
+            }
+        }
 
         $pattern = '/^[ \t]*(export[ \t]+)?' . preg_quote($strVar, '/') . '=.*$/m';
 
