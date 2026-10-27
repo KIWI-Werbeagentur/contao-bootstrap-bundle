@@ -15,12 +15,11 @@
 // Configuration
 {% block config %}
 @import "{{ bootstrapStyles }}/functions";
-{% if legacyGrid %}
-// KIWI_BOOTSTRAP_LEGACY_GRID: Bootstrap's stock grid (see BootstrapConfiguration::usesLegacyGrid())
-$kiwi-legacy-grid: true;
-{% endif %}
 @import "../themevars-{{ themeName }}";
 @import "layoutvars-{{ layoutName }}";
+// KIWI_BOOTSTRAP_LEGACY_GRID (see BootstrapConfiguration::usesLegacyGrid()). Set after the theme and
+// layout vars so they cannot override it: the grid-overrides import below follows the same switch.
+$kiwi-legacy-grid: {{ legacyGrid ? 'true' : 'false' }};
 {% block config_pre_variables %}
 @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/bundle-variables.scss";
 {% endblock %}
