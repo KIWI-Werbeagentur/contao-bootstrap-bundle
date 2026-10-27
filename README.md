@@ -54,7 +54,8 @@ Some options can be configured via .env variables:
 # The `default` option renders its pre-partial `pt-default` / `pb-default` class
 # instead of the partialed one in mode 1, and both in mode 2, so existing project CSS
 # keeps matching. See "The `default` class alias" below for why and the removal path.
-KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
+# Fresh projects leave it unset; the migration writes 1 for projects with stored deprecated values.
+#KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
 ```
 
 ### Implementation <a name="implementation"></a>
