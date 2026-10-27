@@ -232,8 +232,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         $this->applyDeprecatedSpacingsMode();
 
-        $this->retainLegacyDefaultsForBcMode();
-
         $this->applyContainerPaddingXScale();
 
         $this->applyGutterScale();
@@ -300,11 +298,15 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         // at its default. The partial is supplied at render time (getSpacingClasses /
         // getSpacingTop/Bottom for articles, getGroupSpacingClasses for element groups;
         // see BootstrapFrontendService).
-        $this->arrSpacingsDefaults                  = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrSpacingTopDefaults                = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrSpacingBottomDefaults             = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrElementGroupSpacingTopDefaults    = ['xs' => GridStyles::GENERIC_DEFAULT];
-        $this->arrElementGroupSpacingBottomDefaults = ['xs' => GridStyles::GENERIC_DEFAULT];
+        // A property a project subclass redeclared is its own choice and is left alone.
+        $bundleDefaults    = (new \ReflectionClass(self::class))->getDefaultProperties();
+        $effectiveDefaults = (new \ReflectionClass(static::class))->getDefaultProperties();
+
+        foreach (['arrSpacingsDefaults', 'arrSpacingTopDefaults', 'arrSpacingBottomDefaults', 'arrElementGroupSpacingTopDefaults', 'arrElementGroupSpacingBottomDefaults'] as $prop) {
+            if ($effectiveDefaults[$prop] === $bundleDefaults[$prop]) {
+                $this->$prop = ['xs' => GridStyles::GENERIC_DEFAULT];
+            }
+        }
     }
 
     /**
@@ -449,36 +451,6 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         // Mode 3 and default fallback: keep only the new spacer-based keys.
         foreach (self::DEPRECATED_SPACING_KEYS as $key) {
             unset($this->arrSpacings[$key]);
-        }
-    }
-
-    /**
-     * For installations that still use the deprecated spacing options (env mode 1 or
-     * 2) the bundle's field defaults are reverted to `['xs' => 'default']`.
-     *
-     * If a subclass has redeclared `arrSpacingTopDefaults` or `arrSpacingBottomDefaults`
-     * (detected via reflection by comparing the effective declared defaults to this
-     * bundle's declared defaults), the user-chosen value is left alone. The deprecated
-     * `arrSpacingsDefaults` is not reverted: nothing reads it anymore - the field
-     * defaults come from the top/bottom properties only.
-     */
-    private function retainLegacyDefaultsForBcMode(): void
-    {
-        $mode = $this->getDeprecatedSpacingsMode();
-        if ($mode !== 1 && $mode !== 2) {
-            return;
-        }
-
-        $bundleDefaults    = (new \ReflectionClass(self::class))->getDefaultProperties();
-        $effectiveDefaults = (new \ReflectionClass(static::class))->getDefaultProperties();
-
-        foreach (['arrSpacingTopDefaults', 'arrSpacingBottomDefaults'] as $prop) {
-            // A subclass redeclared the property → respect the project's choice.
-            if (($effectiveDefaults[$prop] ?? null) !== ($bundleDefaults[$prop] ?? null)) {
-                continue;
-            }
-
-            $this->$prop = ['xs' => 'default'];
         }
     }
 
