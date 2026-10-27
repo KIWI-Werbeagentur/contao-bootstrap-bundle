@@ -48,6 +48,10 @@ use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
  *   - the layout's header/footer sections are fluid but nest an inner wrapper between the
  *     container and the row, so their content was inset by 12px like a bounded container.
  *
+ * It also runs under KIWI_BOOTSTRAP_LEGACY_GRID (see PreserveLegacyGridMode): the stock grid emits
+ * no .cx-* rules, so the values have no effect there, but they are in place once the project
+ * switches to the marginless grid.
+ *
  * Only NULL cells are touched, so an explicit editor choice - including an explicit `space-0` -
  * is never overwritten, and the migration is idempotent.
  *

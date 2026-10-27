@@ -41,6 +41,11 @@ services:
       - '@database_connection'
       - '@filesystem'
       - '%kernel.project_dir%'
+  Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacyGridMode:
+    arguments:
+      - '@database_connection'
+      - '@filesystem'
+      - '%kernel.project_dir%'
   Kiwi\Contao\BootstrapBundle\Migration\BackfillContainerPaddingX:
     arguments:
       - '@database_connection'

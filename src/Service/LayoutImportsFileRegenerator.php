@@ -3,6 +3,7 @@
 namespace Kiwi\Contao\BootstrapBundle\Service;
 
 use Contao\System;
+use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
@@ -58,6 +59,7 @@ class LayoutImportsFileRegenerator
             'bootstrapComponents' => "@import '../_imports-{$themeAlias}.scss';",
             'bootstrapStyles'     => str_replace('__ROOT__', $strToRoot, (string) ($GLOBALS['responsive']['bootstrap'] ?? '')),
             'customStyles'        => str_replace('__ROOT__', $strToRoot, (string) ($GLOBALS['responsive']['custom'] ?? '')),
+            'legacyGrid'          => BootstrapConfiguration::usesLegacyGrid(),
         ];
 
         $rendered = $this->twig->render(self::TWIG_TEMPLATE, $arrData);

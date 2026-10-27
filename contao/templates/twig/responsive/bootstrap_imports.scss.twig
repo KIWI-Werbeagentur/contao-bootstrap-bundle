@@ -15,6 +15,10 @@
 // Configuration
 {% block config %}
 @import "{{ bootstrapStyles }}/functions";
+{% if legacyGrid %}
+// KIWI_BOOTSTRAP_LEGACY_GRID: Bootstrap's stock grid (see BootstrapConfiguration::usesLegacyGrid())
+$kiwi-legacy-grid: true;
+{% endif %}
 @import "../themevars-{{ themeName }}";
 @import "layoutvars-{{ layoutName }}";
 {% block config_pre_variables %}
@@ -35,10 +39,12 @@ $theme-colors: map-merge($theme-colors, $colors);
 {% endblock %}
 @import "{{ bootstrapStyles }}/mixins";
 {% block config_post_mixins %}
+{% if not legacyGrid %}
 /* Marginless grid override — must come AFTER {{ bootstrapStyles }}/mixins
  * (so the redefined make-row / make-col* / make-container mixins win) and BEFORE
  * the .row/.col/.container rule emission inside the component imports below. */
 @import "../../../../vendor/kiwi/contao-bootstrap/assets/customization/grid-overrides.scss";
+{% endif %}
 {% endblock %}
 @import "{{ bootstrapStyles }}/utilities";
 {% block config_post_utilities %}

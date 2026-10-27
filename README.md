@@ -56,6 +56,12 @@ Some options can be configured via .env variables:
 # keeps matching. See "The `default` class alias" below for why and the removal path.
 # Fresh projects leave it unset; the migration writes 1 for projects with stored deprecated values.
 #KIWI_BOOTSTRAP_DEPRECATED_SPACINGS=1
+
+# Renders Bootstrap's stock grid (negative row margins, column padding, container padding)
+# instead of the marginless one. Written as 1 by the migration on installations upgrading
+# from a release before the marginless grid; 0 is an explicit opt-out. Purge the cache and
+# the script cache after changing it. See "Legacy grid" below.
+#KIWI_BOOTSTRAP_LEGACY_GRID=1
 ```
 
 ### Implementation <a name="implementation"></a>
@@ -144,6 +150,28 @@ kiwi_bootstrap:
 ```
 
 Bootstrap's `$spacers` map is separate: it drives Bootstrap's own utilities (`.p-*`, `.m-*`, `.gap-*`, `.g*-*`) and the backported `.row-gap-*`. The bundle redefines keys 1, 2 and 5 and adds 6–10 (see `assets/customization/extend-spacers.scss`), so these utilities differ from stock Bootstrap. You can modify and add values via `$modify-spacers`, or completely customize the scale by overwriting `$spacers`.
+
+
+#### Legacy grid
+
+The bundle replaces Bootstrap's negative-margin grid with a marginless one: rows space their columns with `column-gap`, columns carry no padding, and containers only pad themselves through the container padding setting (`.cx-*`). How far content used to be inset came from the CSS rather than from any setting (theme rules padding columns, backgrounds reaching past the container padding, nested containers cancelling each other's padding), so it cannot be migrated reliably from the stored records.
+
+Installations upgrading from a release before the marginless grid therefore keep Bootstrap's stock grid: on the first `contao:migrate` the bundle writes `KIWI_BOOTSTRAP_LEGACY_GRID=1` to `.env.local` (detected by `tl_content` not having the `responsiveContainerPaddingX` column yet). In that mode
+
+- `assets/customization/grid-overrides.scss` is not loaded, so rows, columns, offsets and `row-cols` behave like stock Bootstrap
+- containers keep Bootstrap's max-widths (the marginless grid reduces them by the dropped padding)
+- the `.cx-*` rules are not emitted, so the container padding setting has no effect
+- the nested-container padding reset and `.row.in-grid-bg` from earlier releases are active again
+
+The spacing scale, row gap and `$spacers` are the same in both modes; the gutter setting applies as column padding instead of a gap.
+
+The container padding is back-filled in legacy mode too; the values have no effect until the project switches.
+
+**Switching to the marginless grid** (or back) is a per-project step: set the variable to `0` (or `1`), regenerate the styles and review every page. Theme rules that pad columns now add to the gap, and content of fluid containers may become flush. Regenerating takes both the Symfony cache and Contao's script cache, as the compiled layout CSS does not notice the regenerated imports:
+```sh
+vendor/bin/contao-console cache:clear
+vendor/bin/contao-console contao:automator purgeScriptCache
+```
 
 
 #### Legacy spacings (deprecated)

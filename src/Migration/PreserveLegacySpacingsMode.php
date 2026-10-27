@@ -31,6 +31,8 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class PreserveLegacySpacingsMode extends AbstractMigration
 {
+    use WritesEnvLocalTrait;
+
     private const ENV_VAR = 'KIWI_BOOTSTRAP_DEPRECATED_SPACINGS';
 
     /**
@@ -81,32 +83,8 @@ class PreserveLegacySpacingsMode extends AbstractMigration
 
     public function run(): MigrationResult
     {
-        $envFile = $this->projectDir . '/.env.local';
         $newLine = self::ENV_VAR . '=1';
-
-        $content = $this->filesystem->exists($envFile)
-            ? (string) file_get_contents($envFile)
-            : '';
-
-        // Replace existing assignment (any value, optionally `export`ed) or append at end.
-        $pattern = '/^[ \t]*(export[ \t]+)?' . preg_quote(self::ENV_VAR, '/') . '=.*$/m';
-
-        if (preg_match($pattern, $content) === 1) {
-            $content = (string) preg_replace($pattern, $newLine, $content, 1);
-        } else {
-            if ($content !== '' && !str_ends_with($content, "\n")) {
-                $content .= "\n";
-            }
-            $content .= $newLine . "\n";
-        }
-
-        $this->filesystem->dumpFile($envFile, $content);
-
-        // Populate the in-process env so a subsequent shouldRun() call inside the
-        // same `contao:migrate` invocation observes the new value. Without this,
-        // Symfony's Dotenv only re-reads on the next PHP process start and the
-        // migration loop would keep firing.
-        $_ENV[self::ENV_VAR]    = '1';
+        $envFile = $this->writeEnvLocal(self::ENV_VAR, '1');
 
         $foundIn = $this->findFirstTableWithDeprecatedValues();
 

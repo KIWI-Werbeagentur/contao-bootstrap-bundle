@@ -544,6 +544,32 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     }
 
     /**
+     * Env var switching the frontend back to Bootstrap's stock grid. Written by
+     * {@see \Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacyGridMode} on installations
+     * upgrading from a release before the marginless grid.
+     */
+    public const LEGACY_GRID_ENV = 'KIWI_BOOTSTRAP_LEGACY_GRID';
+
+    /**
+     * Whether the installation renders Bootstrap's stock negative-margin grid instead of the
+     * marginless one (`KIWI_BOOTSTRAP_LEGACY_GRID=1`):
+     *
+     *   - `.row` pulls back its columns with negative margins, columns carry the gutter as padding
+     *     and containers pad themselves (assets/customization/grid-overrides.scss is skipped)
+     *   - containers keep Bootstrap's own max-widths instead of the reduced ones
+     *   - the `.cx-*` container-padding rules are not emitted, so the container padding field
+     *     has no effect (its values are still back-filled, ready for a switch)
+     *   - kiwi.scss restores the nested-container padding reset and `.row.in-grid-bg`
+     *
+     * Everything else (spacing scale, row gap, gutter) keeps working; the gutter applies as column
+     * padding instead of a gap. Only exactly `1` enables it, `0` is an explicit opt-out.
+     */
+    public static function usesLegacyGrid(): bool
+    {
+        return '1' === (string) ($_ENV[self::LEGACY_GRID_ENV] ?? '');
+    }
+
+    /**
      * Named-bucket spacing keys deprecated in favour of the value-derived space-N
      * scale. `default` is intentionally NOT listed: it is the permanent dynamic
      * default option (→ var(--kiwi-vertical-spacing-default)), kept in every mode.

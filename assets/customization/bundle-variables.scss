@@ -1,11 +1,16 @@
 /* Overwrite Bootstrap Grid Row Columns */
 $grid-row-columns:  12 !default;
 
-// adjust for missing padding, to have the actually usable area be the same width as before
-$container-max-widths: (
+// Set to true by the imports template under KIWI_BOOTSTRAP_LEGACY_GRID (Bootstrap's stock grid)
+$kiwi-legacy-grid: false !default;
+
+// adjust for missing padding, to have the actually usable area be the same width as before.
+// The legacy grid keeps the container padding, so it keeps Bootstrap's widths: null leaves the
+// variable unset, and Bootstrap's own `!default` fills it in.
+$container-max-widths: if($kiwi-legacy-grid, null, (
   sm: 516px,
   md: 696px,
   lg: 936px,
   xl: 1116px,
   xxl: 1296px
-) !default;
+)) !default;

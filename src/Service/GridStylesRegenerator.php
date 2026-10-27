@@ -52,8 +52,9 @@ class GridStylesRegenerator
         $styles->registerRequiredSteps();
 
         // container-padding-x has no flat apply-spec; its fluid-gated classes are
-        // emitted by a bespoke loop in the template, fed from the same config.
-        $cxUtilities = isset($this->grid['container-padding-x'])
+        // emitted by a bespoke loop in the template, fed from the same config. The
+        // legacy grid pads containers itself, so it gets none.
+        $cxUtilities = isset($this->grid['container-padding-x']) && !BootstrapConfiguration::usesLegacyGrid()
             ? $styles->utilityEntries('container-padding-x')
             : [];
 
