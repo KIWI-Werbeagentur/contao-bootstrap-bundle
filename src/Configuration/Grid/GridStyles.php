@@ -419,7 +419,7 @@ final class GridStyles
         }
 
         // Emit a default class only where build() generates its variable: skip `noop`
-        // defaults (no var) and partials with neither an own nor a generic default.
+        // defaults (no var). A generic default always exists (required by the config tree).
         $partials = SubsystemRegistry::partials($subsystem);
         if ($partials === []) {
             // No partials: a single generic default class.
@@ -431,7 +431,7 @@ final class GridStyles
             }
         } else {
             foreach ($partials as $partial) {
-                if ($this->resolvedDefault($subsystem, $partial) === null || $this->defaultIsNoOp($subsystem, $partial)) {
+                if ($this->defaultIsNoOp($subsystem, $partial)) {
                     continue;
                 }
                 $entries[] = [

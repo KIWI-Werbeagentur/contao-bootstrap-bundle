@@ -82,6 +82,12 @@ class KiwiBootstrapBundle extends AbstractBundle
                                 ->scalarPrototype()->end()
                             ->end()
                         ->end()
+                        // The built-in `default` option is offered for every subsystem, so it must
+                        // resolve to something. A subsystem whose default adds nothing says so with `noop`.
+                        ->validate()
+                            ->ifTrue(static fn (array $v): bool => !isset($v['defaults'][GridStyles::GENERIC_DEFAULT]))
+                            ->thenInvalid('A grid subsystem needs a generic "defaults.default" (use "'.GridStyles::NO_OP.'" for one that renders nothing), got %s.')
+                        ->end()
                     ->end()
                 ->end()
             ->end();
