@@ -31,10 +31,12 @@ use Symfony\Component\Filesystem\Filesystem;
  * HOW AN UPGRADE IS DETECTED
  * --------------------------
  * `contao:migrate` runs the migrations before the schema update. An installation whose
- * `tl_content` exists but has no `responsiveContainerPaddingX` column yet is upgrading from a
- * release before the container-padding-x subsystem on this very run. Fresh installations (no
- * `tl_content`) and installations already on the marginless grid (column present) are left alone,
- * as is any explicit value of the variable, `0` included.
+ * `tl_content` has the bundle's `responsiveRowCols` column (present since 1.0.0) but no
+ * `responsiveContainerPaddingX` column yet is upgrading from a release before the
+ * container-padding-x subsystem on this very run. Fresh installations, first-time installs of the
+ * bundle on an existing Contao database (no `responsiveRowCols`) and installations already on the
+ * marginless grid (`responsiveContainerPaddingX` present) are left alone, as is any explicit value
+ * of the variable, `0` included.
  */
 class PreserveLegacyGridMode extends AbstractMigration
 {
@@ -64,13 +66,14 @@ class PreserveLegacyGridMode extends AbstractMigration
             return false;
         }
 
-        foreach ($schemaManager->listTableColumns('tl_content') as $column) {
-            if ('responsivecontainerpaddingx' === strtolower($column->getName())) {
-                return false;
-            }
-        }
+        $columns = array_map(
+            static fn ($column) => strtolower($column->getName()),
+            $schemaManager->listTableColumns('tl_content'),
+        );
 
-        return true;
+        // Bundle installed before (column added in 1.0.0), but not yet on the marginless grid.
+        return \in_array('responsiverowcols', $columns, true)
+            && !\in_array('responsivecontainerpaddingx', $columns, true);
     }
 
     public function run(): MigrationResult

@@ -156,7 +156,7 @@ Bootstrap's `$spacers` map is separate: it drives Bootstrap's own utilities (`.p
 
 The bundle replaces Bootstrap's negative-margin grid with a marginless one: rows space their columns with `column-gap`, columns carry no padding, and containers only pad themselves through the container padding setting (`.cx-*`). How far content used to be inset came from the CSS rather than from any setting (theme rules padding columns, backgrounds reaching past the container padding, nested containers cancelling each other's padding), so it cannot be migrated reliably from the stored records.
 
-Installations upgrading from a release before the marginless grid therefore keep Bootstrap's stock grid: on the first `contao:migrate` the bundle writes `KIWI_BOOTSTRAP_LEGACY_GRID=1` to `.env.local` (detected by `tl_content` not having the `responsiveContainerPaddingX` column yet). In that mode
+Installations upgrading from a release before the marginless grid therefore keep Bootstrap's stock grid: on the first `contao:migrate` the bundle writes `KIWI_BOOTSTRAP_LEGACY_GRID=1` to `.env.local` (detected by `tl_content` having the bundle's `responsiveRowCols` column but not yet `responsiveContainerPaddingX`; a first-time install of the bundle is not affected). In that mode
 
 - `assets/customization/grid-overrides.scss` is not loaded, so rows, columns, offsets and `row-cols` behave like stock Bootstrap
 - containers keep Bootstrap's max-widths (the marginless grid reduces them by the dropped padding)
