@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kiwi\Contao\BootstrapBundle\DependencyInjection\Compiler;
 
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Kiwi\Contao\BootstrapBundle\HtmlSanitizer\ContaoHtmlSanitizer;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,7 +36,7 @@ class HtmlSanitizerPolyfillPass implements CompilerPassInterface
             }
         }
 
-        if (!$container->has(ContaoFramework::class) && !$container->has('contao.framework')) {
+        if (!$container->has('contao.framework') || !$container->has('contao.insert_tag.parser')) {
             return;
         }
 
