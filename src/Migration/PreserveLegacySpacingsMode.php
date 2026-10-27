@@ -88,8 +88,8 @@ class PreserveLegacySpacingsMode extends AbstractMigration
             ? (string) file_get_contents($envFile)
             : '';
 
-        // Replace existing assignment (any value) or append at end.
-        $pattern = '/^[ \t]*' . preg_quote(self::ENV_VAR, '/') . '=.*$/m';
+        // Replace existing assignment (any value, optionally `export`ed) or append at end.
+        $pattern = '/^[ \t]*(export[ \t]+)?' . preg_quote(self::ENV_VAR, '/') . '=.*$/m';
 
         if (preg_match($pattern, $content) === 1) {
             $content = (string) preg_replace($pattern, $newLine, $content, 1);
