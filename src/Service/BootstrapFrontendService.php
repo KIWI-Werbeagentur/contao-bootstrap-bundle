@@ -191,8 +191,10 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      * @param array<string, string> $arrFields
      * @return list<string>
      */
-    public function getAllContainerClasses($varData, array $arrFields = [], string $table = 'tl_article', bool $skipPaletteCheck = false): array
+    public function getAllContainerClasses($varData, array $arrFields = [], ?string $table = null, bool $skipPaletteCheck = false): array
     {
+        [$table, $skipPaletteCheck] = $this->resolveTableArgument($table, $skipPaletteCheck, 'tl_article', __FUNCTION__);
+
         $arrSpecs = [
             ['containerPaddingX', 'responsiveContainerPaddingX',  'getContainerPaddingXClasses'],
         ];
@@ -216,8 +218,10 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      * @param array<string, string> $arrFields
      * @return list<string>
      */
-    public function getAllInnerContainerClasses($varData, array $arrFields = [], string $table = 'tl_content', bool $skipPaletteCheck = false): array
+    public function getAllInnerContainerClasses($varData, array $arrFields = [], ?string $table = null, bool $skipPaletteCheck = false): array
     {
+        [$table, $skipPaletteCheck] = $this->resolveTableArgument($table, $skipPaletteCheck, 'tl_content', __FUNCTION__);
+
         // Checked here as well: the fields below live in the same subpalette as the parent's, so
         // they must not render either while the selector is off - and the parent call would not
         // stop the row/gutter classes added afterwards.
