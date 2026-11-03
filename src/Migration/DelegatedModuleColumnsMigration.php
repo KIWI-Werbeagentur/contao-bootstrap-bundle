@@ -30,7 +30,8 @@ use Kiwi\Contao\ResponsiveBaseBundle\Migration\DelegatedModuleColumnsMigration a
  * is the source, and an empty flag now suppresses its columns in favour of the parent's
  * "elements per row" - the regression this migration repairs. Writing the flag together
  * with the module's values reproduces what was rendered before, which is the only intent
- * that existing content ever expressed.
+ * that existing content ever expressed. A module that rendered no widths or offsets clears
+ * the flag along with them instead.
  */
 class DelegatedModuleColumnsMigration extends BaseMigration
 {
@@ -41,7 +42,11 @@ class DelegatedModuleColumnsMigration extends BaseMigration
 
     protected function getValuesToWrite(array $arrResolved): array
     {
-        return parent::getValuesToWrite($arrResolved) + ['responsiveOverwriteRowCols' => '1'];
+        // Without widths or offsets the flag goes off with them, so a module that rendered none
+        // defers to the parent's "elements per row" exactly as before
+        $blnColumns = $arrResolved['cols'] !== '' || $arrResolved['offsets'] !== '';
+
+        return parent::getValuesToWrite($arrResolved) + ['responsiveOverwriteRowCols' => $blnColumns ? '1' : ''];
     }
 
     protected function getRequiredContentColumns(): array
