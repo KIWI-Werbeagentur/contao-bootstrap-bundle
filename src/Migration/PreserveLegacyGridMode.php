@@ -7,6 +7,8 @@ namespace Kiwi\Contao\BootstrapBundle\Migration;
 use Contao\CoreBundle\Migration\AbstractMigration;
 use Contao\CoreBundle\Migration\MigrationResult;
 use Doctrine\DBAL\Connection;
+use Kiwi\Contao\BootstrapBundle\CacheWarmer\GridStylesCacheWarmer;
+use Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer;
 use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -37,6 +39,13 @@ use Symfony\Component\Filesystem\Filesystem;
  * bundle on an existing Contao database (no `responsiveRowCols`) and installations already on the
  * marginless grid (`responsiveContainerPaddingX` present) are left alone, as is any explicit value
  * of the variable, `0` included.
+ *
+ * RE-RENDERING
+ * ------------
+ * `_grid.scss` and every `_imports-<layout>.scss` depend on the variable, and the cache warmup
+ * that precedes `contao:migrate` (contao:setup, Contao Manager) rendered them before it was set,
+ * i.e. for the marginless grid. Both are therefore re-rendered right after writing it, through
+ * their cache warmers (non-fatal, written only on change); the variable is already in `$_ENV`.
  */
 class PreserveLegacyGridMode extends AbstractMigration
 {
@@ -46,6 +55,9 @@ class PreserveLegacyGridMode extends AbstractMigration
         private readonly Connection $connection,
         private readonly Filesystem $filesystem,
         private readonly string $projectDir,
+        private readonly GridStylesCacheWarmer $gridStylesWarmer,
+        private readonly LayoutImportsCacheWarmer $layoutImportsWarmer,
+        private readonly string $cacheDir,
     ) {}
 
     public function getName(): string
@@ -80,12 +92,17 @@ class PreserveLegacyGridMode extends AbstractMigration
     {
         $envFile = $this->writeEnvLocal(BootstrapConfiguration::LEGACY_GRID_ENV, '1');
 
+        // The preceding cache warmup rendered these for the marginless grid
+        $this->gridStylesWarmer->warmUp($this->cacheDir);
+        $this->layoutImportsWarmer->warmUp($this->cacheDir);
+
         return $this->createResult(
             true,
             sprintf(
                 'Upgrade from a release before the marginless grid detected. Wrote "%s=1" to %s, so the '
                 . 'frontend keeps rendering Bootstrap\'s stock grid (negative row margins, column padding, '
-                . 'container padding) and looks as before. To switch to the marginless grid, set it to 0, '
+                . 'container padding) and looks as before, and re-rendered the grid styles and layout imports '
+                . 'SCSS accordingly. To switch to the marginless grid, set it to 0, '
                 . 'clear the cache and review every page.',
                 BootstrapConfiguration::LEGACY_GRID_ENV,
                 $envFile,

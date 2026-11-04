@@ -7,6 +7,7 @@ namespace Kiwi\Contao\BootstrapBundle\Migration;
 use Contao\CoreBundle\Migration\AbstractMigration;
 use Contao\CoreBundle\Migration\MigrationResult;
 use Doctrine\DBAL\Connection;
+use Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer;
 use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -28,6 +29,10 @@ use Symfony\Component\Filesystem\Filesystem;
      *
      * If `.env.local` already contains the variable (e.g. set to `0`), the existing
      * line is replaced rather than duplicated.
+ *
+ * `_spacings.scss` depends on the variable, and the cache warmup preceding `contao:migrate`
+ * rendered it before it was set, so it is re-rendered right after writing it, through its cache
+ * warmer (non-fatal, written only on change); the variable is already in `$_ENV`.
  */
 class PreserveLegacySpacingsMode extends AbstractMigration
 {
@@ -64,6 +69,8 @@ class PreserveLegacySpacingsMode extends AbstractMigration
         private readonly Connection $connection,
         private readonly Filesystem $filesystem,
         private readonly string $projectDir,
+        private readonly SpacingsCacheWarmer $spacingsWarmer,
+        private readonly string $cacheDir,
     ) {}
 
     public function getName(): string
@@ -86,12 +93,15 @@ class PreserveLegacySpacingsMode extends AbstractMigration
         $newLine = self::ENV_VAR . '=1';
         $envFile = $this->writeEnvLocal(self::ENV_VAR, '1');
 
+        // The preceding cache warmup rendered it without the deprecated buckets
+        $this->spacingsWarmer->warmUp($this->cacheDir);
+
         $foundIn = $this->findFirstTableWithDeprecatedValues();
 
         return $this->createResult(
             true,
             sprintf(
-                'Detected stored deprecated spacing values%s. Wrote "%s" to %s so the legacy backend dropdowns stay available. Migrate the stored values, then remove the variable. If you need to enforce the new spacings, despite still having deprecated stored values, set it to 3 instead (not recommended).',
+                'Detected stored deprecated spacing values%s. Wrote "%s" to %s so the legacy backend dropdowns stay available, and re-rendered the spacings SCSS accordingly. Migrate the stored values, then remove the variable. If you need to enforce the new spacings, despite still having deprecated stored values, set it to 3 instead (not recommended).',
                 $foundIn !== null ? sprintf(' (e.g. in table "%s")', $foundIn) : '',
                 $newLine,
                 $envFile,

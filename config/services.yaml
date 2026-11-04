@@ -38,14 +38,19 @@ services:
   Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer: ~
   Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode:
     arguments:
-      - '@database_connection'
-      - '@filesystem'
-      - '%kernel.project_dir%'
+      $connection: '@database_connection'
+      $filesystem: '@filesystem'
+      $projectDir: '%kernel.project_dir%'
+      $spacingsWarmer: '@Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer'
+      $cacheDir: '%kernel.cache_dir%'
   Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacyGridMode:
     arguments:
-      - '@database_connection'
-      - '@filesystem'
-      - '%kernel.project_dir%'
+      $connection: '@database_connection'
+      $filesystem: '@filesystem'
+      $projectDir: '%kernel.project_dir%'
+      $gridStylesWarmer: '@Kiwi\Contao\BootstrapBundle\CacheWarmer\GridStylesCacheWarmer'
+      $layoutImportsWarmer: '@Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer'
+      $cacheDir: '%kernel.cache_dir%'
   Kiwi\Contao\BootstrapBundle\Migration\BackfillContainerPaddingX:
     arguments:
       - '@database_connection'
