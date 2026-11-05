@@ -7,6 +7,8 @@
             <a class="navbar__brand navbar-brand" href="{{env::base_url}}<?= $this->localePrefix ?>"<?php if ($this->inlineSingleSRC): ?> aria-label="<?= \Contao\StringUtil::specialchars($this->alt) ?>"<?php endif; ?>>
                 <?php if ($this->inlineSingleSRC): ?>
                     <?= $this->inlineSingleSRC ?>
+                <?php elseif ($this->logoPicture): ?>
+                    <?php $this->insert('picture_default', $this->logoPicture); ?>
                 <?php else:?>
                     <img src="<?= $this->singleSRC ?>"  alt="<?= \Contao\StringUtil::specialchars($this->alt) ?>">
                 <?php endif;?>

@@ -3,10 +3,12 @@
 namespace Kiwi\Contao\BootstrapBundle\FrontendModule;
 
 use Contao\BackendTemplate;
+use Contao\CoreBundle\File\Metadata;
 use Contao\FilesModel;
 use Contao\Module;
 use Contao\ModuleModel;
 use Contao\PageModel;
+use Contao\StringUtil;
 use Contao\System;
 use enshrined\svgSanitize\Sanitizer;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,6 +64,22 @@ class BootstrapNavbar extends Module
                             $this->Template->inlineSingleSRC = $strSvg;
                         }
                     }
+                }
+            }
+
+            // Resize the logo through the image studio when a size is set, so it is served as a
+            // cacheable asset with width/height. Without a size the original path is output as before.
+            if (!$this->Template->inlineSingleSRC && array_filter(StringUtil::deserialize($this->imgSize, true))) {
+                try {
+                    $this->Template->logoPicture = System::getContainer()->get('contao.image.studio')
+                        ->createFigureBuilder()
+                        ->fromFilesModel($objFile)
+                        ->setSize($this->imgSize)
+                        ->setMetadata(new Metadata([Metadata::VALUE_ALT => (string) $this->alt]))
+                        ->build()
+                        ->getLegacyTemplateData()['picture'];
+                } catch (\Exception $e) {
+                    System::getContainer()->get('monolog.logger.contao')->error($e->getMessage());
                 }
             }
         }
