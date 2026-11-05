@@ -45,11 +45,16 @@ class BootstrapNavbar extends Module
         $objFile = FilesModel::findByPk($this->singleSRC);
 
         if ($objFile !== null) {
+            $strAbsolutePath = System::getContainer()->getParameter('kernel.project_dir') . '/' . $objFile->path;
             $this->Template->singleSRC = $objFile->path;
 
-            if ($this->inlineSvg && strtolower((string)$objFile->extension) === 'svg') {
-                $strAbsolutePath = System::getContainer()->getParameter('kernel.project_dir') . '/' . $objFile->path;
+            // Add a cache-busting parameter derived from the file's mtime, like Contao does for
+            // layout scripts and stylesheets, so a replaced logo is not served from the cache.
+            if (is_file($strAbsolutePath)) {
+                $this->Template->singleSRC .= '?v=' . substr(md5((string) filemtime($strAbsolutePath)), 0, 8);
+            }
 
+            if ($this->inlineSvg && strtolower((string)$objFile->extension) === 'svg') {
                 if (is_file($strAbsolutePath) && is_readable($strAbsolutePath)) {
                     $strSvg = file_get_contents($strAbsolutePath);
 
