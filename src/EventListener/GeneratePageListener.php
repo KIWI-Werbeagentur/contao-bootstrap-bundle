@@ -42,8 +42,6 @@ class GeneratePageListener
         // remove styles from array, so files do not get added twice
         $objLayout->framework = serialize($arrFramework);
 
-        // Breakpoints
-        $GLOBALS['TL_JAVASCRIPT'][] = 'responsive/breakpoints.js';
         // Bootstrap js
         $GLOBALS['TL_JAVASCRIPT'][] = 'assets/kiwi-twbs-bootstrap/js/bootstrap.bundle.min.js|static|defer';
     }
