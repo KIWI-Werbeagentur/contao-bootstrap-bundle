@@ -6,6 +6,7 @@ use Contao\DataContainer;
 use Contao\Message;
 use Contao\System;
 use Contao\ThemeModel;
+use Kiwi\Contao\BootstrapBundle\Service\GridStylesRegenerator;
 use Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -34,6 +35,15 @@ class LayoutListener
 
         // The record is already saved at this point: report a failed write instead of
         // aborting the request, so the editor sees it and can fix the permissions.
+        // The imports file imports the shared _grid.scss, whose only other writer is an
+        // optional cache warmer (not run on a kernel boot), so make sure it exists first.
+        try {
+            System::getContainer()->get(GridStylesRegenerator::class)->regenerate();
+        } catch (IOException $e) {
+            System::getContainer()->get('monolog.logger.contao.error')->error('Could not regenerate the grid styles file: ' . $e->getMessage(), ['exception' => $e]);
+            Message::addError($e->getMessage());
+        }
+
         try {
             System::getContainer()->get(LayoutImportsFileRegenerator::class)->regenerate($themeAlias, $layoutAlias);
         } catch (IOException $e) {
