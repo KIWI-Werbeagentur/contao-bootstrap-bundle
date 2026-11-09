@@ -41,7 +41,7 @@ use Kiwi\Contao\BootstrapBundle\Configuration\Grid\GridStyles;
  *     container holding one counts as mixed and stays flush.
  *
  * Fluidity is only decided where the record actually carries a container size of its own: the
- * article's `responsiveContainerSize`, and `responsiveContainer` on content elements and form
+ * (blueprint) article's `responsiveContainerSize`, and `responsiveContainer` on content elements and form
  * fields, which carry the padding field only in container mode and then are a container with
  * an inner row just like an article. Everything else keeps `default`:
  *
@@ -92,10 +92,15 @@ class BackfillContainerPaddingX extends AbstractMigration
     ];
 
     /**
-     * Tables whose fluid containers hold content elements: articles, and content elements acting
-     * as a container for nested ones (Contao 5). Maps the table to the `ptable` of its children.
+     * Tables whose fluid containers hold content elements: articles, blueprint articles
+     * (kiwi/contao-blueprints), and content elements acting as a container for nested ones
+     * (Contao 5). Maps the table to the `ptable` of its children.
      */
-    private const PARENT_TABLES = ['tl_article' => 'tl_article', 'tl_content' => 'tl_content'];
+    private const PARENT_TABLES = [
+        'tl_article' => 'tl_article',
+        'tl_blueprint_article' => 'tl_blueprint_article',
+        'tl_content' => 'tl_content',
+    ];
 
     public function __construct(private readonly Connection $connection)
     {
