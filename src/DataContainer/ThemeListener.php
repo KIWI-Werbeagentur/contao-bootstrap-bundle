@@ -49,7 +49,7 @@ class ThemeListener
         }
 
         // Delegate to the shared regenerator service so this code path and the
-        // SpacingsCacheWarmer perform exactly the same render/diff/backup/write.
+        // SpacingsCacheWarmer perform exactly the same render/diff/write.
         // The record is already saved at this point: report a failed write instead of
         // aborting the request, so the editor sees it and can fix the permissions.
         try {
