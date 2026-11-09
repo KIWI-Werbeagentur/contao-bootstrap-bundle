@@ -195,20 +195,8 @@ class BootstrapFrontendService extends ResponsiveFrontendService
     {
         [$table, $skipPaletteCheck] = $this->resolveTableArgument($table, $skipPaletteCheck, 'tl_article', __FUNCTION__);
 
-        $arrSpecs = [
-            ['containerPaddingX', 'responsiveContainerPaddingX',  'getContainerPaddingXClasses'],
-        ];
-
-        $type = self::getProp($varData, 'type') ?: null;
-
-        $arrBootstrapClasses = [];
-        foreach ($arrSpecs as [$strKey, $strDefaultField, $strMethod]) {
-            $strField = $arrFields[$strKey] ?? $strDefaultField;
-            if (!$this->isFieldInPalette($strField, $type, $table, $skipPaletteCheck)) {
-                continue;
-            }
-            $arrBootstrapClasses = array_merge($arrBootstrapClasses, $this->$strMethod($varData, $table, $strField, $skipPaletteCheck));
-        }
+        // Gates on the palette itself
+        $arrBootstrapClasses = $this->getContainerPaddingXClasses($varData, $table, $arrFields['containerPaddingX'] ?? 'responsiveContainerPaddingX', $skipPaletteCheck);
 
         return array_merge(parent::getAllContainerClasses($varData, $arrFields, $table, $skipPaletteCheck), $arrBootstrapClasses);
     }
