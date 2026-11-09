@@ -10,8 +10,7 @@ use Kiwi\Contao\BootstrapBundle\Configuration\SpacingScale;
  * Processes the `kiwi_bootstrap.grid` configuration: validates and resolves each
  * subsystem's options/defaults/variables against {@see SpacingScale} and the
  * {@see SubsystemRegistry}, builds the CSS-variable sets emitted to
- * files/themes/_grid.scss, registers the required scale steps, and exposes the
- * resolver helpers the per-subsystem wiring will consume.
+ * files/themes/_grid.scss, and exposes the resolver helpers the per-subsystem wiring will consume.
  *
  * Naming of the emitted custom properties:
  *   semantic variable `foo`        → --kiwi-<subsystem>-foo
@@ -72,26 +71,6 @@ final class GridStyles
     public static function defaultVar(string $subsystem, ?string $partial = null): string
     {
         return 'var(' . self::defaultVarName($subsystem, $partial) . ')';
-    }
-
-    /**
-     * Register the scale steps the grid config needs (the `space-N` options of
-     * every subsystem) with {@see SpacingScale}, so the dropdown union is populated.
-     */
-    public function registerRequiredSteps(): void
-    {
-        $steps = [];
-        foreach ($this->grid as $config) {
-            foreach ($config['options'] ?? [] as $option) {
-                if (preg_match('/^space-(\d+)$/', (string) $option, $m)) {
-                    $steps[] = (int) $m[1];
-                }
-            }
-        }
-
-        if ($steps !== []) {
-            SpacingScale::requireSteps(...$steps);
-        }
     }
 
     /**

@@ -12,12 +12,10 @@ namespace Kiwi\Contao\BootstrapBundle\Configuration;
  * `space-4` is `1rem`, `space-16` is `4rem`.
  *
  * The scale itself is unbounded arithmetic — any integer step is valid (see the
- * SCSS `kiwi-space()` function). This class exists for the PHP side, where a
- * finite list IS needed: a backend dropdown can only offer a bounded set of
- * options. That set is the UNION of the steps each wiring asks for via
- * {@see self::requireSteps()}; with no wiring registered it is empty. Build
- * option lists from {@see self::keys()} / {@see self::options()}, labels from
- * {@see self::label()}, values from {@see self::value()}.
+ * SCSS `kiwi-space()` function). Which steps a field offers is declared per grid
+ * subsystem in the `kiwi_bootstrap.grid` config (see GridStyles); this class only
+ * maps a step to its key ({@see self::key()}), CSS value ({@see self::value()})
+ * and backend label ({@see self::label()}).
  */
 final class SpacingScale
 {
@@ -27,41 +25,8 @@ final class SpacingScale
     /** Class/key prefix, e.g. the `space` in `space-4`. */
     public const PREFIX = 'space';
 
-    /**
-     * Steps asked for by the registered wirings, as a set (step => true). The
-     * available scale ({@see self::steps()}) is the union of these.
-     *
-     * @var array<int, true>
-     */
-    private static array $required = [];
-
     private function __construct()
     {
-    }
-
-    /**
-     * Register the scale steps a wiring needs in its backend dropdown. The
-     * available option set is the union of every wiring's steps, so order and
-     * duplicate registrations do not matter.
-     */
-    public static function requireSteps(int ...$steps): void
-    {
-        foreach ($steps as $step) {
-            self::$required[$step] = true;
-        }
-    }
-
-    /**
-     * The available scale steps: the sorted union of all registered steps.
-     *
-     * @return int[]
-     */
-    public static function steps(): array
-    {
-        $steps = array_keys(self::$required);
-        sort($steps);
-
-        return $steps;
     }
 
     /**
@@ -70,16 +35,6 @@ final class SpacingScale
     public static function key(int $step): string
     {
         return self::PREFIX . '-' . $step;
-    }
-
-    /**
-     * All available option/class keys, in scale order.
-     *
-     * @return list<string>
-     */
-    public static function keys(): array
-    {
-        return array_map([self::class, 'key'], self::steps());
     }
 
     /**
@@ -106,37 +61,5 @@ final class SpacingScale
         $value = str_replace('.', $decimalSeparator, self::value($step));
 
         return $value . ' [' . self::key($step) . ']';
-    }
-
-    /**
-     * The available scale as `key => CSS value`, e.g.
-     * `['space-0' => '0rem', 'space-4' => '1rem', …]`.
-     *
-     * @return array<string, string>
-     */
-    public static function map(): array
-    {
-        $map = [];
-        foreach (self::steps() as $step) {
-            $map[self::key($step)] = self::value($step);
-        }
-
-        return $map;
-    }
-
-    /**
-     * The available scale as `key => label`, ready to drop into a DCA reference /
-     * options array.
-     *
-     * @return array<string, string>
-     */
-    public static function options(string $decimalSeparator = '.'): array
-    {
-        $options = [];
-        foreach (self::steps() as $step) {
-            $options[self::key($step)] = self::label($step, $decimalSeparator);
-        }
-
-        return $options;
     }
 }
