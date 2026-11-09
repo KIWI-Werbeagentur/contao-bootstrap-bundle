@@ -14,16 +14,19 @@ class Content
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
     public function addOverwriteOption(DataContainer $objDca): void
     {
-        //Bug: Loads content with article-id when opening content-overview of article --> leads to permission errors
-        if(Input::get("do") == 'article' && Input::get("table") == 'tl_content' && Input::get("act") !== 'edit') return;
+        // The parent of the records this request is about, as resolved by core for every action: the
+        // edited record's parent, or the parent whose elements are listed / edited together
+        // (editAll, overrideAll). All of them share it, so one palette change fits them all. The
+        // "id" parameter is not a content element in list views, so it must not be read as one.
+        $strPtable = (string) $objDca->parentTable;
+        $strPid = (string) $objDca->currentPid;
+        $strParentModel = $GLOBALS['TL_MODELS'][$strPtable] ?? null;
 
-        if (!$objDca->getCurrentRecord()) return;
+        if (!$strPid || !$strParentModel) return;
 
-        $strPtable = $objDca->getCurrentRecord()['ptable'];
-        $strPid = $objDca->getCurrentRecord()['pid'];
-        $objParentModel = ($GLOBALS['TL_MODELS'][$strPtable])::findByPk($strPid);
+        $objParentModel = $strParentModel::findByPk($strPid);
 
-        if (!array_key_exists('responsiveRowCols',$objParentModel->row())) return;
+        if (!$objParentModel || !array_key_exists('responsiveRowCols', $objParentModel->row())) return;
 
         $arrSizes = StringUtil::deserialize($objParentModel->responsiveRowCols, true);
 
@@ -52,7 +55,7 @@ class Content
                 $GLOBALS['TL_LANG']['tl_content']['responsiveOverwriteRowCols'][1],
                 "<b>" . implode("; ", $arrSize) . "</b>",
                 $strLabel,
-                "/contao?do=article&id=$strPid&table=$strPtable&act=edit",
+                "/contao?do=" . urlencode((string) Input::get('do')) . "&id=$strPid&table=$strPtable&act=edit",
                 $objParentModel->title ?? $GLOBALS['TL_LANG']['CTE'][$objParentModel->type][0] ?? ""
             );
     }
