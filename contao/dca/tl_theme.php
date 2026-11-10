@@ -9,8 +9,8 @@ $GLOBALS['TL_DCA']['tl_theme']['config']['onload_callback'][] = [$GLOBALS['respo
 
 $GLOBALS['TL_DCA']['tl_theme']['fields']['responsiveBootstrapComponents'] = [
     'inputType' => 'checkbox',
+    // No reference: the options are Bootstrap's SCSS partial names, which is what editors need to see
     'options' => &$GLOBALS['responsive']['bootstrapComponents'],
-    'reference' => &$GLOBALS['TL_LANG']['tl_theme']['bootstrapComponents']['options'],
     'eval' => ['tl_class' => 'm12 w50', 'multiple' => true],
     'sql' => "text NULL"
 ];

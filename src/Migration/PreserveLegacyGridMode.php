@@ -101,9 +101,9 @@ class PreserveLegacyGridMode extends AbstractMigration
             sprintf(
                 'Upgrade from a release before the marginless grid detected. Wrote "%s=1" to %s, so the '
                 . 'frontend keeps rendering Bootstrap\'s stock grid (negative row margins, column padding, '
-                . 'container padding) and looks as before, and re-rendered the grid styles and layout imports '
-                . 'SCSS accordingly. To switch to the marginless grid, set it to 0, '
-                . 'clear the cache and review every page.',
+                . 'container padding) and looks as before, and triggered a re-render of the grid styles and '
+                . 'layout imports SCSS (failures are logged, a cache:clear retries). To switch to the '
+                . 'marginless grid, set it to 0, clear the cache and review every page.',
                 BootstrapConfiguration::LEGACY_GRID_ENV,
                 $envFile,
             ),
