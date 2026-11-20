@@ -1,0 +1,23 @@
+// Value-derived spacing scale helpers (Tailwind-style): space-N = N × $kiwi-space-unit
+// (space-4 = 1rem, space-12 = 3rem). Defines functions only — emits no CSS until used.
+//
+// $kiwi-space-unit mirrors Kiwi\Contao\BootstrapBundle\Configuration\SpacingScale::UNIT;
+// keep the two in sync if the base unit ever changes. The scale is unbounded — any
+// integer step is valid.
+
+$kiwi-space-unit: 0.25rem;
+
+// kiwi-space(4) => 4 * $kiwi-space-unit (1rem).
+@function kiwi-space($step) {
+  @return $kiwi-space-unit * $step;
+}
+
+// kiwi-space-subset((0, 4, 6)) => a map of those steps, e.g. for feeding a curated
+// set of steps into another map ($gutters, a utility's `values`, …).
+@function kiwi-space-subset($steps) {
+  $subset: ();
+  @each $n in $steps {
+    $subset: map-merge($subset, ("space-#{$n}": kiwi-space($n)));
+  }
+  @return $subset;
+}

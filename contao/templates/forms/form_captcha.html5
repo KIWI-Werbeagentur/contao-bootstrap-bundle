@@ -9,7 +9,7 @@
 <?php $this->endblock(); ?>
 
 <?php $this->block('field'); ?>
-  <input type="text" name="<?= $this->name ?>" id="ctrl_<?= $this->id ?>" class="captcha mandatory form-control<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if ($this->hasErrors()): ?> is-invalid<?php endif; ?>" value="" aria-describedby="captcha_text_<?= $this->id ?>"<?= $this->getAttributes() ?>>
+  <input type="text" name="<?= $this->name ?>" id="ctrl_<?= $this->id ?>" class="captcha mandatory form-control<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?><?php if ($this->hasErrors()): ?> is-invalid<?php endif; ?>" value="" aria-describedby="captcha_text_<?= $this->id ?><?php if ($this->responsiveHelpBlock): ?> ctrl_<?= $this->id ?>_text<?php endif; ?>"<?= $this->getAttributes() ?>>
   <div id="captcha_text_<?= $this->id ?>" class="captcha_text form-text<?php if ($this->class): ?> <?= $this->class ?><?php endif; ?>"><?= $this->getQuestion() ?></div>
   <?php if ($this->responsiveHelpBlock): ?>
     <div class="form-text" id="ctrl_<?= $this->id ?>_text"><?= $this->responsiveHelpBlock ?></div>
@@ -25,7 +25,9 @@
       <label for="ctrl_<?= $this->id ?>_hp">Do not fill in this field</label>
       <input type="text" name="<?= $this->name ?>_name" id="ctrl_<?= $this->id ?>_hp" value="">
     </div>
-    <script src="<?= $this->getAjaxUrl() ?>" data-id="<?= $this->id ?>" data-name="<?= $this->name ?>" async></script>
+    <?php if (!$this->asEditorView): ?>
+      <script src="<?= $this->getAjaxUrl() ?>" data-id="<?= $this->id ?>" data-name="<?= $this->name ?>" async></script>
+    <?php endif; ?>
   <?php endif ?>
 
 <?php $this->endblock(); ?>

@@ -1,5 +1,13 @@
-<form<?php if ($this->action): ?> action="<?= $this->action ?>"<?php endif; ?><?php if ($this->formId): ?>  id="<?= $this->formId ?>"<?php endif; ?> method="<?= $this->method ?>" enctype="<?= $this->enctype ?>"<?= $this->attributes ?><?= $this->novalidate ?><?php if ($this->ajax): ?> data-ajax-form="<?= $this->id ?>"<?php endif; ?>>
-  <div class="formbody <?= $this->bodyClasses ?? 'row' ?>">
+<?php
+
+// Legacy counterpart of form_inline.html.twig: the responsive inner-container classes
+// (row, row-cols, gutter, row-gap, flex utilities) go on the formbody__inside wrapper.
+$strInnerClasses = implode(' ', \Contao\System::getContainer()->get('kiwi.contao.responsive.frontend')
+    ->getAllInnerContainerClasses($this->getData(), array(), 'tl_form', true));
+
+?>
+<form<?php if ($this->action): ?> action="<?= $this->action ?>"<?php endif; ?><?php if ($this->formId): ?> id="<?= $this->formId ?>"<?php endif; ?> method="<?= $this->method ?>" enctype="<?= $this->enctype ?>"<?= $this->attributes ?><?= $this->novalidate ?><?php if ($this->ajax): ?> data-ajax-form="<?= $this->id ?>"<?php endif; ?>>
+  <div class="formbody<?php if ($this->bodyClasses): ?> <?= $this->bodyClasses ?><?php endif; ?>">
     <?php if ($this->errors): ?>
       <?php foreach ($this->errors as $error): ?>
         <p class="error"><?= $error ?></p>
@@ -13,6 +21,8 @@
       <?php endif; ?>
     <?php endif; ?>
     <?= $this->hidden ?>
-    <?= $this->fields ?>
+    <div class="formbody__inside<?php if ($strInnerClasses): ?> <?= $strInnerClasses ?><?php endif; ?>">
+      <?= $this->fields ?>
+    </div>
   </div>
 </form>

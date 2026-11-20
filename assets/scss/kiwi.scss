@@ -89,47 +89,55 @@
   }
 }
 
-// this class is added to create wrappers with backgrounds, where the background doesn't overflow the grid
-.row.in-grid-bg {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-
-// bootstrap 5 workarounds
-// remove padding that creates unwanted indents from nested containers
-// DO NOT remove it from containers nested within a larger container, or direct children of .row or .navbar
-// .container-fluid @extends to all responsive container classes, see twbs/bootstrap/scss/_containers.scss::16
-.container, .container-fluid {
-  :not(.row):not(.navbar) > {
-    // this is deliberate, to avoid @extends
-    [class*="container-fluid"] {
-      padding-left: 0;
-      padding-right: 0;
-    }
-    @include media-breakpoint-only(xs) {
-      .container, .container-fluid {
-        padding-left: 0;
-        padding-right: 0;
-      }
-    }
+// Marginless grid: `.row` no longer has negative margins, so `.in-grid-bg` is a
+// no-op for the new layout. The legacy grid (KIWI_BOOTSTRAP_LEGACY_GRID) still needs it.
+@if $kiwi-legacy-grid {
+  // this class is added to create wrappers with backgrounds, where the background doesn't overflow the grid
+  .row.in-grid-bg {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
-@include media-breakpoint-up(sm) {
-  .container {
+
+// The marginless grid needs no "remove padding from nested containers" workaround: container
+// padding is opt-in and applied directly by .cx-* (not via an inheriting custom property), so a
+// nested container has no padding unless it carries its own .cx-* class. The legacy grid pads
+// every container, so it keeps the workaround.
+@if $kiwi-legacy-grid {
+  // remove padding that creates unwanted indents from nested containers
+  // DO NOT remove it from containers nested within a larger container, or direct children of .row or .navbar
+  // .container-fluid @extends to all responsive container classes, see twbs/bootstrap/scss/_containers.scss::16
+  .container, .container-fluid {
     :not(.row):not(.navbar) > {
-      .container, .container-fluid {
+      // this is deliberate, to avoid @extends
+      [class*="container-fluid"] {
         padding-left: 0;
         padding-right: 0;
       }
+      @include media-breakpoint-only(xs) {
+        .container, .container-fluid {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
     }
   }
-  @each $breakpoint, $container-max-width in $container-max-widths {
-    .container-#{$breakpoint} {
+  @include media-breakpoint-up(sm) {
+    .container {
       :not(.row):not(.navbar) > {
         .container, .container-fluid {
           padding-left: 0;
           padding-right: 0;
+        }
+      }
+    }
+    @each $breakpoint, $container-max-width in $container-max-widths {
+      .container-#{$breakpoint} {
+        :not(.row):not(.navbar) > {
+          .container, .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+          }
         }
       }
     }
@@ -142,9 +150,13 @@
     @include media-breakpoint-up($breakpoint, $grid-breakpoints) {
       .row > %responsive-container-#{$breakpoint} {
         max-width: $container-max-width;
+        width: 100%;
       }
     }
   }
+}
+.row > .container-fluid {
+  width: 100%;
 }
 
 // reintroduce text-justify

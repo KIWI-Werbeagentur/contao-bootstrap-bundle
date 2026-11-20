@@ -14,7 +14,7 @@
 
 <?php $this->block('field'); ?>
   <?php if ($this->multiple): ?>
-    <input type="hidden" name="<?= rtrim($this->name, '[]') ?>" value="">
+    <input type="hidden" name="<?= str_ends_with($this->name, '[]') ? substr($this->name, 0, -2) : $this->name ?>" value="">
   <?php endif; ?>
 
   <?php if ($this->responsiveInputAttribute): ?>

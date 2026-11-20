@@ -1,0 +1,60 @@
+{% extends '@Contao/form_row.html.twig' %}
+
+{% block label %}
+    {% if this.label %}
+        <label for="ctrl_{{ this.id }}"{% if this.class|default %} class="{{ this.class|default }}"{% endif %}>
+            {% if this.mandatory|default %}
+                <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label|insert_tag_raw }}<span class="mandatory">*</span>
+            {% else %}
+                {{ this.label|insert_tag_raw }}
+            {% endif %}
+        </label>
+    {% endif %}
+{% endblock %}
+
+{% block field %}
+    {% if this.responsiveInputAttribute|default %}
+        <div class="input-group{% if hasErrors.invoke() %} is-invalid{% endif %}">
+            {% if this.responsiveInputAttributePosition|default == 'before' %}
+                <span class="input-group-text input-group-prepend">{{ this.responsiveInputAttributeContent|raw }}</span>
+            {% endif %}
+    {% endif %}
+
+    {#- Contao 5.3 compat: Twig resolves an attribute through isset(), and Widget::__isset()
+        only answers for keys in arrAttributes/arrConfiguration there - FormTextarea keeps `rows`
+        and `cols` in its own properties behind the magic getter, so they read as null and the
+        textarea loses its size. From 5.7 __isset() ends in `null !== $this->__get($strKey)`,
+        making the plain attribute work. Calling the getter directly works on both. Replace with
+        `this.rows` / `this.cols` at the ^5.7 bump. -#}
+    {% set textarea_rows = this.__get('rows') %}
+    {% set textarea_cols = this.__get('cols') %}
+    {% set textarea_attributes = attrs(getAttributes.invoke()) %}
+
+    <textarea{{ attrs()
+        .set('name', this.name)
+        .set('id', "ctrl_#{this.id}")
+        .addClass('textarea form-control')
+        .addClass('is-invalid', hasErrors.invoke())
+        .addClass(this.class|default)
+        .set('rows', textarea_rows)
+        .set('cols', textarea_cols)
+        .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
+        .mergeWith(textarea_attributes)
+        .setIfExists('placeholder', textarea_attributes.placeholder|default|insert_tag)
+    }}>{{ this.value|default|insert_tag }}</textarea>
+
+    {% if this.responsiveInputAttribute|default %}
+            {% if this.responsiveInputAttributePosition|default == 'after' %}
+                <span class="input-group-text input-group-append">{{ this.responsiveInputAttributeContent|raw }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if this.responsiveHelpBlock|default %}
+        <div class="form-text" id="ctrl_{{ this.id }}_text">{{ this.responsiveHelpBlock|raw }}</div>
+    {% endif %}
+
+    {% if hasErrors.invoke() %}
+        <div class="invalid-feedback">{{ getErrorAsString.invoke() }}</div>
+    {% endif %}
+{% endblock %}

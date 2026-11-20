@@ -1,4 +1,5 @@
 <!-- indexer::stop -->
+<?php // TODO: when moving to Twig, take the breakpoint size from the module (kiwi.contao.responsive.frontend getConfig()) instead of building a new responsive configuration here, twice per navbar ?>
 
 <nav class="<?= $this->class ?> block navbar navbar-<?= $this->theme ?><?php if ($this->breakpoint): ?> navbar-expand-<?= $this->breakpoint ?><?php endif; ?>"<?= $this->cssID ?> data-breakpoint-name="<?= $this->breakpoint?>" data-breakpoint-size="<?= (new $GLOBALS['responsive']['config']())->arrBreakpoints[$this->breakpoint]['breakpoint'] ?? "" ?>"  style="--breakpoint-name:<?= $this->breakpoint?>;--breakpoint-size:<?= (new $GLOBALS['responsive']['config']())->arrBreakpoints[$this->breakpoint]['breakpoint'] ?? 0 ?>;<?= $this->style ?>">
     <?php $this->block('inner'); ?>

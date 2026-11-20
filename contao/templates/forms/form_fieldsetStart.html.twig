@@ -6,3 +6,8 @@
     place for custom legacy fieldset templates (customTpl) that extend 'form_fieldsetStart'.
 #}
 {% extends '@Contao_KiwiResponsiveBaseBundle/form_fieldsetStart.html.twig' %}
+
+{% set fieldsetAttrs = attrs()
+    .addClass(getContainerPaddingXClasses(this, table: 'tl_form_field'), this.responsiveContainer|default)
+    .mergeWith(fieldsetAttrs|default)
+%}

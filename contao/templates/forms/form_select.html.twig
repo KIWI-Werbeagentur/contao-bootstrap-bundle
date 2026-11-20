@@ -1,0 +1,65 @@
+{% extends '@Contao/form_row.html.twig' %}
+
+{% block label %}
+    {% if this.label %}
+        <label for="ctrl_{{ this.id }}"{% if this.class|default %} class="{{ this.class|default }}"{% endif %}>
+            {% if this.mandatory|default %}
+                <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label|insert_tag_raw }}<span class="mandatory">*</span>
+            {% else %}
+                {{ this.label|insert_tag_raw }}
+            {% endif %}
+        </label>
+    {% endif %}
+{% endblock %}
+
+{% block field %}
+    {% if this.multiple|default %}
+        <input type="hidden" name="{{ this.name ends with '[]' ? this.name[:-2] : this.name }}" value="">
+    {% endif %}
+
+    {% if this.responsiveInputAttribute|default %}
+        <div class="input-group{% if hasErrors.invoke() %} is-invalid{% endif %}">
+            {% if this.responsiveInputAttributePosition|default == 'before' %}
+                <span class="input-group-text input-group-prepend">{{ this.responsiveInputAttributeContent|raw }}</span>
+            {% endif %}
+    {% endif %}
+
+    <select{{ attrs()
+        .set('name', this.name)
+        .set('id', "ctrl_#{this.id}")
+        .addClass(this.class|default)
+        .addClass('form-select')
+        .addClass('is-invalid', hasErrors.invoke())
+        .set('aria-describedby', "ctrl_#{this.id}_text", this.responsiveHelpBlock|default)
+        .mergeWith(getAttributes.invoke())
+    }}>
+        {% for option in getOptions.invoke() %}
+            {% if option.type == 'group_start' %}
+                <optgroup label="{{ option.label }}">
+            {% endif %}
+
+            {% if option.type == 'option' %}
+                <option value="{{ option.value }}"{{ option.selected }}>{{ option.label }}</option>
+            {% endif %}
+
+            {% if option.type == 'group_end' %}
+                </optgroup>
+            {% endif %}
+        {% endfor %}
+    </select>
+
+    {% if this.responsiveInputAttribute|default %}
+            {% if this.responsiveInputAttributePosition|default == 'after' %}
+                <span class="input-group-text input-group-append">{{ this.responsiveInputAttributeContent|raw }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if this.responsiveHelpBlock|default %}
+        <div class="form-text" id="ctrl_{{ this.id }}_text">{{ this.responsiveHelpBlock|raw }}</div>
+    {% endif %}
+
+    {% if hasErrors.invoke() %}
+        <div class="invalid-feedback">{{ getErrorAsString.invoke() }}</div>
+    {% endif %}
+{% endblock %}
