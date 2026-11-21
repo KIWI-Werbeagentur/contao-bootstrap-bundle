@@ -249,6 +249,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
 
         $this->arrAlignmentSelf = [
             'default' => '',
+            'auto' => 'align-self{{modifier}}-auto',
             'stretch' => 'align-self{{modifier}}-stretch',
             'baseline' => 'align-self{{modifier}}-baseline',
             'start' => 'align-self{{modifier}}-start',
