@@ -1,0 +1,95 @@
+{#
+    Bootstrap navbar: logo, burger toggler and the collapsible navigation container holding the
+    selected navigation module. Custom HTML can be output at four positions: before and after the
+    navigation container ("out") and inside it, before and after the navigation ("in").
+
+    Extending templates can add attributes through `attributes` (the <nav>), `container_attributes`,
+    `brand_attributes`, `toggler_attributes` and `collapse_attributes`, or override the blocks.
+
+    Sorts ahead of mod_bootstrap_navbar.html5, which stays in place as the base for custom legacy
+    templates extending 'mod_bootstrap_navbar'; a project's mod_bootstrap_navbar.html5 still wins.
+#}
+{% use '@Contao/component/_picture.html.twig' %}
+
+<!-- indexer::stop -->
+{% block wrapper %}
+    {% set navbar_attributes = attrs(cssID|default)
+        .addClass([class|default, 'block', 'navbar'])
+        .addClass("navbar-#{theme}", theme)
+        .addClass("navbar-expand-#{breakpoint}", breakpoint)
+        .set('data-breakpoint-name', breakpoint)
+        .set('data-breakpoint-size', breakpointSize|default)
+        .addStyle({'--breakpoint-name': breakpoint, '--breakpoint-size': breakpointSize|default(0)})
+        .addStyle(style|default)
+        .mergeWith(attributes|default)
+    %}
+    <nav{{ navbar_attributes }}>
+        {% block inner %}
+            {% set navbar_container_attributes = attrs()
+                .addClass(['navbar__container', 'mod_bootstrapNavbar__container', 'container-fluid'])
+                .mergeWith(container_attributes|default)
+            %}
+            <div{{ navbar_container_attributes }}>
+                {% block brand %}
+                    {% if inlineSingleSRC|default or singleSRC|default %}
+                        {% set navbar_brand_attributes = attrs()
+                            .addClass(['navbar__brand', 'navbar-brand'])
+                            .set('href', homeUrl)
+                            .set('aria-label', alt, inlineSingleSRC|default and alt)
+                            .mergeWith(brand_attributes|default)
+                        %}
+                        <a{{ navbar_brand_attributes }}>
+                            {%- if inlineSingleSRC|default -%}
+                                {{ inlineSingleSRC|raw }}
+                            {%- elseif logoFigure|default -%}
+                                {% with {figure: logoFigure} %}{{ block('picture_component') }}{% endwith %}
+                            {%- else -%}
+                                <img src="{{ singleSRC }}" alt="{{ alt }}">
+                            {%- endif -%}
+                        </a>
+                    {% endif %}
+                {% endblock %}
+
+                {% block toggler %}
+                    {% set navbar_toggler_attributes = attrs()
+                        .set('type', 'button')
+                        .addClass(['navbar__toggler', 'navbar-toggler', 'burger', "burger--#{animation}"])
+                        .set('data-bs-toggle', 'collapse')
+                        .set('data-bs-target', "#navbar-collapse-#{id}")
+                        .set('aria-controls', "navbar-collapse-#{id}")
+                        .set('aria-expanded', 'false')
+                        .set('aria-label', 'Toggle navigation')
+                        .mergeWith(toggler_attributes|default)
+                    %}
+                    <button{{ navbar_toggler_attributes }}>
+                        {% block burger %}
+                            {% if animation %}
+                                {{ include("@Contao/burger_#{animation}.html.twig") }}
+                            {% else %}
+                                <span class="burger__line burger__line--1"></span>
+                                <span class="burger__line burger__line--2"></span>
+                                <span class="burger__line burger__line--3"></span>
+                            {% endif %}
+                        {% endblock %}
+                    </button>
+                {% endblock %}
+
+                {% block nav %}
+                    {{ navbarHtmlOutBefore|default|sanitize_html('contao')|insert_tag_raw }}
+                    {% set navbar_collapse_attributes = attrs()
+                        .addClass(['navbar__nav', 'collapse', 'navbar-collapse'])
+                        .set('id', "navbar-collapse-#{id}")
+                        .mergeWith(collapse_attributes|default)
+                    %}
+                    <div{{ navbar_collapse_attributes }}>
+                        {{ navbarHtmlInBefore|default|sanitize_html('contao')|insert_tag_raw }}
+                        {{ navigationHTML|raw }}
+                        {{ navbarHtmlInAfter|default|sanitize_html('contao')|insert_tag_raw }}
+                    </div>
+                    {{ navbarHtmlOutAfter|default|sanitize_html('contao')|insert_tag_raw }}
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </nav>
+{% endblock %}
+<!-- indexer::continue -->

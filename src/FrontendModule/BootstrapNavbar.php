@@ -4,6 +4,7 @@ namespace Kiwi\Contao\BootstrapBundle\FrontendModule;
 
 use Contao\BackendTemplate;
 use Contao\CoreBundle\File\Metadata;
+use Contao\Environment;
 use Contao\FilesModel;
 use Contao\Module;
 use Contao\ModuleModel;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @property string $alt
  * @property string $animation may be '' or '0'
+ * @property string $breakpoint
  * @property Template $Template
  * @property string $inlineSvg used as bool ('1' / '')
  * @property int $module
@@ -100,13 +102,14 @@ class BootstrapNavbar extends Module
             // cacheable asset with width/height. Without a size the original path is output as before.
             if (!$this->Template->inlineSingleSRC && array_filter(StringUtil::deserialize($this->imgSize, true))) {
                 try {
-                    $this->Template->logoPicture = System::getContainer()->get('contao.image.studio')
+                    // The figure for the Twig template, its picture data for legacy html5 templates
+                    $this->Template->logoFigure = System::getContainer()->get('contao.image.studio')
                         ->createFigureBuilder()
                         ->fromFilesModel($objFile)
                         ->setSize($this->imgSize)
                         ->setMetadata(new Metadata([Metadata::VALUE_ALT => (string) $this->alt]))
-                        ->build()
-                        ->getLegacyTemplateData()['picture'];
+                        ->build();
+                    $this->Template->logoPicture = $this->Template->logoFigure->getLegacyTemplateData()['picture'];
                 } catch (\Exception $e) {
                     System::getContainer()->get('monolog.logger.contao')->error($e->getMessage());
                 }
@@ -118,6 +121,12 @@ class BootstrapNavbar extends Module
             $strLocalePrefix = '/' . $objPage->urlPrefix . '/';
         }
         $this->Template->localePrefix = $strLocalePrefix;
+
+        // Twig templates cannot contain the {{env::base_url}} insert tag the legacy template prefixes this with
+        $this->Template->homeUrl = Environment::get('base') . ltrim($strLocalePrefix, '/');
+
+        // From the shared per-request configuration (legacy templates build their own)
+        $this->Template->breakpointSize = System::getContainer()->get('kiwi.contao.responsive.frontend')->getConfig()->arrBreakpoints[$this->breakpoint]['breakpoint'] ?? null;
 
         /** @var ModuleModel $objNavigation */
         $objNavigation = ModuleModel::findByPk($this->module);
