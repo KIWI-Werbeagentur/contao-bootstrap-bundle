@@ -15,6 +15,7 @@ use enshrined\svgSanitize\Sanitizer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * @property string $alt
  * @property string $animation may be '' or '0'
  * @property Template $Template
  * @property string $inlineSvg used as bool ('1' / '')

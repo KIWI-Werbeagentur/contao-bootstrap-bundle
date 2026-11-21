@@ -4,7 +4,7 @@ namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
-use Contao\DataContainer;
+use Contao\DC_Table;
 use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
@@ -12,7 +12,7 @@ use Contao\System;
 class Content
 {
     #[AsCallback(table: 'tl_content', target: 'config.onload')]
-    public function addOverwriteOption(DataContainer $objDca): void
+    public function addOverwriteOption(DC_Table $objDca): void
     {
         // The parent of the records this request is about, as resolved by core for every action: the
         // edited record's parent, or the parent whose elements are listed / edited together
