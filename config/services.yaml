@@ -51,6 +51,9 @@ services:
       $gridStylesWarmer: '@Kiwi\Contao\BootstrapBundle\CacheWarmer\GridStylesCacheWarmer'
       $layoutImportsWarmer: '@Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer'
       $cacheDir: '%kernel.cache_dir%'
+  Kiwi\Contao\BootstrapBundle\Migration\NavbarHtmlPositionsMigration:
+    arguments:
+      - '@database_connection'
   Kiwi\Contao\BootstrapBundle\Migration\BackfillContainerPaddingX:
     arguments:
       - '@database_connection'

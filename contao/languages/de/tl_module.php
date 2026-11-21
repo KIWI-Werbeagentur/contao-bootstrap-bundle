@@ -29,14 +29,8 @@ $GLOBALS['TL_LANG']['tl_module']['module'] = [
     1 => "Welches Navigationsmodul soll eingebunden werden?"
 ];
 
-// Matching mod_bootstrap_navbar: "out" is outside the collapsible navigation container, "in" inside it
-$GLOBALS['TL_LANG']['tl_module']['position'] = [
-    0 => "Position",
-    1 => "An welcher Position, soll der Inhalt eingefügt werden?",
-    'options' => [
-        'out::before' => 'Vor dem Navigations-Container',
-        'in::before' => 'Im Navigations-Container, vor der Navigation',
-        'in::after' => 'Im Navigations-Container, nach der Navigation',
-        'out::after' => 'Nach dem Navigations-Container',
-    ]
-];
+// Matching mod_bootstrap_navbar: "Out" is outside the collapsible navigation container, "In" inside it
+$GLOBALS['TL_LANG']['tl_module']['navbarHtmlOutBefore'] = ['HTML vor dem Navigations-Container', 'Wird vor dem (mobil ausklappbaren) Navigations-Container ausgegeben.'];
+$GLOBALS['TL_LANG']['tl_module']['navbarHtmlInBefore'] = ['HTML im Navigations-Container, vor der Navigation', 'Wird im (mobil ausklappbaren) Navigations-Container vor der Navigation ausgegeben.'];
+$GLOBALS['TL_LANG']['tl_module']['navbarHtmlInAfter'] = ['HTML im Navigations-Container, nach der Navigation', 'Wird im (mobil ausklappbaren) Navigations-Container nach der Navigation ausgegeben.'];
+$GLOBALS['TL_LANG']['tl_module']['navbarHtmlOutAfter'] = ['HTML nach dem Navigations-Container', 'Wird nach dem (mobil ausklappbaren) Navigations-Container ausgegeben.'];

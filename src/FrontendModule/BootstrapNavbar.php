@@ -20,9 +20,25 @@ use Symfony\Component\HttpFoundation\Request;
  * @property Template $Template
  * @property string $inlineSvg used as bool ('1' / '')
  * @property int $module
+ * @property string $position @deprecated, see HTML_FIELDS
+ * @property string|null $navbarHtmlOutBefore
+ * @property string|null $navbarHtmlInBefore
+ * @property string|null $navbarHtmlInAfter
+ * @property string|null $navbarHtmlOutAfter
  */
 class BootstrapNavbar extends Module
 {
+    /**
+     * The custom HTML field for each position, keyed by the values of the legacy `position` select
+     * Will be removed in v2.
+     */
+    public const HTML_FIELDS = [
+        'out::before' => 'navbarHtmlOutBefore',
+        'in::before' => 'navbarHtmlInBefore',
+        'in::after' => 'navbarHtmlInAfter',
+        'out::after' => 'navbarHtmlOutAfter',
+    ];
+
     protected $strTemplate = 'mod_bootstrap_navbar';
 
     public function generate(): string
@@ -108,5 +124,11 @@ class BootstrapNavbar extends Module
         /** @var Module $objNavigationModule */
         $objNavigationModule = new $GLOBALS['FE_MOD']['navigationMenu'][$objNavigation->type]($objNavigation);
         $this->Template->navigationHTML = $objNavigationModule->generate();
+
+        // Customized legacy templates output $this->html at $this->position: feed it from the field
+        // for the stored position, so they keep rendering that position (other fields need a template update)
+        // will be removed in v2
+        $strField = self::HTML_FIELDS[$this->position] ?? null;
+        $this->Template->html = null !== $strField ? $this->$strField : '';
     }
 }

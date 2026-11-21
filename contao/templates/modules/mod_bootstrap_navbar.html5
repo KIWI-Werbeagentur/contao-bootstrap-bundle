@@ -31,20 +31,20 @@
         </button>
 
         <?php $this->block('nav'); ?>
-        <?php if ($this->html && $this->position == 'out::before'): ?>
-            <?= $this->html ?>
+        <?php if ($this->navbarHtmlOutBefore): ?>
+            <?= $this->navbarHtmlOutBefore ?>
         <?php endif; ?>
         <div class="navbar__nav collapse navbar-collapse" id="navbar-collapse-<?= $this->id ?>">
-            <?php if ($this->html && $this->position == 'in::before'): ?>
-                <?= $this->html ?>
+            <?php if ($this->navbarHtmlInBefore): ?>
+                <?= $this->navbarHtmlInBefore ?>
             <?php endif; ?>
             <?= $this->navigationHTML ?>
-            <?php if ($this->html && $this->position == 'in::after'): ?>
-                <?= $this->html ?>
+            <?php if ($this->navbarHtmlInAfter): ?>
+                <?= $this->navbarHtmlInAfter ?>
             <?php endif; ?>
         </div>
-        <?php if ($this->html && $this->position == 'out::after'): ?>
-            <?= $this->html ?>
+        <?php if ($this->navbarHtmlOutAfter): ?>
+            <?= $this->navbarHtmlOutAfter ?>
         <?php endif; ?>
         <?php $this->endblock(); ?>
     </div>

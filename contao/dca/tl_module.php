@@ -3,6 +3,7 @@
 use Contao\Backend;
 use Contao\Controller;
 use Kiwi\Contao\BootstrapBundle\DataContainer\ModuleListener;
+use Kiwi\Contao\BootstrapBundle\FrontendModule\BootstrapNavbar;
 
 Controller::loadDataContainer('responsive');
 Backend::loadDataContainer('tl_content');
@@ -14,7 +15,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['responsiveRowCols'] = $GLOBALS['TL_DC
 
 
 //Navbar
-$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,imgSize,alt,inlineSvg;{nav_legend},module;{html_legend},html,position;{template_legend:hide},customTpl,breakpoint,animation,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['bootstrapNavbar'] = '{title_legend},name,type;{image_legend},singleSRC,imgSize,alt,inlineSvg;{nav_legend},module;{html_legend},navbarHtmlOutBefore,navbarHtmlInBefore,navbarHtmlInAfter,navbarHtmlOutAfter;{template_legend:hide},customTpl,breakpoint,animation,theme;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['fields']['alt'] = [
     'inputType' => 'text',
     'eval' => ['tl_class' => 'w50', 'maxlength' => 255],
@@ -62,15 +63,27 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['theme'] = [
     'sql' => "varchar(16) NOT NULL default ''"
 ];
 
+// Replaced by the per-position HTML fields below, no longer editable. The value stays for BC:
+// customized legacy templates output $this->html at $this->position, fed from the field for this position (see: BootstrapNavbar::HTML_FIELDS).
+// Will be removed in v2.
 $GLOBALS['TL_DCA']['tl_module']['fields']['position'] = [
-    'inputType' => 'select',
-    'options' => [
-        'out::before',
-        'in::before',
-        'in::after',
-        'out::after',
-    ],
-    'reference' => &$GLOBALS['TL_LANG']['tl_module']['position']['options'],
-    'eval' => ['tl_class' => 'w50'],
-    'sql' => "varchar(16) NOT NULL default ''"
+    'sql' => "varchar(16) NOT NULL default ''",
 ];
+
+// Custom HTML per position, matching mod_bootstrap_navbar: "Out" is outside the collapsible
+// navigation container, "In" inside it. Same configuration as the core html field.
+foreach (BootstrapNavbar::HTML_FIELDS as $strField) {
+    $GLOBALS['TL_DCA']['tl_module']['fields'][$strField] = [
+        'search' => true,
+        'inputType' => 'textarea',
+        'eval' => [
+            'allowHtml' => true,
+            'class' => 'monospace',
+            'rte' => 'ace|html',
+            'helpwizard' => true,
+            'tl_class' => 'clr',
+        ],
+        'explanation' => 'insertTags',
+        'sql' => "text NULL",
+    ];
+}
