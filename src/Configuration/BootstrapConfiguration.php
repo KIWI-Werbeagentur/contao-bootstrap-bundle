@@ -207,8 +207,12 @@ class BootstrapConfiguration extends ResponsiveConfiguration
     {
         parent::__construct($objDca);
 
+        // `default` renders nothing on its own. On a larger breakpoint it renders the class
+        // restoring the CSS default, where a smaller breakpoint set a class it has to cancel
+        // (see ResponsiveFrontendService::getResponsiveClasses()). For flex-wrap that is the
+        // `.row` default (wrap), as these containers are rows.
         $this->arrOrder = [
-            'default' => '',
+            'default' => 'order{{modifier}}-0',
             '0' => 'order{{modifier}}-0',
             '1' => 'order{{modifier}}-1',
             '2' => 'order{{modifier}}-2',
@@ -220,7 +224,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         ];
 
         $this->arrAlignmentContent = [
-            'default' => '',
+            'default' => 'align-content{{modifier}}-stretch',
             'start' => 'align-content{{modifier}}-start',
             'center' => 'align-content{{modifier}}-center',
             'end' => 'align-content{{modifier}}-end',
@@ -229,7 +233,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         ];
 
         $this->arrJustifyContent = [
-            'default' => '',
+            'default' => 'justify-content{{modifier}}-start',
             'start' => 'justify-content{{modifier}}-start',
             'center' => 'justify-content{{modifier}}-center',
             'end' => 'justify-content{{modifier}}-end',
@@ -239,7 +243,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         ];
 
         $this->arrAlignmentItems = [
-            'default' => '',
+            'default' => 'align-items{{modifier}}-stretch',
             'stretch' => 'align-items{{modifier}}-stretch',
             'baseline' => 'align-items{{modifier}}-baseline',
             'start' => 'align-items{{modifier}}-start',
@@ -248,7 +252,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         ];
 
         $this->arrAlignmentSelf = [
-            'default' => '',
+            'default' => 'align-self{{modifier}}-auto',
             'auto' => 'align-self{{modifier}}-auto',
             'stretch' => 'align-self{{modifier}}-stretch',
             'baseline' => 'align-self{{modifier}}-baseline',
@@ -258,7 +262,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         ];
 
         $this->arrFlexDirection = [
-            'default' => '',
+            'default' => 'flex{{modifier}}-row',
             'row' => 'flex{{modifier}}-row',
             'column' => 'flex{{modifier}}-column',
             'row-reverse' => 'flex{{modifier}}-row-reverse',
@@ -266,7 +270,7 @@ class BootstrapConfiguration extends ResponsiveConfiguration
         ];
 
         $this->arrFlexWrap = [
-            'default' => '',
+            'default' => 'flex{{modifier}}-wrap',
             'wrap' => 'flex{{modifier}}-wrap',
             'nowrap' => 'flex{{modifier}}-nowrap',
             'wrap-reverse' => 'flex{{modifier}}-wrap-reverse',
