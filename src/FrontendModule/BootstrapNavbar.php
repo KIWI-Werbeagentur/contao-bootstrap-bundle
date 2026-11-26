@@ -4,7 +4,6 @@ namespace Kiwi\Contao\BootstrapBundle\FrontendModule;
 
 use Contao\BackendTemplate;
 use Contao\CoreBundle\File\Metadata;
-use Contao\Environment;
 use Contao\FilesModel;
 use Contao\Module;
 use Contao\ModuleModel;
@@ -122,8 +121,16 @@ class BootstrapNavbar extends Module
         }
         $this->Template->localePrefix = $strLocalePrefix;
 
-        // Twig templates cannot contain the {{env::base_url}} insert tag the legacy template prefixes this with
-        $this->Template->homeUrl = Environment::get('base') . ltrim($strLocalePrefix, '/');
+        // Twig templates cannot contain the {{env::base_url}} insert tag the legacy template prefixes this
+        // with, so prefix the request's base URL like it does: it keeps a front controller in the URL
+        // (e.g. /preview.php). Without a locale prefix link to the root, not to the current page ("").
+        $objRequest = System::getContainer()->get('request_stack')->getCurrentRequest();
+
+        if (null === $objRequest) {
+            throw new \RuntimeException('The navbar module needs a request to build its home URL.');
+        }
+
+        $this->Template->homeUrl = $objRequest->getBaseUrl() . ($strLocalePrefix ?: '/');
 
         // From the shared per-request configuration (legacy templates build their own)
         $this->Template->breakpointSize = System::getContainer()->get('kiwi.contao.responsive.frontend')->getConfig()->arrBreakpoints[$this->breakpoint]['breakpoint'] ?? null;
