@@ -123,13 +123,12 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getSpacingClasses(?string $strData, string $strDirection = "", array $arrOptions = []): array
+    public function getSpacingClasses(?string $strData, string $strDirection = ""): array
     {
         return $this->resolveSpacingClasses(
             $strData,
             $strDirection,
             $strDirection === 'b' ? 'articleBottom' : 'articleTop',
-            $arrOptions,
         );
     }
 
@@ -139,20 +138,19 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getGroupSpacingClasses(?string $strData, string $strDirection = "", array $arrOptions = []): array
+    public function getGroupSpacingClasses(?string $strData, string $strDirection = ""): array
     {
         return $this->resolveSpacingClasses(
             $strData,
             $strDirection,
             $strDirection === 'b' ? 'groupBottom' : 'groupTop',
-            $arrOptions,
         );
     }
 
     /**
      * @return list<string>
      */
-    private function resolveSpacingClasses(?string $strData, string $strDirection, string $partial, array $arrOptions = []): array
+    private function resolveSpacingClasses(?string $strData, string $strDirection, string $partial): array
     {
         // When this partial's configured default is `noop`, a field resolving to the
         // `default` option must also render nothing — exclude it alongside the noop
@@ -162,18 +160,11 @@ class BootstrapFrontendService extends ResponsiveFrontendService
             $excludeValues[] = GridStyles::GENERIC_DEFAULT;
         }
 
-        $arrOptions = array_merge(
-            [
-                'excludeValues' => $excludeValues,
-            ],
-            $arrOptions,
-            [
-                'direction' => $strDirection,
-                'partial' => $partial,
-            ],
-        );
-
-        return $this->getResponsiveClasses($strData, 'varSpacingClasses', $arrOptions);
+        return $this->getResponsiveClasses($strData, 'varSpacingClasses', [
+            'direction' => $strDirection,
+            'partial' => $partial,
+            'excludeValues' => $excludeValues,
+        ]);
     }
 
     /**
@@ -181,9 +172,9 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getSpacingTopClasses(?string $strData, array $arrOptions = []): array
+    public function getSpacingTopClasses(?string $strData): array
     {
-        return $this->getSpacingClasses($strData, 't', $arrOptions);
+        return $this->getSpacingClasses($strData, 't');
     }
 
     /**
@@ -191,9 +182,9 @@ class BootstrapFrontendService extends ResponsiveFrontendService
      *
      * @return list<string>
      */
-    public function getSpacingBottomClasses(?string $strData, array $arrOptions = []): array
+    public function getSpacingBottomClasses(?string $strData): array
     {
-        return $this->getSpacingClasses($strData, 'b', $arrOptions);
+        return $this->getSpacingClasses($strData, 'b');
     }
 
     /**
