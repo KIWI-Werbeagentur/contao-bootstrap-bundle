@@ -9,4 +9,6 @@ $GLOBALS['TL_LANG']['burger']['animation']['options'] = [
     5 => 'smooth implosion',
     6 => 'circular',
     7 => 'glitch',
+    8 => 'looping drop',
+    9 => 'wave',
 ];

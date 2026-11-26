@@ -45,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['breakpoint'] = [
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['animation'] = [
     'inputType' => 'select',
-    'options' => [0,1,2,3,4,5,6,7],
+    'options' => [0,1,2,3,4,5,6,7,8,9],
     'reference' => &$GLOBALS['TL_LANG']['burger']['animation']['options'],
     'eval' => ['tl_class' => 'w50'],
     'sql' => "varchar(255) NOT NULL default ''"
