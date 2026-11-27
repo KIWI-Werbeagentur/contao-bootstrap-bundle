@@ -30,6 +30,7 @@ class GridStylesRegenerator
         private readonly Environment $twig,
         private readonly string $projectDir,
         private readonly array $grid,
+        private readonly ?ThemeStylesInvalidator $invalidator = null,
     ) {}
 
     /**
@@ -71,6 +72,8 @@ class GridStylesRegenerator
         // dumpFile() writes atomically (temp file + rename) and throws on failure, so a failed
         // write neither reports success nor leaves a truncated file behind.
         $this->filesystem->dumpFile($targetFile, $rendered);
+
+        $this->invalidator?->invalidate();
 
         return true;
     }

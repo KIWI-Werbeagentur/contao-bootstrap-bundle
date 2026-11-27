@@ -20,6 +20,7 @@ services:
       - '@twig'
       - '%kernel.project_dir%'
       - '%kiwi_bootstrap.grid%'
+      - '@Kiwi\Contao\BootstrapBundle\Service\ThemeStylesInvalidator'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\SpacingsCacheWarmer: ~
   Kiwi\Contao\BootstrapBundle\Service\GridStylesRegenerator:
     public: true
@@ -28,6 +29,7 @@ services:
       - '@twig'
       - '%kernel.project_dir%'
       - '%kiwi_bootstrap.grid%'
+      - '@Kiwi\Contao\BootstrapBundle\Service\ThemeStylesInvalidator'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\GridStylesCacheWarmer: ~
   Kiwi\Contao\BootstrapBundle\Service\LayoutImportsFileRegenerator:
     public: true
@@ -35,7 +37,22 @@ services:
       - '@filesystem'
       - '@twig'
       - '%kernel.project_dir%'
+      - '@Kiwi\Contao\BootstrapBundle\Service\ThemeStylesInvalidator'
   Kiwi\Contao\BootstrapBundle\CacheWarmer\LayoutImportsCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Service\ThemeImportsFileRegenerator:
+    public: true
+    arguments:
+      - '@filesystem'
+      - '%kernel.project_dir%'
+      - '@Kiwi\Contao\BootstrapBundle\Service\ThemeStylesInvalidator'
+  Kiwi\Contao\BootstrapBundle\CacheWarmer\ThemeImportsCacheWarmer: ~
+  Kiwi\Contao\BootstrapBundle\Service\ThemeStylesInvalidator:
+    public: true
+    arguments:
+      - '@contao.framework'
+      - '@filesystem'
+      - '%kernel.project_dir%'
+      - '@?logger'
   Kiwi\Contao\BootstrapBundle\Migration\PreserveLegacySpacingsMode:
     arguments:
       $connection: '@database_connection'

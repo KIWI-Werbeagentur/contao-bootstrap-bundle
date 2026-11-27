@@ -2,6 +2,7 @@
 
 namespace Kiwi\Contao\BootstrapBundle\Service;
 
+use Composer\InstalledVersions;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Configuration\BootstrapConfiguration;
 use Symfony\Component\Filesystem\Filesystem;
@@ -28,6 +29,7 @@ class LayoutImportsFileRegenerator
         private readonly Filesystem $filesystem,
         private readonly Environment $twig,
         private readonly string $projectDir,
+        private readonly ?ThemeStylesInvalidator $invalidator = null,
     ) {}
 
     /**
@@ -74,6 +76,10 @@ class LayoutImportsFileRegenerator
             }
         }
 
+        // Appended here rather than in the template, so overrides and hooks cannot drop it:
+        // a bundle update then always rewrites the file, which recompiles the layout's CSS.
+        $rendered .= $this->versionStamp();
+
         $current = $this->filesystem->exists($targetFile) ? file_get_contents($targetFile) : null;
 
         if ($current === $rendered) {
@@ -84,6 +90,62 @@ class LayoutImportsFileRegenerator
         // write neither reports success nor leaves a truncated file behind.
         $this->filesystem->dumpFile($targetFile, $rendered);
 
+        $this->invalidator?->invalidate($themeAlias, $layoutAlias);
+
         return true;
+    }
+
+    /**
+     * One comment line per package whose SCSS the layout compiles: this bundle and the
+     * package that holds the bootstrapStyles path (none when the path is in no package).
+     */
+    private function versionStamp(): string
+    {
+        $packages = ['kiwi/contao-bootstrap'];
+
+        $bootstrapPath = realpath(str_replace('__ROOT__', $this->projectDir, (string) ($GLOBALS['responsive']['bootstrap'] ?? '')));
+        if ($bootstrapPath !== false) {
+            $owner = $this->findOwningPackage($bootstrapPath);
+            if ($owner !== null && $owner !== 'kiwi/contao-bootstrap') {
+                $packages[] = $owner;
+            }
+        }
+
+        $stamp = '';
+        foreach ($packages as $package) {
+            $stamp .= "\n// {$package}: " . InstalledVersions::getReference($package);
+        }
+
+        return $stamp . "\n";
+    }
+
+    /**
+     * The installed package with the deepest install path containing $path. The root
+     * package is left out: its install path is the project itself.
+     */
+    private function findOwningPackage(string $path): ?string
+    {
+        $rootPackage = InstalledVersions::getRootPackage()['name'];
+        $owner = null;
+        $ownerPathLength = 0;
+
+        foreach (InstalledVersions::getInstalledPackages() as $package) {
+            if ($package === $rootPackage) {
+                continue;
+            }
+
+            $installPath = InstalledVersions::getInstallPath($package);
+            $installPath = $installPath !== null ? realpath($installPath) : false;
+            if ($installPath === false) {
+                continue;
+            }
+
+            if (str_starts_with($path . '/', $installPath . '/') && \strlen($installPath) > $ownerPathLength) {
+                $owner = $package;
+                $ownerPathLength = \strlen($installPath);
+            }
+        }
+
+        return $owner;
     }
 }
