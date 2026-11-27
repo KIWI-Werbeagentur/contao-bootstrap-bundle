@@ -113,7 +113,7 @@ class LayoutImportsFileRegenerator
 
         $stamp = '';
         foreach ($packages as $package) {
-            $stamp .= "\n// {$package}: " . InstalledVersions::getReference($package);
+            $stamp .= "\n// {$package}: " . InstalledVersions::getPrettyVersion($package) . ' (' . InstalledVersions::getReference($package) . ')';
         }
 
         return $stamp . "\n";
