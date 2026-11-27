@@ -4,9 +4,9 @@ namespace Kiwi\Contao\BootstrapBundle\DataContainer;
 
 use Contao\DataContainer;
 use Contao\Message;
-use Contao\StringUtil;
 use Contao\System;
 use Kiwi\Contao\BootstrapBundle\Service\SpacingsFileRegenerator;
+use Kiwi\Contao\BootstrapBundle\Service\ThemeImportsFileRegenerator;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -59,30 +59,9 @@ class ThemeListener
             Message::addError($e->getMessage());
         }
 
-        $projectDir = System::getContainer()->getParameter('kernel.project_dir');
-        $themePath = $projectDir . '/files/themes/' . $themeAlias . '/';
-
-        // Relative path from the imports file's directory back to the project root, derived
-        // like in LayoutImportsFileRegenerator instead of hardcoding the depth.
-        $strToRoot = rtrim($fs->makePathRelative($projectDir, $themePath), '/');
-
-        $arrComponents = [];
-        foreach ($GLOBALS['responsive']['bootstrapComponents'] ?? [] as $strComponent) {
-            if (!($record['responsiveBootstrapComponents'] ?? null) || in_array($strComponent, StringUtil::deserialize($record['responsiveBootstrapComponents'], true))) {
-                $strPath = str_replace("__ROOT__", $strToRoot, (string) ($GLOBALS['responsive']['bootstrap'] ?? ''));
-                $arrComponents[] = "@import '$strPath/$strComponent';";
-            }
-        }
-
-        $strImportsFile = $themePath . '_imports-' . $themeAlias . '.scss';
-        $strImports = implode("\n", $arrComponents);
-
-        // Same write contract as the regenerators: only on change, atomically, and a failure
-        // is reported instead of aborting the already saved record.
+        // The record is already saved at this point: report a failed write instead of aborting.
         try {
-            if (!$fs->exists($strImportsFile) || file_get_contents($strImportsFile) !== $strImports) {
-                $fs->dumpFile($strImportsFile, $strImports);
-            }
+            System::getContainer()->get(ThemeImportsFileRegenerator::class)->regenerate($themeAlias, $record['responsiveBootstrapComponents'] ?? null);
         } catch (IOException $e) {
             System::getContainer()->get('monolog.logger.contao.error')->error('Could not write the theme imports file: ' . $e->getMessage(), ['exception' => $e]);
             Message::addError($e->getMessage());
